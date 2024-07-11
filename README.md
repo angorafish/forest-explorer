@@ -1,9 +1,13 @@
-APIs:
+API Links (USFS):
 
-Google Maps API - https://developers.google.com/maps/documentation - Potentially used in addition to Mapbox to provide GPS navigation, but still up in the air.
+# USFS National Forest System Trails
+https://data-usfs.hub.arcgis.com/datasets/0969eb1cbb2f4a1d861ee58fff587cc2_0/explore?location=27.202374%2C-110.397450%2C3.13
+- Purpose: Contains information about trails within National Forest System
 
-Mappbox API - https://docs.mapbox.com/api/ - Highly customizable map data; will revert to Google Maps API as backup.
+# Recreation Information Database (RIDB)
+https://data-usfs.hub.arcgis.com/documents/usfs::recreation-information-database-ridb/about
+- Purpose: Provides comprehensive information about recreational areas, campsites and activities
 
-OpenWeatherMap API - https://openweathermap.org/api - Compile live weather data.
-
-National park service API - https://www.nps.gov/subjects/developer/api-documentation.html - data on national parks, including details, alerts, news and events - ** This is the main API I will be using, and I will either choose to optionally implement the others following it or will stick with this.
+# Forest Administrative Boundaries
+https://data-usfs.hub.arcgis.com/datasets/usfs::forest-administrative-boundaries-feature-layer/about
+- Purpose: Provide boundaries of national forests and grasslands

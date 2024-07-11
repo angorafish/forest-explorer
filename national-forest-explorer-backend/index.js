@@ -13,9 +13,17 @@ const postRouter = require('./routes/post');
 const reviewRouter = require('./routes/review');
 const authenticateToken = require('./middleware/auth');
 const commentRouter = require('./routes/comment');
+const trailRouter = require('./routes/trail');
+const campsiteRouter = require('./routes/campsite');
+const errorHandler = require('./middleware/errorHandler');
+const { error } = require('console');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3001',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(bodyParser.json());
 
 app.use('/api/forests', forestRoutes);
@@ -27,10 +35,34 @@ app.use('/api/posts', postRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/comments', authenticateToken, commentRouter);
 app.use('/uploads', express.static('uploads'));
+app.use('/api/trails', trailRouter);
+app.use('/api/campsites', campsiteRouter);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, async () => {
-    console.log(`Server is running on port ${PORT}`);
-    await sequelize.authenticate();
-    console.log('Database connected!');
-});
+
+const syncDatabase = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Database connected!');
+        await sequelize.sync({ force: false });
+        console.log('Database synchronized!');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+};
+
+const startServer = async () => {
+    try {
+        await syncDatabase();
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Error starting server:', error);
+    }
+};
+
+startServer();
+
+module.exports = { app, sequelize };

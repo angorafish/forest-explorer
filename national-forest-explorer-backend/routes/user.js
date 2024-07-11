@@ -8,7 +8,7 @@ const authenticateToken = require('../middleware/auth');
 
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findbyPk(req.params.id);
+        const user = await User.findByPk(req.params.id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -20,7 +20,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
 router.put('/profile-picture', authenticateToken, upload.single('profilePicture'), async (req, res) => {
     try {
-        const user = await User.findbyPk(req.user.id);
+        const user = await User.findByPk(req.user.id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -34,7 +34,7 @@ router.put('/profile-picture', authenticateToken, upload.single('profilePicture'
 
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, passsword } = req.body;
+        const { username, email, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ username, email, password_hash: hashedPassword });
         res.status(201).json(user);
@@ -45,9 +45,9 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const { email, passsword } = req.body;
+        const { email, password } = req.body;
         const user = await User.findOne({ where: { email } });
-        if (!user || !(await bcrypt.compare(passsword, user.passsword_hash))) {
+        if (!user || !(await bcrypt.compare(password, user.password_hash))) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });

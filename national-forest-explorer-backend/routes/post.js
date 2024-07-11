@@ -8,20 +8,20 @@ router.get('/', async (req, res) => {
             include: [
                 {
                     model: User,
-                    as: 'User',
+                    as: 'user',
                     attributes: ['username']
                 },
                 {
                     model: Review,
-                    as: 'Reviews'
+                    as: 'reviews'
                 },
                 {
                     model: Comment,
-                    as: 'Comments',
+                    as: 'comments',
                     include: [
                         {
                             model: User,
-                            as: 'User',
+                            as: 'user',
                             attributes: ['username']
                         }
                     ]
@@ -41,20 +41,20 @@ router.get('/:id', async (req, res) => {
             include: [
                 {
                     model: User,
-                    as: 'User',
+                    as: 'user',
                     attributes: ['username']
                 },
                 {
                     model: Review,
-                    as: 'Reviews'
+                    as: 'reviews'
                 },
                 {
                     model: Comment,
-                    as: 'Comments',
+                    as: 'comments',
                     include: [
                         {
                             model: User,
-                            as: 'User',
+                            as: 'user',
                             attributes: ['username']
                         }
                     ]

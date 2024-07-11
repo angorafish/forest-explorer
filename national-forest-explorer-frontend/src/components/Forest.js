@@ -15,7 +15,7 @@ const Forest = () => {
                 setForest(response.data);
                 setLoading(false);
             } catch (error) {
-                setError("Failed to fetch forest details.");
+                setError("Failed to fetch forest details. Please try again later.");
                 setLoading(false);
             }
         };
@@ -25,13 +25,14 @@ const Forest = () => {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
+    if (!forest) return <div>No forest details available.</div>;
 
     return (
         <div>
             <h1>{forest.fullName}</h1>
             <p>{forest.description}</p>
             <ul>
-                {forest.trails.map(trail => (
+                {forest.trails && forest.trails.map(trail => (
                     <li key={trail.id}>
                         <Link to={`/trail/${trail.id}`}>{trail.name}</Link>
                     </li>
