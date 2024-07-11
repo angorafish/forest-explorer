@@ -9,31 +9,52 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      forest_id: {
-        type: Sequelize.INTEGER
+      trailId: {
+        type: Sequelize.STRING(50),
+        unique: true
       },
       name: {
         type: Sequelize.STRING
       },
-      length: {
+      type: {
         type: Sequelize.STRING
       },
-      difficulty: {
+      segmentLength: {
+        type: Sequelize.DOUBLE
+      },
+      managingOrg: {
         type: Sequelize.STRING
       },
-      elevation: {
+      accessibilityStatus: {
         type: Sequelize.STRING
       },
-      coordinates: {
+      trailSurface: {
+        type: Sequelize.STRING
+      },
+      allowedTerraUse: {
+        type: Sequelize.STRING
+      },
+      allowedSnowUse: { 
+        type: Sequelize.STRING
+      },
+      allowedWaterUse: {
+        type: Sequelize.STRING
+      },
+      typicalTrailGrade: {
+        type: Sequelize.STRING
+      },
+      typicalTreadWidth: {
         type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       }
     });
   },

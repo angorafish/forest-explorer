@@ -16,15 +16,21 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
-    reviewText: {
-      type: DataTypes.TEXT,
-    },
-    photos: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-    },
+    reviewText: DataTypes.TEXT,
+    photos: DataTypes.ARRAY(DataTypes.STRING),
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
   }, {
     sequelize,

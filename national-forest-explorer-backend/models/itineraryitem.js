@@ -4,26 +4,44 @@ module.exports = (sequelize) => {
   class ItineraryItem extends Model {}
 
   ItineraryItem.init({
-    itinerary_id: DataTypes.INTEGER,
-    forest_id: DataTypes.INTEGER,
-    trail_id: DataTypes.INTEGER,
-    campsite_id: DataTypes.INTEGER,
+    itineraryId: {
+      type: DataTypes.INTEGER,
+    },
+    forestId: {
+      type: DataTypes.INTEGER,
+    },
+    trailId: {
+      type: DataTypes.INTEGER,
+    },
+    campsiteId: {
+      type: DataTypes.INTEGER,
+    },
     date: DataTypes.DATE,
     time: DataTypes.TIME,
     note: DataTypes.STRING,
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
   }, {
     sequelize,
     modelName: 'ItineraryItem',
     tableName: 'ItineraryItems',
     timestamps: true,
-    underscored: true,
+    underscored: false,
   });
 
   ItineraryItem.associate = function(models) {
-    ItineraryItem.belongsTo(models.Itinerary, { foreignKey: 'itinerary_id' });
-    ItineraryItem.belongsTo(models.Forest, { foreignKey: 'forest_id' });
-    ItineraryItem.belongsTo(models.Trail, { foreignKey: 'trail_id' });
-    ItineraryItem.belongsTo(models.Campsite, { foreignKey: 'campsite_id' });
+    ItineraryItem.belongsTo(models.Itinerary, { foreignKey: 'itineraryId' });
+    ItineraryItem.belongsTo(models.Forest, { foreignKey: 'forestId' });
+    ItineraryItem.belongsTo(models.Trail, { foreignKey: 'trailId' });
+    ItineraryItem.belongsTo(models.Campsite, { foreignKey: 'campsiteId' });
   };
 
   return ItineraryItem;

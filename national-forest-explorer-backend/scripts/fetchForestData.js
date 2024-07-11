@@ -20,17 +20,17 @@ const fetchForestData = async () => {
         }
 
         for (const forest of forests) {
-            await Forest.create({
-                admin_forest_id: forest.attributes.ADMINFORESTID,
+            await Forest.upsert({
+                adminForestId: forest.attributes.ADMINFORESTID,
                 region: forest.attributes.REGION,
-                forest_number: forest.attributes.FORESTNUMBER,
-                forest_org_code: forest.attributes.FORESTORGCODE,
+                forestNumber: forest.attributes.FORESTNUMBER,
+                forestOrgCode: forest.attributes.FORESTORGCODE,
                 name: forest.attributes.FORESTNAME,
-                gis_acres: forest.attributes.GIS_ACRES,
-                shape_length: forest.attributes.SHAPE_Length,
-                shape_area: forest.attributes.SHAPE_Area,
-                created_at: new Date(),
-                updated_at: new Date()
+                gisAcres: forest.attributes.GIS_ACRES,
+                shapeLength: forest.attributes.SHAPE_Length,
+                shapeArea: forest.attributes.SHAPE_Area,
+                createdAt: new Date(),
+                updatedAt: new Date()
             });
         }
         console.log('Forest data fetched and inserted successfully');

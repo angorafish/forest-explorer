@@ -55,9 +55,11 @@ const syncDatabase = async () => {
 const startServer = async () => {
     try {
         await syncDatabase();
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
+        if (process.env.NODE_ENV !== 'test') {
+            app.listen(PORT, () => {
+                console.log(`Server is running on port ${PORT}`);
+            });
+        }
     } catch (error) {
         console.error('Error starting server:', error);
     }

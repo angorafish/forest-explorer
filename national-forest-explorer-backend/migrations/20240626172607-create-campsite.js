@@ -9,28 +9,51 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      forest_id: {
+      facilityId: {
         type: Sequelize.INTEGER
       },
       name: {
         type: Sequelize.STRING
       },
-      facilities: {
+      type: {
         type: Sequelize.STRING
       },
-      availability: {
+      latitude: {
+        type: Sequelize.DOUBLE
+      },
+      longitude: {
+        type: Sequelize.DOUBLE
+      },
+      mapUrl: {
         type: Sequelize.STRING
       },
-      coordinates: {
+      phone: {
+        type: Sequelize.STRING
+      },
+      email: {
+        type: Sequelize.STRING
+      },
+      description: {
+        type: Sequelize.TEXT
+      },
+      useFeeDescription: {
+        type: Sequelize.TEXT
+      },
+      reservable: {
+        type: Sequelize.BOOLEAN
+      },
+      adaAccess: {
         type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       }
     });
   },

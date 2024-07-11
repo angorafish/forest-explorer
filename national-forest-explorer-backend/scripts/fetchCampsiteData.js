@@ -17,21 +17,38 @@ const fetchCampsiteData = async () => {
         }
 
         for (const site of campsites) {
-            await Campsite.upsert({
-                facility_id: site.FacilityID,
-                name: site.FacilityName,
-                type: site.FacilityTypeDescription,
-                latitude: site.FacilityLatitude,
-                longitude: site.FacilityLongitude,
-                map_url: site.FacilityMapURL,
+            console.log('Upserting campsite data:', {
+                facilityId: site.FacilityID,
+                name: site.CampsiteName,
+                type: site.CampsiteType,
+                latitude: site.CampsiteLatitude,
+                longitude: site.CampsiteLongitude,
+                mapUrl: site.ENTITYMEDIA && site.ENTITYMEDIA[0] ? site.ENTITYMEDIA[0].URL : null,
                 phone: site.FacilityPhone,
                 email: site.FacilityEmail,
-                description: site.FacilityDescription,
-                use_fee_description: site.FacilityUseFeeDescription,
-                reservable: site.Reservable,
-                ada_access: site.ADAAccess,
-                created_at: new Date(),
-                updated_at: new Date()
+                description: site.CampsiteDescription,
+                useFeeDescription: site.FacilityUseFeeDescription,
+                reservable: site.CampsiteReservable,
+                adaAccess: site.CampsiteAccessible,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+
+            await Campsite.upsert({
+                facilityId: site.FacilityID,
+                name: site.CampsiteName,
+                type: site.CampsiteType,
+                latitude: site.CampsiteLatitude,
+                longitude: site.CampsiteLongitude,
+                mapUrl: site.ENTITYMEDIA && site.ENTITYMEDIA[0] ? site.ENTITYMEDIA[0].URL : null,
+                phone: site.FacilityPhone,
+                email: site.FacilityEmail,
+                description: site.CampsiteDescription,
+                useFeeDescription: site.FacilityUseFeeDescription,
+                reservable: site.CampsiteReservable,
+                adaAccess: site.CampsiteAccessible,
+                createdAt: new Date(),
+                updatedAt: new Date()
             });
         }
         console.log('Campsite data fetched and inserted successfully');

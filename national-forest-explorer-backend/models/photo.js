@@ -4,24 +4,42 @@ module.exports = (sequelize) => {
   class Photo extends Model {}
 
   Photo.init({
-    user_id: DataTypes.INTEGER,
-    forest_id: DataTypes.INTEGER,
-    trail_id: DataTypes.INTEGER,
-    campsite_id: DataTypes.INTEGER,
+    userId: {
+      type: DataTypes.INTEGER,
+    },
+    forestId: {
+      type: DataTypes.INTEGER,
+    },
+    trailId: {
+      type: DataTypes.INTEGER,
+    },
+    campsiteId: {
+      type: DataTypes.INTEGER,
+    },
     url: DataTypes.STRING,
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
   }, {
     sequelize,
     modelName: 'Photo',
     tableName: 'Photos',
     timestamps: true,
-    underscored: true,
+    underscored: false,
   });
 
   Photo.associate = function(models) {
-    Photo.belongsTo(models.User, { foreignKey: 'user_id' });
-    Photo.belongsTo(models.Forest, { foreignKey: 'forest_id' });
-    Photo.belongsTo(models.Trail, { foreignKey: 'trail_id' });
-    Photo.belongsTo(models.Campsite, { foreignKey: 'campsite_id' });
+    Photo.belongsTo(models.User, { foreignKey: 'userId' });
+    Photo.belongsTo(models.Forest, { foreignKey: 'forestId' });
+    Photo.belongsTo(models.Trail, { foreignKey: 'trailId' });
+    Photo.belongsTo(models.Campsite, { foreignKey: 'campsiteId' });
     Photo.belongsTo(models.Post, { foreignKey: 'postId' });
   };
 

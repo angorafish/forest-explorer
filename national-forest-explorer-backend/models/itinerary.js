@@ -7,13 +7,25 @@ module.exports = (sequelize) => {
   Itinerary.init({
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    userId: DataTypes.INTEGER,
+    userId: {
+      type: DataTypes.INTEGER,
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
   }, {
     sequelize,
     modelName: 'Itinerary',
     tableName: 'Itineraries',
     timestamps: true,
-    underscored: true,
+    underscored: false,
   });
 
   Itinerary.associate = function(models) {
@@ -22,7 +34,7 @@ module.exports = (sequelize) => {
       as: 'user',
     });
     Itinerary.hasMany(models.ItineraryItem, {
-      foreignKey: 'itinerary_id',
+      foreignKey: 'itineraryId',
       as: 'items',
     });
   };

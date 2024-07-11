@@ -4,27 +4,27 @@ module.exports = (sequelize) => {
   class Campsite extends Model {}
 
   Campsite.init({
-    facility_id: {
+    facilityId: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false,
+      allowNull: false
     },
     name: DataTypes.STRING,
     type: DataTypes.STRING,
     latitude: DataTypes.FLOAT,
     longitude: DataTypes.FLOAT,
-    map_url: DataTypes.STRING,
+    mapUrl: DataTypes.STRING,
     phone: DataTypes.STRING,
     email: DataTypes.STRING,
     description: DataTypes.TEXT,
-    use_fee_description: DataTypes.TEXT,
+    useFeeDescription: DataTypes.TEXT,
     reservable: DataTypes.BOOLEAN,
-    ada_access: DataTypes.STRING,
-    created_at: {
+    adaAccess: DataTypes.STRING,
+    createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
@@ -32,7 +32,7 @@ module.exports = (sequelize) => {
     sequelize,
     modelName: 'Campsite',
     tableName: 'Campsites',
-    timestamps: false,
+    timestamps: true,
   });
 
   return Campsite;

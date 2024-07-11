@@ -1,5 +1,8 @@
-const request = require('supertest');
-const { app } = require('../index');
+const setup = require('./setup');
+const teardown = require('./teardown');
+
+beforeAll(setup);
+afterAll(teardown);
 
 describe('GET /api/trails', () => {
     it('should fetch all trails', async () => {

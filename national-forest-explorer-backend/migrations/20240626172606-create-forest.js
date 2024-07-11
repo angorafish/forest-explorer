@@ -9,34 +9,40 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      adminForestId: {
+        type: Sequelize.STRING(50),
+        unique: true
+      },
+      region: {
+        type: Sequelize.STRING(50)
+      },
+      forestNumber: {
+        type: Sequelize.STRING(50)
+      },
+      forestOrgCode: {
+        type: Sequelize.STRING(50)
+      },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING(255)
       },
-      location: {
-        type: Sequelize.STRING
+      gisAcres: {
+        type: Sequelize.DOUBLE
       },
-      size: {
-        type: Sequelize.STRING
+      shapeLength: {
+        type: Sequelize.DOUBLE
       },
-      description: {
-        type: Sequelize.STRING
-      },
-      history: {
-        type: Sequelize.STRING
-      },
-      flora_fauna: {
-        type: Sequelize.STRING
-      },
-      conservation_status: {
-        type: Sequelize.STRING
+      shapeArea: {
+        type: Sequelize.DOUBLE
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       }
     });
   },

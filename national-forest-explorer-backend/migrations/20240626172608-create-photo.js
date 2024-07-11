@@ -9,16 +9,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER
       },
-      forest_id: {
+      forestId: {
         type: Sequelize.INTEGER
       },
-      trail_id: {
+      trailId: {
         type: Sequelize.INTEGER
       },
-      campsite_id: {
+      campsiteId: {
         type: Sequelize.INTEGER
       },
       url: {
@@ -26,11 +26,13 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       }
     });
   },

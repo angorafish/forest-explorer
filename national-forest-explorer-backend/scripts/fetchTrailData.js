@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { Trail, sequelize } = require('../models');
+
 const fetchTrailData = async () => {
   try {
     await sequelize.authenticate();
@@ -20,26 +21,29 @@ const fetchTrailData = async () => {
 
     for (const trail of trailData) {
       try {
-        const existingTrail = await Trail.findOne({ where: { trail_id: trail.attributes.TRAIL_NO } });
+        const existingTrail = await Trail.findOne({ where: { trailId: trail.attributes.TRAIL_NO } });
 
         if (existingTrail) {
           console.log(`Trail with ID ${trail.attributes.TRAIL_NO} already exists. Skipping.`);
-          continue; // Skip the duplicate entry
+          continue;
         }
 
         console.log('Inserting trail data:', trail.attributes.TRAIL_NO);
         await Trail.create({
-          trail_id: trail.attributes.TRAIL_NO,
+          trailId: trail.attributes.TRAIL_NO,
           name: trail.attributes.TRAIL_NAME,
           type: trail.attributes.TRAIL_TYPE,
-          segment_length: trail.attributes.SEGMENT_LENGTH,
-          managing_org: trail.attributes.MANAGING_ORG,
-          accessibility_status: trail.attributes.ACCESSIBILITY_STATUS,
-          trail_surface: trail.attributes.TRAIL_SURFACE,
-          allowed_terra_use: trail.attributes.ALLOWED_TERRA_USE,
-          allowed_snow_use: trail.attributes.ALLOWED_SNOW_USE,
-          typical_trail_grade: trail.attributes.TYPICAL_TRAIL_GRADE,
-          typical_tread_width: trail.attributes.TYPICAL_TREAD_WIDTH,
+          segmentLength: trail.attributes.SEGMENT_LENGTH,
+          managingOrg: trail.attributes.MANAGING_ORG,
+          accessibilityStatus: trail.attributes.ACCESSIBILITY_STATUS,
+          trailSurface: trail.attributes.TRAIL_SURFACE,
+          allowedTerraUse: trail.attributes.ALLOWED_TERRA_USE,
+          allowedSnowUse: trail.attributes.ALLOWED_SNOW_USE,
+          allowedWaterUse: trail.attributes.ALLOWED_WATER_USE,
+          typicalTrailGrade: trail.attributes.TYPICAL_TRAIL_GRADE,
+          typicalTreadWidth: trail.attributes.TYPICAL_TREAD_WIDTH,
+          createdAt: new Date(),
+          updatedAt: new Date()
         });
       } catch (error) {
         console.error('Error inserting trail data:', error);

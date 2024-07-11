@@ -14,17 +14,28 @@ module.exports = {
         allowNull: false,
         unique: true
       },
-      password_hash: {
+      passwordHash: {
         type: Sequelize.STRING,
         allowNull: false
       },
+      profilePicture: {
+        type: Sequelize.STRING
+      },
+      coverPhoto: { 
+        type: Sequelize.STRING
+      },
+      profilePhoto: { 
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now')
       }
     });
   },

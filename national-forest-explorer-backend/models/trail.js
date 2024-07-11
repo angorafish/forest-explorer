@@ -4,33 +4,71 @@ module.exports = (sequelize) => {
   class Trail extends Model {}
 
   Trail.init({
-    trail_id: {
+    trailId: {
       type: DataTypes.STRING,
       unique: true,
+      field: 'trailId',
     },
-    name: DataTypes.STRING,
-    type: DataTypes.STRING,
-    segment_length: DataTypes.FLOAT,
-    managing_org: DataTypes.STRING,
-    accessibility_status: DataTypes.STRING,
-    trail_surface: DataTypes.STRING,
-    allowed_terra_use: DataTypes.STRING,
-    allowed_snow_use: DataTypes.STRING,
-    typical_trail_grade: DataTypes.STRING,
-    typical_tread_width: DataTypes.STRING,
-    created_at: {
+    name: {
+      type: DataTypes.STRING,
+      field: 'name',
+    },
+    type: {
+      type: DataTypes.STRING,
+      field: 'type',
+    },
+    segmentLength: {
+      type: DataTypes.FLOAT,
+      field: 'segmentLength',
+    },
+    managingOrg: {
+      type: DataTypes.STRING,
+      field: 'managingOrg',
+    },
+    accessibilityStatus: {
+      type: DataTypes.STRING,
+      field: 'accessibilityStatus',
+    },
+    trailSurface: {
+      type: DataTypes.STRING,
+      field: 'trailSurface',
+    },
+    allowedTerraUse: {
+      type: DataTypes.STRING,
+      field: 'allowedTerraUse',
+    },
+    allowedSnowUse: {
+      type: DataTypes.STRING,
+      field: 'allowedSnowUse',
+    },
+    allowedWaterUse: {
+      type: DataTypes.STRING,
+      field: 'allowedWaterUse',
+    },
+    typicalTrailGrade: {
+      type: DataTypes.STRING,
+      field: 'typicalTrailGrade',
+    },
+    typicalTreadWidth: {
+      type: DataTypes.STRING,
+      field: 'typicalTreadWidth',
+    },
+    createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+      field: 'createdAt',
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+      field: 'updatedAt',
     },
   }, {
     sequelize,
     modelName: 'Trail',
     tableName: 'Trails',
-    timestamps: false,
+    timestamps: true,
+    underscored: false,
   });
 
   return Trail;

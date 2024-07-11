@@ -4,38 +4,34 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Review extends Model {
     static associate(models) {
-      Review.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+      Review.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
       Review.belongsTo(models.Post, { foreignKey: 'postId', as: 'post' });
-      Review.belongsTo(models.Forest, { foreignKey: 'forest_id', as: 'forest' });
-      Review.belongsTo(models.Trail, { foreignKey: 'trail_id', as: 'trail' });
-      Review.belongsTo(models.Campsite, { foreignKey: 'campsite_id', as: 'campsite' });
+      Review.belongsTo(models.Forest, { foreignKey: 'forestId', as: 'forest' });
+      Review.belongsTo(models.Trail, { foreignKey: 'trailId', as: 'trail' });
+      Review.belongsTo(models.Campsite, { foreignKey: 'campsiteId', as: 'campsite' });
     }
   }
 
   Review.init({
-    user_id: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     postId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'postId',
     },
-    forest_id: {
+    forestId: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      field: 'forest_id',
     },
-    trail_id: {
+    trailId: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      field: 'trail_id',
     },
-    campsite_id: {
+    campsiteId: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      field: 'campsite_id',
     },
     rating: {
       type: DataTypes.INTEGER,
@@ -48,12 +44,12 @@ module.exports = (sequelize) => {
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: 'createdAt',
+      defaultValue: DataTypes.NOW,
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: 'updatedAt',
+      defaultValue: DataTypes.NOW,
     },
   }, {
     sequelize,

@@ -1,11 +1,10 @@
 const express = require('express');
-const axios = require('axios');
 const router = express.Router();
-const { Forest } = require('../models');
+const forestService = require('../services/forestService'); 
 
-router.get('/national-forests', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const forests = await Forest.findAll();
+    const forests = await forestService.getAllForests();
     res.json(forests);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch national forests data' });
