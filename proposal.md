@@ -123,7 +123,41 @@ Itinerary_items:
 -`updated_at`
 
 ## b. What kinds of issues might you run into with your API? This is especially important if you are creating your own API, web scraping produces notoriously messy data.
+-Inconsistent data from API = > Implement data validation checks
+-API rate limits = > Caching mechanisms to reduce API requests
+-Keeping time-sensitive data up-to-date = > Scheduled data updating 
+
 ## c. Is there any sensitive information you need to secure?
+User's passwords will be secured using hashing. Other methods will be implemented to protect their personal information. API keys will also be secured using environment variables. HTTPS encryption will be used for data in transit. Authentication (JWT) will be used for secure API access. Access to sensitive endpoints will be controlled through user roles and permissions.
+
 ## d. What functionality will your app include?
+-User registration and authentication, log in and out, manage profiles
+-Detailed forest information, links to trails, campsites, points of interest.
+-Interactive maps marking different forests, more detailed individual forest maps with trail and camping locations, info on different roads etc.
+-Search and filter functionality for users to find the perfect forest land based on their preferences.
+-Itinerary builder controlled by users, connected to user's individualized calendar.
+-All-purpose admin-controlled calendar with time-specific information about forests, such as closures, events, etc.
+-User ratings, reviews and photos as well as an explore page.
+-Community engagement through explore page, user following, and liking reviews and photos.
+-Additional resources linked to various forests, landmarks etc.
+
 ## e. What will the user flow look like?
+-Landing page: Explore page, where recently posted photos will appear for users, featured forest at top of page. Search bar to search for specific forests.
+-Forest detail page: Users select a forest to view detailed information, including trails campsites and landmarks.
+-Interactive map: Users interact with the map to explore forests.
+-User registration/login: Users can create an account or log in to access additional features, such as personalized homepage, personal calendar and itinerary, as well as view their own content and edit their profile.
+-Itinerary creation: Logged-in users can create and manage their trip itineraries, adding particular trip details, and can view their itineraries on their personal calendar.
+-Reviews and photos: Users can submit reviews and update photos for places they have visited.
+-Community engagement: Users can view and interact with reviews and photos submitted by others.
+
 ## f. What features make your site more than a CRUD app? What are your stretch goals? Please create a GitHub repos
+Advanced features:
+- Geospatial filtering: Allow users to filter trails and campsites based on their location on the map.
+- Real-time updates: Weather conditions and trail/campsite statuses.
+- Social features: user following and interaction, sharing itineraries.
+- Recommendations: Personalized recommendations based on user preferences and activities.
+Stretch goals:
+- Machine learning: Use machine learning to analyze user behavior and customize recommendations.
+- Offline access: Allow users to download maps and itinerary details for offline access.
+- Game-implementation: Introduce game-like elements such as achievements, scavenger-hunt-inspired challenges, badges and more.
+- Mobile: Develop a mobile app adaption.

@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const { sequelize } = require('./models');
 const forestRoutes = require('./routes/forest');
 const feedRouter = require('./routes/feed');
@@ -22,9 +23,11 @@ const app = express();
 app.use(cors({
     origin: 'http://localhost:3001',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use('/api/forests', forestRoutes);
 app.use('/api/feed', feedRouter);

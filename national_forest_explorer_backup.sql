@@ -1,6 +1,6 @@
 --
 -- PostgreSQL database dump
---
+-- psql -U mfoster -h 127.0.0.1 -p 5432 national_forest_explorer_dev < national_forest_explorer_backup.sql
 
 -- Dumped from database version 16.3 (Postgres.app)
 -- Dumped by pg_dump version 16.3 (Postgres.app)

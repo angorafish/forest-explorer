@@ -1,32 +1,79 @@
 const express = require('express');
-const router = express.Router();
-const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { User } = require('../models');
+const authenticateToken = require('../middleware/auth');
+const emailValidator = require('email-validator');
+const router = express.Router();
+
+const hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+};
+
+const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+};
 
 router.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
+    console.log('Received signup request', { username, email });
+    
+    if (!emailValidator.validate(email)) {
+        console.log('Invalid email format');
+        return res.status(400).json({ error: 'Invalid email format' });
+    }
+    if (!validatePassword(password)) {
+        console.log('Password does not meet requirements');
+        return res.status(400).json({ error: 'Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, and one number.' });
+    }
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ username, password_hash: hashedPassword });
+        const hashedPassword = await hashPassword(password);
+        console.log('Creating user', { username, email });
+        const user = await User.create({ username, email, passwordHash: hashedPassword });
         const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET);
         res.json({ user, token });
     } catch (error) {
+        console.error('Error signing up user:', error);
         res.status(500).json({ error: 'Error signing up user' });
     }
 });
 
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
+    console.log('Received login request', { username });
     try {
         const user = await User.findOne({ where: { username } });
-        if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+        if (!user) {
+            console.log('User not found');
+            return res.status(400).json({ error: 'Invalid credentials' });
+        }
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
+        if (!isMatch) {
+            console.log('Password does not match');
             return res.status(400).json({ error: 'Invalid credentials' });
         }
         const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET);
         res.json({ user, token });
     } catch (error) {
+        console.error('Error logging in user:', error);
         res.status(500).json({ error: 'Error logging in user' });
+    }
+});
+
+router.get('/me', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id, {
+            attributes: { exclude: ['passwordHash'] }
+        });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ error: 'Error fetching user details' });
     }
 });
 
