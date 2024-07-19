@@ -31,8 +31,14 @@ const Posts = () => {
             <ul>
                 {posts.map(post => (
                     <li key={post.id}>
-                        <h2>{post.title}</h2>
-                        <p>{post.content}</p>
+                        <h2>{post.location}</h2>
+                        <p>{post.reviewText}</p>
+                        <p>Rating: {post.rating}</p>
+                        {post.photos && post.photos.map(photo => (
+                            <img key={photo.id} src={`/${photo.url}`} alt="Post" />
+                        ))}
+                        <p>Posted by: {post.user.username}</p>
+                        <Link to={`/post/${post.id}`}>View Post</Link>
                     </li>
                 ))}
             </ul>

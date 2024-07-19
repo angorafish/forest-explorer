@@ -23,17 +23,7 @@ const PostDetails = () => {
             }
         };
 
-        const fetchComments = async () => {
-            try {
-                const response = await axios.get(`/comments/${id}`);
-                setComments(response.data);
-            } catch (error) {
-                console.error('Failed to fetch comments', error);
-            }
-        };
-
         fetchPost();
-        fetchComments();
     }, [id]);
 
     const handleCommentSubmit = async (e) => {
@@ -57,12 +47,14 @@ const PostDetails = () => {
         <div>
             <h1>{post.location}</h1>
             {post.photos && post.photos.length > 0 && (
-                <img src={`http://localhost:3000/${post.photos[0]}`} alt={post.location} />
+                post.photos.map((photo, index) => (
+                    <img key={index} src={`http://localhost:3000/${photo.url}`} alt={post.location} />
+                ))
             )}
-            <p>Posted by {post.User.username}</p>
+            <p>Posted by {post.user.username}</p>
             {post.rating && <p>Rating: {post.rating} stars</p>}
             <p>{post.reviewText}</p>
-            {post.Reviews && post.Reviews.map((review) => (
+            {post.reviews && post.reviews.map((review) => (
                 <div key={review.id} className="review">
                     <p>Rating: {review.rating} stars</p>
                     <p>{review.comment}</p>
@@ -70,7 +62,7 @@ const PostDetails = () => {
             ))}
             <div>
                 <h2>Comments</h2>
-                {comments.map((comment) => (
+                {post.comments && post.comments.map((comment) => (
                     <Comment key={comment.id} comment={comment} />
                 ))}
                 <form onSubmit={handleCommentSubmit}>

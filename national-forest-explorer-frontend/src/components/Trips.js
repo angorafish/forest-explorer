@@ -1,42 +1,86 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import axios from '../services/axiosConfig';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import NewTripForm from './NewTripForm.js';
+import { useNavigate } from 'react-router-dom';
+import Modal from 'react-modal';
+
+const localizer = momentLocalizer(moment);
 
 const Trips = () => {
-    const [trips, setTrips] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [itineraries, setItineraries] = useState([]);
+    const [isNewTripModalOpen, setNewTripModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchTrips = async () => {
+        const fetchItineraries = async () => {
             try {
-                const response = await axios.get('/trips');
-                setTrips(response.data);
-                setLoading(false);
+                const response = await axios.get('/api/itineraries');
+                setItineraries(response.data);
             } catch (error) {
-                setError("Failed to fetch trips.");
-                setLoading(false);
+                console.error('Failed to fetch itineraries:', error);
             }
         };
 
-        fetchTrips();
+        fetchItineraries();
     }, []);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+    const handleSelectEvent = (event) => {
+        const itinerary = itineraries.find(i => i.name === event.title && new Date(i.startDate).getTime() === new Date(event.start).getTime());
+        if (itinerary) {
+            navigate(`/trip-details/${itinerary.id}`);
+        }
+    };
+
+    const handleNewTrip = () => {
+        setNewTripModalOpen(true);
+    };
 
     return (
         <div>
             <h1>My Trips</h1>
-            <ul>
-                {trips.map(trip => (
-                    <li key={trip.id}>
-                        <h2>{trip.name}</h2>
-                        <p>{trip.description}</p>
-                    </li>
+            <button onClick={handleNewTrip}>Create New Trip</button>
+            <Calendar
+                localizer={localizer}
+                events={itineraries.map(itinerary => ({
+                    title: itinerary.name,
+                    start: new Date(itinerary.startDate),
+                    end: new Date(itinerary.endDate),
+                }))}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ height: 500 }}
+                onSelectEvent={handleSelectEvent}
+            />
+            <div>
+                <h2>Upcoming Itineraries</h2>
+                {itineraries.filter(itinerary => new Date(itinerary.startDate) >= new Date()).map(itinerary => (
+                    <div key={itinerary.id} onClick={() => navigate(`/trip-details/${itinerary.id}`)}>
+                        <h3>{itinerary.name}</h3>
+                        <p>{itinerary.startDate} - {itinerary.endDate}</p>
+                        <p>{itinerary.forest}</p>
+                    </div>
                 ))}
-            </ul>
-            <Link to="/">Go Back to Home</Link>
+            </div>
+            <div>
+                <h2>Previous Itineraries</h2>
+                {itineraries.filter(itinerary => new Date(itinerary.startDate) < new Date()).map(itinerary => (
+                    <div 
+                        key={itinerary.id} 
+                        onClick={() => navigate(`/trip-details/${itinerary.id}`)}
+                        style={{ color: 'gray' }}
+                    >
+                        <h3>{itinerary.name}</h3>
+                        <p>{itinerary.startDate} - {itinerary.endDate}</p>
+                        <p>{itinerary.forest}</p>
+                    </div>
+                ))}
+            </div>
+            <Modal isOpen={isNewTripModalOpen} onRequestClose={() => setNewTripModalOpen(false)}>
+                <NewTripForm isOpen={isNewTripModalOpen} onClose={() => setNewTripModalOpen(false)} />
+            </Modal>
         </div>
     );
 };

@@ -1,16 +1,71 @@
-import React from 'react';
-import Map from './Map';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Explore = () => {
+  const [searchInput, setSearchInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedDestination, setSelectedDestination] = useState('');
+  const navigate = useNavigate();
+
+  const handleInputChange = async (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+    if (value) {
+      try {
+        console.log(`Fetching suggestions for: ${value}`);
+        const response = await axios.get(`http://localhost:3000/api/search/suggestions?q=${value}`);
+        setSuggestions(response.data);
+      } catch (error) {
+        console.error('Error fetching suggestions:', error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSearch = async () => {
+    try {
+      console.log(`Searching for: ${searchInput}, State: ${selectedState}, Destination: ${selectedDestination}`);
+      const response = await axios.get(`http://localhost:3000/api/search`, {
+        params: {
+          q: searchInput,
+          state: selectedState,
+          destination: selectedDestination,
+        },
+      });
+      setSearchResults(response.data);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSearchInput(suggestion);
+    setSuggestions([]);
+  };
+
+  const handleResultClick = (id, type) => {
+    navigate(`/details/${type}/${id}`);
+  };
+
   return (
     <div>
       <div className="search-bar">
-        <input type="text" placeholder="Search for forests, campsites, trails..." />
-        <button>Search</button>
-        <select>
+        <input
+          type="text"
+          placeholder="Search for forests, campsites, trails..."
+          value={searchInput}
+          onChange={handleInputChange}
+        />
+        <button onClick={handleSearch}>Search</button>
+        <select value={selectedState} onChange={(e) => setSelectedState(e.target.value)}>
           <option value="">Filter by State</option>
+          {/* Add state options */}
           <option value="AL">Alabama</option>
-          <option value="AL">Alaska</option>
+          <option value="AK">Alaska</option>
           <option value="AZ">Arizona</option>
           <option value="AR">Arkansas</option>
           <option value="CA">California</option>
@@ -59,16 +114,33 @@ const Explore = () => {
           <option value="WV">West Virginia</option>
           <option value="WI">Wisconsin</option>
           <option value="WY">Wyoming</option>
-
         </select>
-        <select>
+        <select value={selectedDestination} onChange={(e) => setSelectedDestination(e.target.value)}>
           <option value="">Filter by Destination</option>
           <option value="forest">Forest</option>
           <option value="campsite">Campsite</option>
           <option value="trail">Trail</option>
         </select>
+        <ul>
+          {suggestions.map((suggestion, index) => (
+            <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+              {suggestion}
+            </li>
+          ))}
+        </ul>
       </div>
-      <Map />
+      <div>
+        <img src="/us-forest-land.jpg" alt="US National Forest Land" style={{ width: '100%', height: 'auto' }} />
+      </div>
+      <div>
+        {searchResults.map((result, index) => (
+          <div key={index} onClick={() => handleResultClick(result.id, result.type.toLowerCase())}>
+            <h3>{result.name}</h3>
+            <p>{result.type} in {result.state}</p>
+            <p>{result.forest}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

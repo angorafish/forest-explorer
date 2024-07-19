@@ -1,7 +1,14 @@
-const { Model, DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class ItineraryItem extends Model {}
+  class ItineraryItem extends Model {
+    static associate(models) {
+      ItineraryItem.belongsTo(models.Itinerary, { foreignKey: 'itineraryId' });
+      ItineraryItem.belongsTo(models.Forest, { foreignKey: 'forestId' });
+      ItineraryItem.belongsTo(models.Trail, { foreignKey: 'trailId' });
+      ItineraryItem.belongsTo(models.Campsite, { foreignKey: 'campsiteId' });
+    }
+  }
 
   ItineraryItem.init({
     itineraryId: {
@@ -36,13 +43,6 @@ module.exports = (sequelize) => {
     timestamps: true,
     underscored: false,
   });
-
-  ItineraryItem.associate = function(models) {
-    ItineraryItem.belongsTo(models.Itinerary, { foreignKey: 'itineraryId' });
-    ItineraryItem.belongsTo(models.Forest, { foreignKey: 'forestId' });
-    ItineraryItem.belongsTo(models.Trail, { foreignKey: 'trailId' });
-    ItineraryItem.belongsTo(models.Campsite, { foreignKey: 'campsiteId' });
-  };
 
   return ItineraryItem;
 };

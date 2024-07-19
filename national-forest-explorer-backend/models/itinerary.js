@@ -1,8 +1,18 @@
-'use strict';
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Itinerary extends Model {}
+  class Itinerary extends Model {
+    static associate(models) {
+      Itinerary.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user',
+      });
+      Itinerary.hasMany(models.ItineraryItem, {
+        foreignKey: 'itineraryId',
+        as: 'items',
+      });
+    }
+  }
 
   Itinerary.init({
     name: DataTypes.STRING,
@@ -27,17 +37,6 @@ module.exports = (sequelize) => {
     timestamps: true,
     underscored: false,
   });
-
-  Itinerary.associate = function(models) {
-    Itinerary.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'user',
-    });
-    Itinerary.hasMany(models.ItineraryItem, {
-      foreignKey: 'itineraryId',
-      as: 'items',
-    });
-  };
 
   return Itinerary;
 };

@@ -16,6 +16,14 @@ const validatePassword = (password) => {
     return passwordRegex.test(password);
 };
 
+const createToken = (user) => {
+    return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' });
+};
+
+router.get('/verify', authenticateToken, (req, res) => {
+    res.status(200).json({ message: 'Token is valid' });
+});
+
 router.post('/signup', async (req, res) => {
     const { username, email, password } = req.body;
     console.log('Received signup request', { username, email });
@@ -32,7 +40,7 @@ router.post('/signup', async (req, res) => {
         const hashedPassword = await hashPassword(password);
         console.log('Creating user', { username, email });
         const user = await User.create({ username, email, passwordHash: hashedPassword });
-        const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET);
+        const token = createToken(user);
         res.json({ user, token });
     } catch (error) {
         console.error('Error signing up user:', error);
@@ -54,7 +62,7 @@ router.post('/login', async (req, res) => {
             console.log('Password does not match');
             return res.status(400).json({ error: 'Invalid credentials' });
         }
-        const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET);
+        const token = createToken(user);
         res.json({ user, token });
     } catch (error) {
         console.error('Error logging in user:', error);
@@ -64,17 +72,23 @@ router.post('/login', async (req, res) => {
 
 router.get('/me', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findByPk(req.user.id, {
-            attributes: { exclude: ['passwordHash'] }
-        });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-        res.json(user);
+      const user = await User.findByPk(req.user.id);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+      res.json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        profilePhoto: user.profilePhoto,
+        coverPhoto: user.coverPhoto,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      });
     } catch (error) {
-        console.error('Error fetching user details:', error);
-        res.status(500).json({ error: 'Error fetching user details' });
+      console.error('Error fetching user details:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-});
+  });
 
 module.exports = router;

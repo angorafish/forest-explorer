@@ -32,18 +32,19 @@ const Home = () => {
                 {posts.map(post => (
                     <div key={post.id} className="photo-card">
                         <Link to={`/posts/${post.id}`}>
-                            <img src={`/uploads/${post.photos[0]}`} alt={post.location} />
+                            {post.photos && post.photos.length > 0 && (
+                                <img src={`/uploads/${post.photos[0].url}`} alt={post.location} />
+                            )}
                             <p>{post.location}</p>
                         </Link>
                         <div className="photo-info">
-                            <p>Posted by {post.User.username}</p>
+                            <p>Posted by {post.user ? post.user.username : 'Unknown'}</p>
                         </div>
                     </div>
                 ))}
             </div>
         </div>
     );
-    
 };
 
 export default Home;

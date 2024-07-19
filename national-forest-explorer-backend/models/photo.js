@@ -1,7 +1,15 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Photo extends Model {}
+  class Photo extends Model {
+    static associate(models) {
+      Photo.belongsTo(models.User, { foreignKey: 'userId' });
+      Photo.belongsTo(models.Forest, { foreignKey: 'forestId' });
+      Photo.belongsTo(models.Trail, { foreignKey: 'trailId' });
+      Photo.belongsTo(models.Campsite, { foreignKey: 'campsiteId' });
+      Photo.belongsTo(models.Post, { foreignKey: 'postId', as: 'post' });
+    }
+  }
 
   Photo.init({
     userId: {
@@ -16,7 +24,17 @@ module.exports = (sequelize) => {
     campsiteId: {
       type: DataTypes.INTEGER,
     },
-    url: DataTypes.STRING,
+    postId: {
+      type: DataTypes.INTEGER,
+    },
+    url: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -32,16 +50,7 @@ module.exports = (sequelize) => {
     modelName: 'Photo',
     tableName: 'Photos',
     timestamps: true,
-    underscored: false,
   });
-
-  Photo.associate = function(models) {
-    Photo.belongsTo(models.User, { foreignKey: 'userId' });
-    Photo.belongsTo(models.Forest, { foreignKey: 'forestId' });
-    Photo.belongsTo(models.Trail, { foreignKey: 'trailId' });
-    Photo.belongsTo(models.Campsite, { foreignKey: 'campsiteId' });
-    Photo.belongsTo(models.Post, { foreignKey: 'postId' });
-  };
 
   return Photo;
 };

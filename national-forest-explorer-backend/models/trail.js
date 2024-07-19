@@ -1,7 +1,14 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Trail extends Model {}
+  class Trail extends Model {
+    static associate(models) {
+      Trail.hasMany(models.Post, {
+        foreignKey: 'trailId',
+        as: 'posts'
+      });
+    }
+  }
 
   Trail.init({
     trailId: {

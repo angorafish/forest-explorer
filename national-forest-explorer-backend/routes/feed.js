@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { getUserFeed } = require('../controllers/feedController');
+const authenticateToken = require('../middleware/auth');
 
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.id;
         const feed = await Feed.findAll({

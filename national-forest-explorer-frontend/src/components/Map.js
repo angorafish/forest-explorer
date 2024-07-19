@@ -1,59 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
-import axios from '../services/axiosConfig';
+import React, { useRef, useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
-const containerStyle = {
-  width: '100%',
-  height: '100vh'
-};
-
-const center = {
-  lat: 37.0902,
-  lng: -95.7129
-};
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 const Map = () => {
-  const [forests, setForests] = useState([]);
-  const [selectedForest, setSelectedForest] = useState(null);
+  const mapContainerRef = useRef(null);
 
   useEffect(() => {
-    const fetchForests = async () => {
-      try {
-        const response = await axios.get('/national-forests');
-        setForests(response.data);
-      } catch (error) {
-        console.error('Error fetching forests data:', error);
-      }
-    };
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [-96.9, 37.8],
+      zoom: 4,
+    });
 
-    fetchForests();
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    new mapboxgl.Marker()
+      .setLngLat([-122.4194, 37.7749]) 
+      .setPopup(new mapboxgl.Popup().setText('Example National Park')) 
+      .addTo(map);
+
+    return () => map.remove();
   }, []);
 
-  return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
-      <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={4}>
-        {forests.map(forest => (
-          <Marker
-            key={forest.id}
-            position={{ lat: parseFloat(forest.latitude), lng: parseFloat(forest.longitude) }}
-            onClick={() => setSelectedForest(forest)}
-          />
-        ))}
-
-        {selectedForest && (
-          <InfoWindow
-            position={{ lat: parseFloat(selectedForest.latitude), lng: parseFloat(selectedForest.longitude) }}
-            onCloseClick={() => setSelectedForest(null)}
-          >
-            <div>
-              <h2>{selectedForest.fullName}</h2>
-              <p>{selectedForest.description}</p>
-            </div>
-          </InfoWindow>
-        )}
-      </GoogleMap>
-    </LoadScript>
-  );
+  return <div ref={mapContainerRef} style={{ height: '600px', width: '100%' }} />;
 };
 
 export default Map;

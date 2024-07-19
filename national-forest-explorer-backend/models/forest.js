@@ -1,7 +1,14 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Forest extends Model {}
+  class Forest extends Model {
+    static associate(models) {
+      Forest.hasMany(models.Post, {
+        foreignKey: 'forestId',
+        as: 'posts'
+      });
+    }
+  }
 
   Forest.init({
     adminForestId: {

@@ -13,8 +13,8 @@ const sendInvitationEmail = (to, itinerary) => {
         from: process.env.EMAIL_USER,
         to: to,
         subject: 'You are invited to join an itinerary',
-        text: `You have been invited to join the itinerary: ${itinerary.name} from ${itinerary.startDate} to ${itinerary.endDate}.`,
-        html: `<p>You have been invited to join the itinerary: <strong>${itinerary.name}</strong> from <strong>${itinerary.startDate}</strong> to <strong>${itinerary.endDate}</strong>.</p>`,
+        text: `You have been invited to join the itinerary: ${itinerary.name}.`,
+        html: `<p>You have been invited to join the itinerary: <strong>${itinerary.name}</strong>.</p>`,
     };
 
     return transporter.sendMail(mailOptions);

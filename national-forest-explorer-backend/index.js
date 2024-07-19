@@ -4,7 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const { sequelize } = require('./models');
+const { sequelize, Sequelize } = require('./models');
 const forestRoutes = require('./routes/forest');
 const feedRouter = require('./routes/feed');
 const itineraryRouter = require('./routes/itineraries');
@@ -16,10 +16,36 @@ const authenticateToken = require('./middleware/auth');
 const commentRouter = require('./routes/comment');
 const trailRouter = require('./routes/trail');
 const campsiteRouter = require('./routes/campsite');
+const friendRequestRouter = require('./routes/friendRequest');
+const settingsRouter = require('./routes/settings');
+const notificationRouter = require('./routes/notification');
+const likeRouter = require('./routes/like');
 const errorHandler = require('./middleware/errorHandler');
-const { error } = require('console');
+const fs = require('fs');
+const upload = require('./middleware/upload');
+const http = require('http');
+const socketIo = require('socket.io');
+const photoRouter = require('./routes/photo');
+const searchRouter = require('./routes/search');
+const detailsRouter = require('./routes/details');
+const savedLocationsRouter = require('./routes/savedLocations');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+    cors: {
+        origin: 'http://localhost:3001',
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['Content-Type'],
+        credentials: true
+    }
+});
+
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 app.use(cors({
     origin: 'http://localhost:3001',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -28,6 +54,7 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(uploadDir));
 
 app.use('/api/forests', forestRoutes);
 app.use('/api/feed', feedRouter);
@@ -37,9 +64,17 @@ app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/comments', authenticateToken, commentRouter);
-app.use('/uploads', express.static('uploads'));
 app.use('/api/trails', trailRouter);
 app.use('/api/campsites', campsiteRouter);
+app.use('/api/friend-requests', authenticateToken, friendRequestRouter);
+app.use('/api/settings', settingsRouter);
+app.use('/api/notifications', authenticateToken, notificationRouter);
+app.use('/api/likes', likeRouter);
+app.use('/api/photos', photoRouter);
+app.use('/api/search', searchRouter);
+app.use('/api/details', detailsRouter);
+app.use('/api/savedLocations', savedLocationsRouter);
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
@@ -59,7 +94,7 @@ const startServer = async () => {
     try {
         await syncDatabase();
         if (process.env.NODE_ENV !== 'test') {
-            app.listen(PORT, () => {
+            server.listen(PORT, () => {
                 console.log(`Server is running on port ${PORT}`);
             });
         }
@@ -70,4 +105,12 @@ const startServer = async () => {
 
 startServer();
 
-module.exports = { app, sequelize };
+io.on('connection', (socket) => {
+    console.log('a user connected');
+    socket.on('join', (userId) => {
+        socket.join(userId);
+        console.log(`User ${userId} joined room ${userId}`);
+    });
+});
+
+module.exports = { app, sequelize, io };

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../services/axiosConfig';
+import { useAuth } from '../AuthContext';
 
-const LoginSignup = ({ setCurrentUser }) => {
+const LoginSignup = () => {
+    const { setCurrentUser } = useAuth();
     const [isSignup, setIsSignup] = useState(false);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -24,6 +26,9 @@ const LoginSignup = ({ setCurrentUser }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+        setSuccess(null);
+
         if (isSignup && password !== confirmPassword) {
             setError("Passwords do not match!");
             return;
@@ -36,13 +41,18 @@ const LoginSignup = ({ setCurrentUser }) => {
             setError("Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, and one number.");
             return;
         }
+
         try {
             const endpoint = isSignup ? '/auth/signup' : '/auth/login';
-            const response = await axios.post(endpoint, { username, email, password });
+            const data = isSignup ? { username, email, password } : { username, password };
+            console.log(`Sending request to ${endpoint} with data:`, data);
+            const response = await axios.post(endpoint, data);
             const { token, user } = response.data;
 
             localStorage.setItem('token', token);
+            console.log('Token stored in localStorage:', token);
             setCurrentUser(user);
+
             if (isSignup) {
                 setSuccess("Account created!");
                 setTimeout(() => {

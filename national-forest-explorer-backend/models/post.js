@@ -1,7 +1,18 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class Post extends Model {}
+  class Post extends Model {
+    static associate(models) {
+      Post.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+      Post.hasMany(models.Comment, { foreignKey: 'postId', as: 'comments' });
+      Post.hasMany(models.Review, { foreignKey: 'postId', as: 'reviews' });
+      Post.hasMany(models.Like, { foreignKey: 'postId', as: 'likes' });
+      Post.belongsTo(models.Trail, { foreignKey: 'trailId', as: 'trail' });
+      Post.belongsTo(models.Forest, { foreignKey: 'forestId', as: 'forest' });
+      Post.belongsTo(models.Campsite, { foreignKey: 'campsiteId', as: 'campsite' });
+      Post.hasMany(models.Photo, { foreignKey: 'postId', as: 'photos' });
+    }
+  }
 
   Post.init({
     postType: {
@@ -17,10 +28,21 @@ module.exports = (sequelize) => {
       defaultValue: 0,
     },
     reviewText: DataTypes.TEXT,
-    photos: DataTypes.ARRAY(DataTypes.STRING),
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    forestId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    trailId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    campsiteId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     createdAt: {
       allowNull: false,
@@ -37,23 +59,7 @@ module.exports = (sequelize) => {
     modelName: 'Post',
     tableName: 'Posts',
     timestamps: true,
-    underscored: false,
   });
-
-  Post.associate = function(models) {
-    Post.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'user',
-    });
-    Post.hasMany(models.Comment, {
-      foreignKey: 'postId',
-      as: 'comments',
-    });
-    Post.hasMany(models.Review, {
-      foreignKey: 'postId',
-      as: 'reviews',
-    });
-  };
 
   return Post;
 };
