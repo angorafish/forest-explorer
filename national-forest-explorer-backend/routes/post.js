@@ -46,28 +46,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/user/:username', authenticateToken, async (req, res) => {
-  try {
-    const user = await User.findOne({ where: { username: req.params.username } });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    const posts = await Post.findAll({
-      where: { userId: user.id },
-      include: [
-        {
-          model: Photo,
-          as: 'photos'
-        }
-      ]
-    });
-    res.json(posts);
-  } catch (error) {
-    console.error('Failed to fetch user posts', error);
-    res.status(500).json({ error: 'Failed to fetch user posts' });
-  }
-});
-
 router.get('/:id', async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id, {
@@ -126,18 +104,29 @@ router.post('/', authenticateToken, upload.array('photos'), async (req, res) => 
     });
 
     if (req.files) {
-      const photoUrls = req.files.map(file => path.relative(__dirname, file.path));
-      for (const url of photoUrls) {
-        await Photo.create({
-          userId,
-          postId: post.id,
-          url,
-          type: 'post'
-        });
-      }
+      const photoUrls = req.files.map(file => {
+        return { 
+          userId, 
+          postId: post.id, 
+          url: `/uploads/${file.filename}`,
+          type: 'post' 
+        };
+      });
+
+      await Photo.bulkCreate(photoUrls);
     }
 
-    res.status(201).json(post);
+    const fullPost = await Post.findByPk(post.id, {
+      include: [
+        { model: User, as: 'user', attributes: ['username'] },
+        { model: Review, as: 'reviews' },
+        { model: Comment, as: 'comments', include: [{ model: User, as: 'user', attributes: ['username'] }] },
+        { model: Like, as: 'likes' },
+        { model: Photo, as: 'photos' }
+      ]
+    });
+
+    res.status(201).json(fullPost);
   } catch (error) {
     console.error('Error creating post:', error);
     res.status(500).json({ message: 'Failed to create post' });
