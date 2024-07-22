@@ -1,0 +1,23 @@
+/* Home.css */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 20px;
+}
+
+.photo-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.photo-card img {
+    width: 100%;
+    height: auto;
+}
+
+.photo-info {
+    padding: 10px;
+}

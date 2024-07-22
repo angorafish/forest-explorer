@@ -44,8 +44,13 @@ router.post('/', authenticateToken, async (req, res) => {
             comment,
         });
 
-        res.json(comment);
+        const fullComment = await Comment.findByPk(comment.id, {
+            include: [{ model: User, as: 'user', attributes: ['username'] }]
+        });
+
+        res.json(fullComment);
     } catch (error) {
+        console.error('Error creating comment:', error.message, error.stack);
         res.status(500).json({ error: 'Failed to create comment' });
     }
 });

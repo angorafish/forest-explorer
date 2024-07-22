@@ -22,7 +22,7 @@ const Notifications = () => {
     fetchNotifications();
 
     socket.on('new_notification', (notification) => {
-      console.log('New notification:', notification);
+      console.log('New notification received:', notification);
       setNotifications((prevNotifications) => [notification, ...prevNotifications]);
     });
 
@@ -36,8 +36,9 @@ const Notifications = () => {
       console.log('Marking notification as read:', id);
       const response = await axios.put(`/notifications/${id}/read`);
       console.log('Response from marking as read:', response.data);
+
       setNotifications((prevNotifications) => {
-        const updatedNotifications = prevNotifications.map(notification => 
+        const updatedNotifications = prevNotifications.map(notification =>
           notification.id === id ? { ...notification, status: 'read' } : notification
         );
         console.log('Updated notifications state:', updatedNotifications);
@@ -87,7 +88,6 @@ const Notifications = () => {
                   <strong>{notification.fromUser?.username}</strong> accepted your friend request
                 </p>
               )}
-              {notification.content && <p>{notification.content}</p>}
               <button onClick={() => handleReadNotification(notification.id)}>Mark as read</button>
             </li>
           ))}

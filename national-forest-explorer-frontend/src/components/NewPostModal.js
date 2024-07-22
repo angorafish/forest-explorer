@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createPortal } from 'react-dom';
 import axios from '../services/axiosConfig';
+import '../css/NewPostModal.css';
 
 const NewPostModal = ({ isOpen, onClose }) => {
     const [postType, setPostType] = useState('photo');
@@ -36,9 +37,9 @@ const NewPostModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return createPortal(
-        <div className="modal">
+        <div className="modal-overlay">
             <div className="modal-content">
-                <button onClick={onClose}>Close</button>
+                <button onClick={onClose} className="modal-close-button">×</button>
                 <form onSubmit={handleSubmit}>
                     <label>
                         Post Type:
@@ -62,7 +63,7 @@ const NewPostModal = ({ isOpen, onClose }) => {
                                 Rating:
                                 {[...Array(5)].map((_, index) => (
                                     <span key={index} onClick={() => setRating(index + 1)}>
-                                        {index < rating ? '*' : '☆'}
+                                        {index < rating ? '★' : '☆'}
                                     </span>
                                 ))}
                             </label>

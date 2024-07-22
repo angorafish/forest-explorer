@@ -1,14 +1,14 @@
 import React from 'react';
 
 const Comment = ({ comment }) => {
-    if (!comment.User) {
+    if (!comment.user) {
         return <div>User not found</div>;
     }
 
     return (
         <div className="comment">
             <p>{comment.text}</p>
-            <p>— {comment.User.username}</p>
+            <p>— {comment.user.username}</p>
         </div>
     );
 };

@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { Notification, User, FriendRequest } = require('../models');
 const authenticateToken = require('../middleware/auth');
-const { io } = require('../index');
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
@@ -15,7 +14,6 @@ router.get('/', authenticateToken, async (req, res) => {
             }],
             order: [['createdAt', 'DESC']]
         });
-        console.log('Fetched notifications for user:', req.user.id, notifications);
         res.json(notifications);
     } catch (error) {
         console.error('Error fetching notifications:', error);
