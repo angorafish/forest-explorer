@@ -20,7 +20,6 @@ const Profile = () => {
 
     useEffect(() => {
         axios.get(`/users/profile/${username}`).then(response => {
-            console.log('User data:', response.data);
             setUser(response.data);
             if (response.data.friends) {
                 setFriendsCount(response.data.friends.length);
@@ -31,7 +30,6 @@ const Profile = () => {
         });
 
         axios.get(`/users/user/${username}`).then(response => {
-            console.log('User posts:', response.data);
             setPosts(response.data);
         }).catch(error => {
             console.error('Error fetching user posts:', error);
@@ -161,7 +159,9 @@ const Profile = () => {
                         {posts.map(post => (
                             <div key={post.id} className="post">
                                 <div onClick={() => handlePostClick(post.id)} style={{ cursor: 'pointer' }}>
-                                    {post.picture && <img src={post.picture} alt="Post" className="post-picture" />}
+                                    {post.photos && post.photos.length > 0 && (
+                                        <img src={`http://localhost:3000${post.photos[0].url}`} alt="Post" className="post-picture" />
+                                    )}
                                     <p>{post.rating && `Rating: ${post.rating} / 5 stars`}</p>
                                     <p>{post.location}</p>
                                 </div>
@@ -177,9 +177,9 @@ const Profile = () => {
                                 <div className="post-likes-comments">
                                     <p>
                                         Likes: 
-                                        {post.likes && post.likes.map(like => (
+                                        {post.likes && post.likes.length > 0 && post.likes.map(like => (
                                             <span
-                                                key={like.username}
+                                                key={like.id}
                                                 onClick={() => handleLikeClick(like.username)}
                                                 style={{ cursor: 'pointer', textDecoration: 'underline', marginLeft: '5px' }}
                                             >
@@ -188,7 +188,7 @@ const Profile = () => {
                                         ))}
                                     </p>
                                     <ul>
-                                        {post.comments && post.comments.map(comment => (
+                                        {post.comments && post.comments.length > 0 && post.comments.map(comment => (
                                             <li key={comment.id}>
                                                 <span
                                                     onClick={() => handleCommentClick(comment.username)}

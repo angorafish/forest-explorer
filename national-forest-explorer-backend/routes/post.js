@@ -39,6 +39,7 @@ router.get('/', async (req, res) => {
         }
       ]
     });
+    console.log('Fetched Posts with Photos:', JSON.stringify(posts, null, 2)); // Log the posts to verify data
     res.json(posts);
   } catch (error) {
     console.error('Failed to fetch posts', error);
@@ -104,14 +105,12 @@ router.post('/', authenticateToken, upload.array('photos'), async (req, res) => 
     });
 
     if (req.files) {
-      const photoUrls = req.files.map(file => {
-        return { 
-          userId, 
-          postId: post.id, 
-          url: `/uploads/${file.filename}`,
-          type: 'post' 
-        };
-      });
+      const photoUrls = req.files.map(file => ({
+        userId,
+        postId: post.id,
+        url: `/uploads/${file.filename}`,
+        type: 'post'
+      }));
 
       await Photo.bulkCreate(photoUrls);
     }
@@ -169,37 +168,66 @@ router.post('/:id/like', authenticateToken, async (req, res) => {
   }
 });
 
-router.put('/:id', authenticateToken, async (req, res) => {
+router.put('/:id', authenticateToken, upload.single('photo'), async (req, res) => {
   try {
-    const post = await Post.findByPk(req.params.id);
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
-    }
-    if (post.userId !== req.user.id) {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    await post.update(req.body);
-    res.json(post);
+      const post = await Post.findByPk(req.params.id);
+      if (!post) {
+          return res.status(404).json({ error: 'Post not found' });
+      }
+      if (post.userId !== req.user.id) {
+          return res.status(403).json({ error: 'Unauthorized' });
+      }
+      const { location, rating, reviewText } = req.body;
+
+      await post.update({ location, rating, reviewText });
+
+      if (req.file) {
+          const photoUrl = `/uploads/${req.file.filename}`;
+          const photo = await Photo.findOne({ where: { postId: post.id } });
+          if (photo) {
+              await photo.update({ url: photoUrl });
+          } else {
+              await Photo.create({
+                  userId: post.userId,
+                  postId: post.id,
+                  url: photoUrl,
+                  type: 'post'
+              });
+          }
+      }
+
+      const updatedPost = await Post.findByPk(post.id, {
+          include: [
+              { model: User, as: 'user', attributes: ['username'] },
+              { model: Review, as: 'reviews' },
+              { model: Comment, as: 'comments', include: [{ model: User, as: 'user', attributes: ['username'] }] },
+              { model: Like, as: 'likes' },
+              { model: Photo, as: 'photos' }
+          ]
+      });
+
+      res.json(updatedPost);
   } catch (error) {
-    console.error('Failed to update post', error);
-    res.status(500).json({ error: 'Failed to update post' });
+      console.error('Failed to update post', error);
+      res.status(500).json({ error: 'Failed to update post' });
   }
 });
 
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
-    const post = await Post.findByPk(req.params.id);
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
-    }
-    if (post.userId !== req.user.id) {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-    await post.destroy();
-    res.json({ message: 'Post deleted successfully' });
+      const post = await Post.findByPk(req.params.id);
+      if (!post) {
+          return res.status(404).json({ error: 'Post not found' });
+      }
+      if (post.userId !== req.user.id) {
+          return res.status(403).json({ error: 'Unauthorized' });
+      }
+      await Photo.destroy({ where: { postId: post.id } });
+      await post.destroy();
+      res.json({ message: 'Post deleted successfully' });
   } catch (error) {
-    console.error('Failed to delete post', error);
-    res.status(500).json({ error: 'Failed to delete post' });
+      console.error('Failed to delete post', error);
+      res.status(500).json({ error: 'Failed to delete post' });
   }
 });
 

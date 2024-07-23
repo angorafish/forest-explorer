@@ -22,6 +22,7 @@ import NewTripForm from './components/NewTripForm.js';
 import TripDetails from './components/TripDetails';
 import axios from './services/axiosConfig';
 import socket from './services/socketConfig';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
     const { currentUser, setCurrentUser, notificationCount, setNotificationCount } = useAuth();

@@ -1,23 +1,57 @@
-/* Home.css */
 .photo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
 }
 
 .photo-card {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow: hidden;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
     text-align: center;
+    width: 200px;
 }
 
 .photo-card img {
-    width: 100%;
-    height: auto;
+    max-width: 100%;
+    border-radius: 4px;
 }
 
 .photo-info {
-    padding: 10px;
+    margin-top: 10px;
+}
+
+.photo-info p {
+    margin: 5px 0;
+}
+
+.rating {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    pointer-events: none;
+}
+
+.rating .fa-star {
+    font-size: 1.5em;
+    color: gray;
+    pointer-events: none;
+}
+
+.rating .fa-star.checked {
+    color: gold;
+}
+
+.rating .fa-star:hover {
+    color: gray;
+}
+
+.fa-star {
+    color: gold;
+}
+
+.checked {
+    color: gold;
 }

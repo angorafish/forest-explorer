@@ -1,10 +1,5 @@
 .post-details {
-    max-width: 800px;
-    margin: 0 auto;
     padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .post-title {
@@ -15,75 +10,78 @@
 .post-images {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
 }
 
 .post-image {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    margin: 5px;
 }
 
 .post-author {
-    font-size: 1.2em;
-    color: #333;
-    margin-bottom: 10px;
+    margin: 10px 0;
 }
 
-.post-rating {
-    font-size: 1.2em;
-    color: #ff9800;
-    margin-bottom: 10px;
+.stars {
+    color: gold;
 }
 
 .post-review-text {
-    font-size: 1em;
-    color: #555;
-    margin-bottom: 20px;
+    margin: 10px 0;
 }
 
-.post-reviews {
-    margin-bottom: 20px;
+.post-actions {
+    position: relative;
+    display: inline-block;
 }
 
-.review {
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
 }
 
-.post-comments {
-    margin-top: 20px;
+.dropdown-menu {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: #f0f0f0;
 }
 
 .comment-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    margin-top: 20px;
 }
 
 .comment-textarea {
     width: 100%;
     height: 80px;
     padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+    margin-top: 10px;
 }
 
 .comment-submit-button {
-    align-self: flex-end;
+    margin-top: 10px;
+    background: green;
+    color: white;
     padding: 10px 20px;
-    background-color: #4caf50;
-    color: #fff;
     border: none;
-    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.comment-submit-button:hover {
-    background-color: #45a049;
 }
