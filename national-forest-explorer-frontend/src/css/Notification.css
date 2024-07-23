@@ -1,8 +1,37 @@
-.unread {
-    font-weight: bold;
-  }
-  
-  button {
-    margin-left: 10px;
-  }
-  
+.notifications-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.notifications-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.notifications-list li.unread {
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+.notifications-list li.read {
+  background-color: #e0e0e0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-button:hover {
+  color: #555;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../services/axiosConfig';
+import '../css/Posts.css';
 
 const Posts = () => {
     const [posts, setPosts] = useState([]);
@@ -11,9 +12,11 @@ const Posts = () => {
         const fetchPosts = async () => {
             try {
                 const response = await axios.get('/posts');
+                console.error('Fetched Posts:', response.data);
                 setPosts(response.data);
                 setLoading(false);
             } catch (error) {
+                console.error('Failed to fetch posts:', error);
                 setError("Failed to fetch posts.");
                 setLoading(false);
             }
@@ -35,9 +38,9 @@ const Posts = () => {
                         <p>{post.reviewText}</p>
                         <p>Rating: {post.rating}</p>
                         {post.photos && post.photos.map(photo => (
-                            <img key={photo.id} src={`/${photo.url}`} alt="Post" />
+                            <img key={photo.id} src={`http://localhost:3000${photo.url}`} alt="Post" />
                         ))}
-                        <p>Posted by: {post.user.username}</p>
+                        <p>Posted by: <Link to={`/profile/${post.user.username}`}>{post.user.username}</Link></p>
                         <Link to={`/post/${post.id}`}>View Post</Link>
                     </li>
                 ))}

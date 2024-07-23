@@ -19,7 +19,8 @@ const Profile = () => {
     const [postOptionsVisible, setPostOptionsVisible] = useState({});
 
     useEffect(() => {
-        axios.get(`/users/username/${username}`).then(response => {
+        axios.get(`/users/profile/${username}`).then(response => {
+            console.log('User data:', response.data);
             setUser(response.data);
             if (response.data.friends) {
                 setFriendsCount(response.data.friends.length);
@@ -29,7 +30,8 @@ const Profile = () => {
             console.error('Error fetching user data:', error);
         });
 
-        axios.get(`/posts/user/${username}`).then(response => {
+        axios.get(`/users/user/${username}`).then(response => {
+            console.log('User posts:', response.data);
             setPosts(response.data);
         }).catch(error => {
             console.error('Error fetching user posts:', error);

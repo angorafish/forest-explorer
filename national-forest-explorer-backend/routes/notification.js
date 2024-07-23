@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Notification, User, FriendRequest } = require('../models');
+const { Notification, User } = require('../models');
 const authenticateToken = require('../middleware/auth');
 
 router.get('/', authenticateToken, async (req, res) => {
@@ -16,7 +16,7 @@ router.get('/', authenticateToken, async (req, res) => {
         });
         res.json(notifications);
     } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error('Error fetching notifications:', error.message, error.stack);
         res.status(500).json({ error: 'Failed to fetch notifications' });
     }
 });

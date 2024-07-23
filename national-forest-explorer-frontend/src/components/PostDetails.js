@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import Comment from './Comment';
 import '../css/PostDetails.css';
@@ -87,7 +87,7 @@ const PostDetails = () => {
                     ))
                 )}
             </div>
-            <p className="post-author">Posted by {post.user.username}</p>
+            <p className="post-author">Posted by <Link to={`/profile/${post.user.username}`}>{post.user.username}</Link></p>
             {post.rating && <p className="post-rating">Rating: {post.rating} stars</p>}
             <p className="post-review-text">{post.reviewText}</p>
             <p>{likes} Likes</p>

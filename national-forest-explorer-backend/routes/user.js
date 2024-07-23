@@ -7,23 +7,28 @@ const jwt = require('jsonwebtoken');
 const authenticateToken = require('../middleware/auth');
 const path = require('path');
 
-router.get('/username/:username', authenticateToken, async (req, res) => {
+router.get('/user/:username', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findOne({
-            where: { username: req.params.username },
-            include: [
-                { model: FriendRequest, as: 'sentRequests' },
-                { model: FriendRequest, as: 'receivedRequests' },
-                { model: Post, as: 'posts' }
-            ]
-        });
+        const user = await User.findOne({ where: { username: req.params.username } });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.json(user);
+
+        const posts = await Post.findAll({
+            where: { userId: user.id },
+            include: [
+                { model: User, as: 'user', attributes: ['username'] },
+                { model: Review, as: 'reviews' },
+                { model: Comment, as: 'comments', include: [{ model: User, as: 'user', attributes: ['username'] }] },
+                { model: Like, as: 'likes' },
+                { model: Photo, as: 'photos' }
+            ]
+        });
+
+        res.json(posts);
     } catch (error) {
-        console.error('Failed to fetch user profile:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        console.error('Failed to fetch posts:', error);
+        res.status(500).json({ error: 'Failed to fetch posts' });
     }
 });
 
