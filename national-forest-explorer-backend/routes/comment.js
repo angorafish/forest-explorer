@@ -16,6 +16,7 @@ router.get('/:postId', authenticateToken, async (req, res) => {
         });
         res.json(comments);
     } catch (error) {
+        console.error('Failed to fetch comments:', error.message, error.stack);
         res.status(500).json({ error: 'Failed to fetch comments' });
     }
 });
@@ -30,6 +31,13 @@ router.post('/', authenticateToken, async (req, res) => {
         });
 
         const post = await Post.findByPk(postId);
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+
+        console.log('Post:', post);
+        console.log('Post User ID:', post.userId);
+        console.log('User ID:', req.user.id);
 
         const notification = await Notification.create({
             userId: post.userId,
@@ -38,11 +46,16 @@ router.post('/', authenticateToken, async (req, res) => {
             content: 'Commented on your post'
         });
 
-        io.to(post.userId.toString()).emit('new_notification', {
-            type: 'comment',
-            notification,
-            comment,
-        });
+        console.log('Notification:', notification);
+        console.log('io:', io);
+
+        if (io && post.userId) {
+            io.to(post.userId.toString()).emit('new_notification', {
+                type: 'comment',
+                notification,
+                comment,
+            });
+        }
 
         const fullComment = await Comment.findByPk(comment.id, {
             include: [{ model: User, as: 'user', attributes: ['username'] }]

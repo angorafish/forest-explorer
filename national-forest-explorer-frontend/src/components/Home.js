@@ -12,7 +12,7 @@ const Home = () => {
         const fetchPosts = async () => {
             try {
                 const response = await axios.get('/posts');
-                console.log('Fetched Posts:', response.data); // Log fetched posts
+                console.log('Fetched Posts:', response.data);
                 setPosts(response.data);
                 setLoading(false);
             } catch (error) {
@@ -29,9 +29,9 @@ const Home = () => {
 
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
-            return `/uploads/${url.replace('../uploads/', '')}`;
+            return url.replace('../uploads/', '/uploads/');
         }
-        return `/uploads/${url}`;
+        return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
     };
 
     return (
@@ -42,7 +42,7 @@ const Home = () => {
                     <div key={post.id} className="photo-card">
                         <Link to={`/posts/${post.id}`}>
                             {post.photos && post.photos.length > 0 ? (
-                                <img src={getPhotoUrl(post.photos[0].url)} alt={post.location} />
+                                <img src={`http://localhost:3000${getPhotoUrl(post.photos[0].url)}`} alt={post.location} />
                             ) : (
                                 post.postType === 'review' && (
                                     <div className="review-info">

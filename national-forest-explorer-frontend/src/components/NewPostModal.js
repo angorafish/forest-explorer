@@ -8,7 +8,7 @@ const NewPostModal = ({ isOpen, onClose }) => {
     const [location, setLocation] = useState('');
     const [rating, setRating] = useState(0);
     const [reviewText, setReviewText] = useState('');
-    const [photos, setPhotos] = useState([]);
+    const [photo, setPhoto] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,8 +20,8 @@ const NewPostModal = ({ isOpen, onClose }) => {
                 formData.append('rating', rating);
                 formData.append('reviewText', reviewText);
             }
-            for (const photo of photos) {
-                formData.append('photos', photo);
+            if (photo) {
+                formData.append('photo', photo);
             }
             await axios.post('/posts', formData, {
                 headers: {
@@ -77,11 +77,10 @@ const NewPostModal = ({ isOpen, onClose }) => {
                         </>
                     )}
                     <label>
-                        Photos:
+                        Photo:
                         <input
                             type="file"
-                            multiple
-                            onChange={(e) => setPhotos([...photos, ...e.target.files])}
+                            onChange={(e) => setPhoto(e.target.files[0])}
                         />
                     </label>
                     <button type="submit">Submit</button>

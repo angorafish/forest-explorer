@@ -88,17 +88,30 @@ const PostDetails = () => {
         }
     };
 
+    const handleEdit = () => {
+        setShowModal(true);
+    };
+
+    useEffect(() => {
+        console.log("showModal:", showModal);
+    }, [showModal]);
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
+
+    const getPhotoUrl = (url) => {
+        if (url.startsWith('../uploads/')) {
+            return url.replace('../uploads/', '/uploads/');
+        }
+        return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
+    };
 
     return (
         <div className="post-details">
             <h1 className="post-title">{post.location}</h1>
             <div className="post-images">
                 {post.photos && post.photos.length > 0 && (
-                    post.photos.map((photo, index) => (
-                        <img key={index} src={`http://localhost:3000/uploads/${photo.url.split('/').pop()}`} alt={post.location} className="post-image" />
-                    ))
+                    <img src={`http://localhost:3000${getPhotoUrl(post.photos[0].url)}`} alt={post.location} className="post-image" />
                 )}
             </div>
             <p className="post-author">Posted by <Link to={`/profile/${post.user.username}`}>{post.user.username}</Link></p>
@@ -112,21 +125,19 @@ const PostDetails = () => {
             <button onClick={handleLike}>
                 {likedByUser ? 'Unlike' : 'Like'}
             </button>
-            <div className="post-actions">
-                {currentUser && currentUser.id === post.user.id && (
-                    <>
-                        <button className="action-button" onClick={() => setShowDropdown(!showDropdown)}>
-                            <FaEllipsisV />
-                        </button>
-                        {showDropdown && (
-                            <div className="dropdown-menu">
-                                <button className="dropdown-item" onClick={handleDelete}>Delete</button>
-                                <button className="dropdown-item" onClick={() => setShowModal(true)}>Edit</button>
-                            </div>
-                        )}
-                    </>
-                )}
-            </div>
+            {currentUser && post.userId === currentUser.id && (
+                <div className="post-actions">
+                    <button className="action-button" onClick={() => setShowDropdown(!showDropdown)}>
+                        <FaEllipsisV />
+                    </button>
+                    {showDropdown && (
+                        <div className="dropdown-menu">
+                            <button className="dropdown-item" onClick={handleDelete}>Delete</button>
+                            <button className="dropdown-item" onClick={handleEdit}>Edit</button>
+                        </div>
+                    )}
+                </div>
+            )}
             <div className="post-reviews">
                 {post.reviews && post.reviews.map((review) => (
                     <div key={review.id} className="review">
