@@ -10,6 +10,14 @@ const NewPostModal = ({ isOpen, onClose }) => {
     const [reviewText, setReviewText] = useState('');
     const [photo, setPhoto] = useState(null);
 
+    const resetForm = () => {
+        setPostType('photo');
+        setLocation('');
+        setRating(0);
+        setReviewText('');
+        setPhoto(null);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -29,6 +37,7 @@ const NewPostModal = ({ isOpen, onClose }) => {
                 }
             });
             onClose();
+            resetForm();
         } catch (error) {
             console.error("Failed to create a post", error);
         }
@@ -39,7 +48,7 @@ const NewPostModal = ({ isOpen, onClose }) => {
     return createPortal(
         <div className="modal-overlay">
             <div className="modal-content">
-                <button onClick={onClose} className="modal-close-button">×</button>
+                <button onClick={() => { onClose(); resetForm(); }} className="modal-close-button">×</button>
                 <form onSubmit={handleSubmit}>
                     <label>
                         Post Type:

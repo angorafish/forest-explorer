@@ -165,25 +165,27 @@ const Profile = () => {
                                     <p>{post.rating && `Rating: ${post.rating} / 5 stars`}</p>
                                     <p>{post.location}</p>
                                 </div>
-                                <div className="post-options">
-                                    <button onClick={() => togglePostOptions(post.id)}>⋮</button>
-                                    {postOptionsVisible[post.id] && (
-                                        <div className="post-options-menu">
-                                            <button onClick={() => handleEditPost(post.id)}>Edit</button>
-                                            <button onClick={() => handleDeletePost(post.id)}>Delete</button>
-                                        </div>
-                                    )}
-                                </div>
+                                {isCurrentUser && (
+                                    <div className="post-options">
+                                        <button onClick={() => togglePostOptions(post.id)}>⋮</button>
+                                        {postOptionsVisible[post.id] && (
+                                            <div className="post-options-menu">
+                                                <button onClick={() => handleEditPost(post.id)}>Edit</button>
+                                                <button onClick={() => handleDeletePost(post.id)}>Delete</button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="post-likes-comments">
                                     <p>
-                                        Likes: 
+                                        Likes: {post.likes && post.likes.length}
                                         {post.likes && post.likes.length > 0 && post.likes.map(like => (
                                             <span
                                                 key={like.id}
-                                                onClick={() => handleLikeClick(like.username)}
+                                                onClick={() => handleLikeClick(like.user.username)}
                                                 style={{ cursor: 'pointer', textDecoration: 'underline', marginLeft: '5px' }}
                                             >
-                                                {like.username}
+                                                {like.user.username}
                                             </span>
                                         ))}
                                     </p>
@@ -191,10 +193,10 @@ const Profile = () => {
                                         {post.comments && post.comments.length > 0 && post.comments.map(comment => (
                                             <li key={comment.id}>
                                                 <span
-                                                    onClick={() => handleCommentClick(comment.username)}
+                                                    onClick={() => handleCommentClick(comment.user.username)}
                                                     style={{ cursor: 'pointer', textDecoration: 'underline' }}
                                                 >
-                                                    {comment.username}
+                                                    {comment.user.username}
                                                 </span>: {comment.text}
                                             </li>
                                         ))}

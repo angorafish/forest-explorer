@@ -5,7 +5,7 @@ import Comment from './Comment';
 import '../css/PostDetails.css';
 import EditPostModal from './EditPostModal';
 import { useAuth } from '../AuthContext';
-import { FaEllipsisV } from 'react-icons/fa';
+import { FaEllipsisV, FaArrowLeft } from 'react-icons/fa';
 
 const PostDetails = () => {
     const { id } = useParams();
@@ -108,6 +108,9 @@ const PostDetails = () => {
 
     return (
         <div className="post-details">
+            <button className="back-button" onClick={() => navigate(-1)}>
+                <FaArrowLeft /> Back
+            </button>
             <h1 className="post-title">{post.location}</h1>
             <div className="post-images">
                 {post.photos && post.photos.length > 0 && (
@@ -122,9 +125,11 @@ const PostDetails = () => {
             )}
             <p className="post-review-text">{post.reviewText}</p>
             <p>{likes} Likes</p>
-            <button onClick={handleLike}>
-                {likedByUser ? 'Unlike' : 'Like'}
-            </button>
+            {currentUser && (
+                <button onClick={handleLike}>
+                    {likedByUser ? 'Unlike' : 'Like'}
+                </button>
+            )}
             {currentUser && post.userId === currentUser.id && (
                 <div className="post-actions">
                     <button className="action-button" onClick={() => setShowDropdown(!showDropdown)}>
@@ -153,17 +158,19 @@ const PostDetails = () => {
                 {comments && comments.map((comment) => (
                     <Comment key={comment.id} comment={comment} />
                 ))}
-                <form onSubmit={handleCommentSubmit} className="comment-form">
-                    <label>
-                        Comment:
-                        <textarea
-                            value={newComment}
-                            onChange={(e) => setNewComment(e.target.value)}
-                            className="comment-textarea"
-                        ></textarea>
-                    </label>
-                    <button type="submit" className="comment-submit-button">Submit Comment</button>
-                </form>
+                {currentUser && (
+                    <form onSubmit={handleCommentSubmit} className="comment-form">
+                        <label>
+                            Comment:
+                            <textarea
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                className="comment-textarea"
+                            ></textarea>
+                        </label>
+                        <button type="submit" className="comment-submit-button">Submit Comment</button>
+                    </form>
+                )}
             </div>
             {showModal && (
                 <EditPostModal post={post} onClose={() => setShowModal(false)} />
