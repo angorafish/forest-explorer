@@ -9,8 +9,6 @@ const OtherProfile = () => {
     const { username } = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [isFriend, setIsFriend] = useState(false);
-    const [friendRequestStatus, setFriendRequestStatus] = useState(null);
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
 
@@ -19,11 +17,6 @@ const OtherProfile = () => {
             try {
                 const response = await axios.get(`/users/profile/${username}`);
                 setUser(response.data);
-                const friendRequest = response.data.receivedRequests.find(req => req.requesterId === currentUser.id) || response.data.sentRequests.find(req => req.receiverId === currentUser.id);
-                if (friendRequest) {
-                    setIsFriend(friendRequest.status === 'accepted');
-                    setFriendRequestStatus(friendRequest.status);
-                }
                 setPosts(response.data.posts);
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -31,31 +24,7 @@ const OtherProfile = () => {
             }
         };
         fetchUserData();
-    }, [username, currentUser]);
-
-    const handleFriendAction = () => {
-        console.log('Handling friend action for user:', user.id);
-        if (isFriend) {
-            axios.delete(`/friend-requests/${user.id}`).then(() => {
-                setIsFriend(false);
-                setFriendRequestStatus(null);
-            }).catch(error => {
-                console.error('Error unfriending user', error);
-            });
-        } else if (friendRequestStatus === 'pending') {
-            axios.delete(`/friend-requests/${user.id}`).then(() => {
-                setFriendRequestStatus(null);
-            }).catch(error => {
-                console.error('Error canceling friend request', error);
-            });
-        } else {
-            axios.post(`/friend-requests`, { receiverId: user.id }).then(() => {
-                setFriendRequestStatus('pending');
-            }).catch(error => {
-                console.error('Error sending friend request', error);
-            });
-        }
-    };
+    }, [username]);
 
     if (error) {
         return <div>{error}</div>;
@@ -64,8 +33,6 @@ const OtherProfile = () => {
     if (!user) {
         return <div>Loading...</div>;
     }
-
-    const isCurrentUser = currentUser && currentUser.username === user.username;
 
     return (
         <div className="profile-page">
@@ -78,11 +45,6 @@ const OtherProfile = () => {
                 </div>
                 <h2>{user.username}</h2>
                 <p>Member since {new Date(user.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
-                {!isCurrentUser && (
-                    <button onClick={handleFriendAction}>
-                        {isFriend ? 'Remove Friend' : (friendRequestStatus === 'pending' ? 'Cancel Friend Request' : 'Add Friend')}
-                    </button>
-                )}
                 <div className="user-posts">
                     <h3>Recent Posts</h3>
                     <div className="posts-grid">

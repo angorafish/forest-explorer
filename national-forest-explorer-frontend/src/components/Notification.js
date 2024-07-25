@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from '../services/axiosConfig';
 import { useAuth } from '../AuthContext';
 import socket from '../services/socketConfig';
-import FriendRequests from './FriendRequests';
 import '../css/Notification.css';
 
 const Notifications = () => {
@@ -38,19 +37,10 @@ const Notifications = () => {
             const response = await axios.put(`/notifications/${id}/read`);
             console.log('Response from marking as read:', response.data);
 
-            setNotifications((prevNotifications) => prevNotifications.filter(notification => notification.id !== id));
+            setNotifications((prevNotifications) => prevNotifications.filter(notification => notification.id !== id)); // Change to changing color/bold instead
             fetchNotifications();
         } catch (error) {
             console.error('Error marking notification as read:', error);
-        }
-    };
-
-    const handleFriendRequest = async (id, accept) => {
-        try {
-            await axios.put(`/friend-requests/${id}/${accept ? 'accept' : 'reject'}`);
-            setNotifications(notifications.filter(notification => notification.id !== id));
-        } catch (error) {
-            console.error('Error handling friend request:', error);
         }
     };
 
@@ -73,18 +63,7 @@ const Notifications = () => {
                                     <strong>{notification.fromUser?.username}</strong> commented on your post
                                 </p>
                             )}
-                            {notification.type === 'friend_request' && (
-                                <FriendRequests 
-                                    notification={notification} 
-                                    handleFriendRequest={handleFriendRequest} 
-                                />
-                            )}
-                            {notification.type === 'friend_accept' && (
-                                <p>
-                                    <strong>{notification.fromUser?.username}</strong> accepted your friend request
-                                </p>
-                            )}
-                            <button className="close-button" onClick={() => handleReadNotification(notification.id)}>X</button>
+                            <button className="close-button" onClick={() => handleReadNotification(notification.id)}>X</button> {/* Change to mark as read button */}
                         </li>
                     ))}
                 </ul>

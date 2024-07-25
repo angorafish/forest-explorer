@@ -15,7 +15,6 @@ import Trails from './components/Trails';
 import Campsites from './components/Campsites';
 import OtherProfile from './components/OtherProfile';
 import Notifications from './components/Notification';
-import FriendRequests from './components/FriendRequests';
 import Details from './components/Details';
 import Saved from './components/Saved';
 import NewTripForm from './components/NewTripForm.js';
@@ -78,7 +77,6 @@ function App() {
                 <Route path="/trails" element={<Trails />} />
                 <Route path="/campsites" element={<Campsites />} />
                 <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
-                <Route path="/friend-requests" element={<ProtectedRoute element={<FriendRequests />} />} />
                 <Route path="/details/:type/:id" element={<Details />} />
                 <Route path="/saved" element={<ProtectedRoute element={<Saved />} />} />
                 <Route path="/new-trip" element={<ProtectedRoute element={<NewTripForm />} />} />

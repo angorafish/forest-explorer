@@ -9,9 +9,6 @@ const Profile = () => {
     const { username } = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [friendsCount, setFriendsCount] = useState(0);
-    const [friendsList, setFriendsList] = useState([]);
-    const [showFriendsList, setShowFriendsList] = useState(false);
     const [posts, setPosts] = useState([]);
     const [editMode, setEditMode] = useState(false);
     const [newProfilePhoto, setNewProfilePhoto] = useState(null);
@@ -21,10 +18,6 @@ const Profile = () => {
     useEffect(() => {
         axios.get(`/users/profile/${username}`).then(response => {
             setUser(response.data);
-            if (response.data.friends) {
-                setFriendsCount(response.data.friends.length);
-                setFriendsList(response.data.friends);
-            }
         }).catch(error => {
             console.error('Error fetching user data:', error);
         });
@@ -104,10 +97,6 @@ const Profile = () => {
         navigate(`/profile/${username}`);
     };
 
-    const toggleFriendsList = () => {
-        setShowFriendsList(!showFriendsList);
-    };
-
     if (!user) {
         return <div>Loading...</div>;
     }
@@ -132,21 +121,8 @@ const Profile = () => {
                     )}
                 </div>
                 <h2>{user.username}</h2>
-                {isCurrentUser ? (
+                {isCurrentUser && (
                     <>
-                        <p onClick={toggleFriendsList} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
-                            Friends: {friendsCount}
-                        </p>
-                        {showFriendsList && (
-                            <div className="friends-list">
-                                <h3>Friends</h3>
-                                <ul>
-                                    {friendsList.map(friend => (
-                                        <li key={friend.id}>{friend.username}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
                         <button onClick={handleEditClick}>
                             {editMode ? 'Cancel' : 'Edit Profile'}
                         </button>
@@ -156,8 +132,6 @@ const Profile = () => {
                             </button>
                         )}
                     </>
-                ) : (
-                    <button>Add Friend</button>
                 )}
                 <p>Member since {new Date(user.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
                 <div className="user-posts">

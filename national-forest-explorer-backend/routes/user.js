@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { User, Post, Review, Comment, Like, FriendRequest, Notification, Photo } = require('../models');
+const { User, Post, Review, Comment, Like, Notification, Photo } = require('../models');
 const upload = require('../middleware/upload');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -46,9 +46,7 @@ router.get('/profile/:username', authenticateToken, async (req, res) => {
                         { model: Comment, as: 'comments', include: [{ model: User, as: 'user', attributes: ['username'] }] },
                         { model: Review, as: 'reviews' }
                     ]
-                },
-                { model: FriendRequest, as: 'sentRequests', include: [{ model: User, as: 'receiver' }] },
-                { model: FriendRequest, as: 'receivedRequests', include: [{ model: User, as: 'requester' }] },
+                }
             ]
         });
         if (!user) {
