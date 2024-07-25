@@ -8,8 +8,6 @@ module.exports = (sequelize) => {
       User.hasMany(models.Post, { foreignKey: 'userId', as: 'posts' });
       User.hasMany(models.Comment, { foreignKey: 'userId', as: 'comments' });
       User.hasMany(models.Like, { foreignKey: 'userId', as: 'likes' });
-      User.hasMany(models.FriendRequest, { foreignKey: 'requesterId', as: 'sentRequests' });
-      User.hasMany(models.FriendRequest, { foreignKey: 'receiverId', as: 'receivedRequests' });
       User.hasMany(models.Notification, { foreignKey: 'userId', as: 'notifications' });
     }
 
