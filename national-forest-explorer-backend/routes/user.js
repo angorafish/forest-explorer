@@ -25,7 +25,7 @@ router.get('/user/:username', async (req, res) => {
             ]
         });
 
-        console.log('Posts:', JSON.stringify(posts, null, 2)); // Log the posts response
+        console.log('Posts:', JSON.stringify(posts, null, 2));
         res.json(posts);
     } catch (error) {
         console.error('Failed to fetch posts:', error);

@@ -39,7 +39,7 @@ const Notifications = () => {
             console.log('Response from marking as read:', response.data);
 
             setNotifications((prevNotifications) => prevNotifications.filter(notification => notification.id !== id));
-            fetchNotifications();  // Refetch to update the list
+            fetchNotifications();
         } catch (error) {
             console.error('Error marking notification as read:', error);
         }

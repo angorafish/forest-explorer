@@ -38,7 +38,7 @@ const Saved = () => {
         await axios.post('http://localhost:3000/api/savedLocations/save', {
           userId: currentUser.id, locationId, locationType
         });
-        setSavedLocations([...savedLocations, { locationId, locationType, userId: currentUser.id, name: "Location Name" }]); // Replace "Location Name" with actual name if available
+        setSavedLocations([...savedLocations, { locationId, locationType, userId: currentUser.id, name: "Location Name" }]);
       }
     } catch (error) {
       console.error(`Error ${isSaved ? 'unsaving' : 'saving'} location:`, error);
