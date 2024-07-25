@@ -8,7 +8,6 @@ import Profile from './components/Profile';
 import Posts from './components/Posts';
 import ProtectedRoute from './components/ProtectedRoute';
 import Settings from './components/Settings';
-import Trips from './components/Trips';
 import PostDetails from './components/PostDetails';
 import Explore from './components/Explore';
 import Trails from './components/Trails';
@@ -17,8 +16,6 @@ import OtherProfile from './components/OtherProfile';
 import Notifications from './components/Notification';
 import Details from './components/Details';
 import Saved from './components/Saved';
-import NewTripForm from './components/NewTripForm.js';
-import TripDetails from './components/TripDetails';
 import axios from './services/axiosConfig';
 import socket from './services/socketConfig';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -71,7 +68,6 @@ function App() {
                 <Route path="/my-profile" element={<ProtectedRoute element={<Profile />} />} />
                 <Route path="/posts" element={<Posts />} />
                 <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
-                <Route path="/itineraries" element={<ProtectedRoute element={<Trips />} />} />
                 <Route path="/posts/:id" element={<PostDetails />} />
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/trails" element={<Trails />} />
@@ -79,8 +75,6 @@ function App() {
                 <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
                 <Route path="/details/:type/:id" element={<Details />} />
                 <Route path="/saved" element={<ProtectedRoute element={<Saved />} />} />
-                <Route path="/new-trip" element={<ProtectedRoute element={<NewTripForm />} />} />
-                <Route path="/trip-details/:id" element={<ProtectedRoute element={<TripDetails />} />} />
             </Routes>
         </Router>
     );

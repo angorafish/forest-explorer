@@ -95,7 +95,7 @@ const NavBar = () => {
         <Link to="/explore">Explore</Link>
         {currentUser && (
           <>
-            <Link to="/itineraries">My Trips</Link>
+            <Link to="/saved">Saved</Link>
             <button onClick={() => setModalOpen(true)}>New Post</button>
           </>
         )}
@@ -107,7 +107,6 @@ const NavBar = () => {
             <div className={`dropdown-content ${isDropdownOpen ? 'open' : ''}`}>
               <Link to={`/profile/${currentUser.username}`}>{currentUser.username}</Link>
               <Link to="/notifications">Notifications {notificationCount > 0 && `(${notificationCount})`}</Link> 
-              <Link to="/saved">Saved</Link>
               <Link to="/settings">Settings</Link>
               <button onClick={handleLogout}>Logout</button>
             </div>

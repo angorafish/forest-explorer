@@ -6,7 +6,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { sequelize } = require('./models');
 const forestRoutes = require('./routes/forest');
-const itineraryRouter = require('./routes/itineraries');
 const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
 const postRouter = require('./routes/post');
@@ -55,7 +54,6 @@ app.use(cookieParser());
 app.use('/uploads', express.static(uploadDir));
 
 app.use('/api/forests', forestRoutes);
-app.use('/api/itineraries', itineraryRouter);
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
