@@ -24,7 +24,7 @@ const TripDetails = () => {
     useEffect(() => {
         const fetchTrip = async () => {
             try {
-                const response = await axios.get(`/api/itineraries/${id}`);
+                const response = await axios.get(`/itineraries/${id}`);
                 setTrip(response.data);
             } catch (error) {
                 console.error('Failed to fetch trip details:', error);
@@ -40,7 +40,7 @@ const TripDetails = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`/api/itineraries/${id}`);
+            await axios.delete(`/itineraries/${id}`);
             navigate('/trips');
         } catch (error) {
             console.error('Failed to delete trip:', error);
@@ -49,7 +49,7 @@ const TripDetails = () => {
 
     const handleLeave = async () => {
         try {
-            await axios.post(`/api/itineraries/${id}/leave`, { userId: currentUser.id });
+            await axios.post(`/itineraries/${id}/leave`, { userId: currentUser.id });
             setLeaveModalOpen(false);
             navigate('/trips');
         } catch (error) {

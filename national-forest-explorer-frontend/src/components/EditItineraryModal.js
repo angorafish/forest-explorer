@@ -25,9 +25,9 @@ const EditItineraryModal = ({ isOpen, onClose, itinerary }) => {
     const handleSave = async () => {
         try {
             if (itinerary) {
-                await axios.put(`/api/itineraries/${itinerary.id}`, { name, startDate, endDate, description });
+                await axios.put(`/itineraries/${itinerary.id}`, { name, startDate, endDate, description });
             } else {
-                await axios.post('/api/itineraries', { name, startDate, endDate, description });
+                await axios.post('/itineraries', { name, startDate, endDate, description });
             }
             onClose();
         } catch (error) {

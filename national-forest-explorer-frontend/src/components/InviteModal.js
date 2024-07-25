@@ -7,7 +7,7 @@ const InviteModal = ({ isOpen, onClose, itinerary }) => {
 
     const handleInvite = async () => {
         try {
-            await axios.post(`/api/itineraries/${itinerary.id}/invite`, { email });
+            await axios.post(`/itineraries/${itinerary.id}/invite`, { email });
             onClose();
         } catch (error) {
             console.error('Failed to send invitation:', error);

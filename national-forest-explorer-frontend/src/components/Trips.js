@@ -6,6 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import NewTripForm from './NewTripForm.js';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
+import '../css/Trips.css';
 
 const localizer = momentLocalizer(moment);
 
@@ -17,7 +18,8 @@ const Trips = () => {
     useEffect(() => {
         const fetchItineraries = async () => {
             try {
-                const response = await axios.get('/api/itineraries');
+                const response = await axios.get('/itineraries');
+                console.log('Fetched itineraries:', response.data);
                 setItineraries(response.data);
             } catch (error) {
                 console.error('Failed to fetch itineraries:', error);
