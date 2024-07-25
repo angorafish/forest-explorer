@@ -27,6 +27,7 @@ const Saved = () => {
   }, [currentUser]);
 
   const handleToggleSave = async (locationId, locationType) => {
+    if (!currentUser) return;
     const isSaved = savedLocations.some(loc => loc.locationId === locationId && loc.locationType === locationType);
     try {
       if (isSaved) {
@@ -57,11 +58,13 @@ const Saved = () => {
               <span onClick={() => navigate(`/details/${loc.locationType}/${loc.locationId}`)}>
                 {loc.name}
               </span>
-              <FontAwesomeIcon
-                icon={savedLocations.some(savedLoc => savedLoc.locationId === loc.locationId && savedLoc.locationType === loc.locationType) ? filledHeart : hollowHeart}
-                onClick={() => handleToggleSave(loc.locationId, loc.locationType)}
-                style={{ cursor: 'pointer', color: savedLocations.some(savedLoc => savedLoc.locationId === loc.locationId && savedLoc.locationType === loc.locationType) ? 'red' : 'grey', marginLeft: '10px' }}
-              />
+              {currentUser && (
+                <FontAwesomeIcon
+                  icon={savedLocations.some(savedLoc => savedLoc.locationId === loc.locationId && savedLoc.locationType === loc.locationType) ? filledHeart : hollowHeart}
+                  onClick={() => handleToggleSave(loc.locationId, loc.locationType)}
+                  style={{ cursor: 'pointer', color: savedLocations.some(savedLoc => savedLoc.locationId === loc.locationId && savedLoc.locationType === loc.locationType) ? 'red' : 'grey', marginLeft: '10px' }}
+                />
+              )}
             </li>
           ))}
         </ul>

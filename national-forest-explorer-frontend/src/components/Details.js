@@ -34,6 +34,7 @@ const Details = () => {
   }, [type, id, currentUser]);
 
   const handleSaveLocation = async () => {
+    if (!currentUser) return;
     try {
       if (isSaved) {
         await axios.delete('http://localhost:3000/api/savedLocations/unsave', {
@@ -61,11 +62,13 @@ const Details = () => {
       <p>State: {details.state || 'Unknown'}</p>
       <p>Forest: {details.forest || 'Unknown'}</p>
       <p>Description: {details.description || 'No description available'}</p>
-      <FontAwesomeIcon
-        icon={isSaved ? filledHeart : hollowHeart}
-        onClick={handleSaveLocation}
-        style={{ cursor: 'pointer', color: isSaved ? 'red' : 'grey', marginLeft: '10px' }}
-      />
+      {currentUser && (
+        <FontAwesomeIcon
+          icon={isSaved ? filledHeart : hollowHeart}
+          onClick={handleSaveLocation}
+          style={{ cursor: 'pointer', color: isSaved ? 'red' : 'grey', marginLeft: '10px' }}
+        />
+      )}
       <h2>Recent Reviews/Photos</h2>
       <div>
         {details.posts && details.posts.length > 0 ? (

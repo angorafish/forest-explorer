@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from '../services/axiosConfig';
 import { useAuth } from '../AuthContext';
 import socket from '../services/socketConfig';
+import { Link } from 'react-router-dom';
 import '../css/Notification.css';
 
 const Notifications = () => {
@@ -57,12 +58,16 @@ const Notifications = () => {
                         <li key={notification.id} className={notification.status === 'unread' ? 'unread' : 'read'}>
                             {notification.type === 'like' && notification.fromUser && (
                                 <p>
-                                    <strong>{notification.fromUser.username}</strong> liked your post
+                                    <Link to={`/profile/${notification.fromUser.username}`}>
+                                        <strong>{notification.fromUser.username}</strong>
+                                    </Link> liked your post
                                 </p>
                             )}
                             {notification.type === 'comment' && notification.fromUser && (
                                 <p>
-                                    <strong>{notification.fromUser.username}</strong> commented on your post
+                                    <Link to={`/profile/${notification.fromUser.username}`}>
+                                        <strong>{notification.fromUser.username}</strong>
+                                    </Link> commented on your post
                                 </p>
                             )}
                             {notification.status === 'unread' && (
