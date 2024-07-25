@@ -1,0 +1,22 @@
+.suggestions-dropdown {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background-color: white;
+    width: calc(100% - 22px);
+    z-index: 1000;
+  }
+  
+  .suggestions-dropdown li {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .suggestions-dropdown li:hover {
+    background-color: #f0f0f0;
+  }

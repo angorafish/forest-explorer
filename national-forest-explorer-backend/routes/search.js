@@ -29,11 +29,12 @@ router.get('/suggestions', async (req, res) => {
     });
 
     const suggestions = [
-      ...campsites.map(site => site.name),
-      ...forests.map(forest => forest.name),
-      ...trails.map(trail => trail.name),
+      ...campsites.map(site => ({ name: site.name, type: 'Campsite' })),
+      ...forests.map(forest => ({ name: forest.name, type: 'Forest' })),
+      ...trails.map(trail => ({ name: trail.name, type: 'Trail' })),
     ];
 
+    console.log('Suggestions:', suggestions); // Log the suggestions
     res.json(suggestions);
   } catch (error) {
     console.error('Error fetching suggestions:', error);
@@ -106,6 +107,7 @@ router.get('/', async (req, res) => {
       );
     }
 
+    console.log('Search results:', results);
     res.json(results);
   } catch (error) {
     console.error('Error fetching search results:', error);

@@ -14,6 +14,7 @@ router.get('/', authenticateToken, async (req, res) => {
             }],
             order: [['createdAt', 'DESC']]
         });
+        console.log('Fetched notifications:', notifications); // Add this line
         res.json(notifications);
     } catch (error) {
         console.error('Error fetching notifications:', error.message, error.stack);

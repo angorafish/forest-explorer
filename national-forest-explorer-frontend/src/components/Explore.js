@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../css/Explore.css';
 
 const Explore = () => {
   const [searchInput, setSearchInput] = useState('');
@@ -17,6 +18,7 @@ const Explore = () => {
       try {
         console.log(`Fetching suggestions for: ${value}`);
         const response = await axios.get(`http://localhost:3000/api/search/suggestions?q=${value}`);
+        console.log('Suggestions response:', response.data);
         setSuggestions(response.data);
       } catch (error) {
         console.error('Error fetching suggestions:', error);
@@ -36,6 +38,7 @@ const Explore = () => {
           destination: selectedDestination,
         },
       });
+      console.log('Search results:', response.data);
       setSearchResults(response.data);
     } catch (error) {
       console.error('Error fetching search results:', error);
@@ -43,8 +46,9 @@ const Explore = () => {
   };
 
   const handleSuggestionClick = (suggestion) => {
-    setSearchInput(suggestion);
+    setSearchInput(suggestion.name);
     setSuggestions([]);
+    handleSearch();
   };
 
   const handleResultClick = (id, type) => {
@@ -53,7 +57,7 @@ const Explore = () => {
 
   return (
     <div>
-      <div className="search-bar">
+      <div className="search-bar" style={{ position: 'relative' }}>
         <input
           type="text"
           placeholder="Search for forests, campsites, trails..."
@@ -63,7 +67,6 @@ const Explore = () => {
         <button onClick={handleSearch}>Search</button>
         <select value={selectedState} onChange={(e) => setSelectedState(e.target.value)}>
           <option value="">Filter by State</option>
-          {/* Add state options */}
           <option value="AL">Alabama</option>
           <option value="AK">Alaska</option>
           <option value="AZ">Arizona</option>
@@ -121,13 +124,15 @@ const Explore = () => {
           <option value="campsite">Campsite</option>
           <option value="trail">Trail</option>
         </select>
-        <ul>
-          {suggestions.map((suggestion, index) => (
-            <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
-              {suggestion}
-            </li>
-          ))}
-        </ul>
+        {suggestions.length > 0 && (
+          <ul className="suggestions-dropdown">
+            {suggestions.map((suggestion, index) => (
+              <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                {suggestion.name || 'No Name Available'} - {suggestion.type}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div>
         <img src="/us-forest-land.jpg" alt="US National Forest Land" style={{ width: '100%', height: 'auto' }} />
