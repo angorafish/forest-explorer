@@ -1,5 +1,5 @@
 const express = require('express');
-const { SavedLocation, Forest, Trail, Campsite } = require('../models');
+const { SavedLocation, Forest, Trail } = require('../models');
 const router = express.Router();
 
 router.get('/user/:userId', async (req, res) => {
@@ -19,9 +19,6 @@ router.get('/user/:userId', async (req, res) => {
           break;
         case 'trail':
           details = await Trail.findByPk(location.locationId);
-          break;
-        case 'campsite':
-          details = await Campsite.findByPk(location.locationId);
           break;
         default:
           details = null;

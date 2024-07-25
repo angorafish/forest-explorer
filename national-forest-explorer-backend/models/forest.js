@@ -16,34 +16,17 @@ module.exports = (sequelize) => {
       unique: true,
       field: 'adminForestId',
     },
-    region: {
+    name: DataTypes.STRING,
+    type: {
       type: DataTypes.STRING,
-      field: 'region',
+      defaultValue: 'forest'
     },
-    forestNumber: {
-      type: DataTypes.STRING,
-      field: 'forestNumber',
-    },
-    forestOrgCode: {
-      type: DataTypes.STRING,
-      field: 'forestOrgCode',
-    },
-    name: {
-      type: DataTypes.STRING,
-      field: 'name',
-    },
-    gisAcres: {
-      type: DataTypes.FLOAT,
-      field: 'gisAcres',
-    },
-    shapeLength: {
-      type: DataTypes.FLOAT,
-      field: 'shapeLength',
-    },
-    shapeArea: {
-      type: DataTypes.FLOAT,
-      field: 'shapeArea',
-    },
+    region: DataTypes.STRING,
+    gisAcres: DataTypes.FLOAT,
+    forestNumber: DataTypes.STRING,
+    forestOrgCode: DataTypes.STRING,
+    shapeLength: DataTypes.FLOAT,
+    shapeArea: DataTypes.FLOAT,
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,

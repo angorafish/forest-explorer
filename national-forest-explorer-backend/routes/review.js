@@ -4,7 +4,7 @@ const { Review } = require('../models');
 const authenticateToken = require('../middleware/auth');
 
 router.post('/', authenticateToken, async (req, res) => {
-    const { forestId, trailId, campsiteId, rating, comment, postId } = req.body;
+    const { forestId, trailId, rating, comment, postId } = req.body;
     const userId = req.user.id;
 
     try {
@@ -13,7 +13,6 @@ router.post('/', authenticateToken, async (req, res) => {
             postId,
             forestId,
             trailId,
-            campsiteId,
             rating,
             comment,
         });

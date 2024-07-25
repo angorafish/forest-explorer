@@ -5,8 +5,6 @@ module.exports = (sequelize) => {
     static associate(models) {
       Photo.belongsTo(models.User, { foreignKey: 'userId' });
       Photo.belongsTo(models.Forest, { foreignKey: 'forestId' });
-      Photo.belongsTo(models.Trail, { foreignKey: 'trailId' });
-      Photo.belongsTo(models.Campsite, { foreignKey: 'campsiteId' });
       Photo.belongsTo(models.Post, { foreignKey: 'postId', as: 'post' });
     }
   }
@@ -16,12 +14,6 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
     },
     forestId: {
-      type: DataTypes.INTEGER,
-    },
-    trailId: {
-      type: DataTypes.INTEGER,
-    },
-    campsiteId: {
       type: DataTypes.INTEGER,
     },
     postId: {

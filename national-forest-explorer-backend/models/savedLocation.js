@@ -6,7 +6,6 @@ module.exports = (sequelize) => {
       SavedLocation.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
       SavedLocation.belongsTo(models.Forest, { foreignKey: 'locationId', as: 'forest', constraints: false });
       SavedLocation.belongsTo(models.Trail, { foreignKey: 'locationId', as: 'trail', constraints: false });
-      SavedLocation.belongsTo(models.Campsite, { foreignKey: 'locationId', as: 'campsite', constraints: false });
     }
   }
 
@@ -20,7 +19,7 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     locationType: {
-      type: DataTypes.ENUM('forest', 'trail', 'campsite'),
+      type: DataTypes.ENUM('forest', 'trail'),
       allowNull: false,
     },
     createdAt: {

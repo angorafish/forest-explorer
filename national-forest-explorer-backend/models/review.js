@@ -7,7 +7,6 @@ module.exports = (sequelize) => {
       Review.belongsTo(models.Post, { foreignKey: 'postId', as: 'post' });
       Review.belongsTo(models.Forest, { foreignKey: 'forestId', as: 'forest' });
       Review.belongsTo(models.Trail, { foreignKey: 'trailId', as: 'trail' });
-      Review.belongsTo(models.Campsite, { foreignKey: 'campsiteId', as: 'campsite' });
     }
   }
 
@@ -25,10 +24,6 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     trailId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    campsiteId: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },

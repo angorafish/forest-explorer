@@ -38,8 +38,14 @@ const Explore = () => {
           destination: selectedDestination,
         },
       });
-      console.log('Search results:', response.data);
-      setSearchResults(response.data);
+
+      const uniqueResults = response.data.filter((item, index, self) =>
+        index === self.findIndex((t) => (
+          t.name === item.name && t.type === item.type
+        ))
+      );
+      
+      setSearchResults(uniqueResults);
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
@@ -60,7 +66,7 @@ const Explore = () => {
       <div className="search-bar" style={{ position: 'relative' }}>
         <input
           type="text"
-          placeholder="Search for forests, campsites, trails..."
+          placeholder="Search for forests or trails..."
           value={searchInput}
           onChange={handleInputChange}
         />
@@ -121,7 +127,6 @@ const Explore = () => {
         <select value={selectedDestination} onChange={(e) => setSelectedDestination(e.target.value)}>
           <option value="">Filter by Destination</option>
           <option value="forest">Forest</option>
-          <option value="campsite">Campsite</option>
           <option value="trail">Trail</option>
         </select>
         {suggestions.length > 0 && (

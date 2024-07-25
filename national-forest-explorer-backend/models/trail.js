@@ -16,50 +16,22 @@ module.exports = (sequelize) => {
       unique: true,
       field: 'trailId',
     },
-    name: {
-      type: DataTypes.STRING,
-      field: 'name',
-    },
+    name: DataTypes.STRING,
     type: {
       type: DataTypes.STRING,
-      field: 'type',
+      defaultValue: 'trail'
     },
-    segmentLength: {
-      type: DataTypes.FLOAT,
-      field: 'segmentLength',
-    },
-    managingOrg: {
-      type: DataTypes.STRING,
-      field: 'managingOrg',
-    },
-    accessibilityStatus: {
-      type: DataTypes.STRING,
-      field: 'accessibilityStatus',
-    },
-    trailSurface: {
-      type: DataTypes.STRING,
-      field: 'trailSurface',
-    },
-    allowedTerraUse: {
-      type: DataTypes.STRING,
-      field: 'allowedTerraUse',
-    },
-    allowedSnowUse: {
-      type: DataTypes.STRING,
-      field: 'allowedSnowUse',
-    },
-    allowedWaterUse: {
-      type: DataTypes.STRING,
-      field: 'allowedWaterUse',
-    },
-    typicalTrailGrade: {
-      type: DataTypes.STRING,
-      field: 'typicalTrailGrade',
-    },
-    typicalTreadWidth: {
-      type: DataTypes.STRING,
-      field: 'typicalTreadWidth',
-    },
+    forest: DataTypes.STRING,
+    state: DataTypes.STRING,
+    segmentLength: DataTypes.FLOAT,
+    trailSurface: DataTypes.STRING,
+    managingOrg: DataTypes.STRING,
+    accessibilityStatus: DataTypes.STRING,
+    allowedTerraUse: DataTypes.STRING,
+    allowedSnowUse: DataTypes.STRING,
+    allowedWaterUse: DataTypes.STRING,
+    typicalTrailGrade: DataTypes.STRING,
+    typicalTreadWidth: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

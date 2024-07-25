@@ -11,7 +11,6 @@ import Settings from './components/Settings';
 import PostDetails from './components/PostDetails';
 import Explore from './components/Explore';
 import Trails from './components/Trails';
-import Campsites from './components/Campsites';
 import OtherProfile from './components/OtherProfile';
 import Notifications from './components/Notification';
 import Details from './components/Details';
@@ -71,7 +70,6 @@ function App() {
                 <Route path="/posts/:id" element={<PostDetails />} />
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/trails" element={<Trails />} />
-                <Route path="/campsites" element={<Campsites />} />
                 <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
                 <Route path="/details/:type/:id" element={<Details />} />
                 <Route path="/saved" element={<ProtectedRoute element={<Saved />} />} />

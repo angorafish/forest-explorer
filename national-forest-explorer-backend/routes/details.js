@@ -1,5 +1,5 @@
 const express = require('express');
-const { Forest, Trail, Campsite, Post } = require('../models');
+const { Forest, Trail, Post } = require('../models');
 const router = express.Router();
 
 router.get('/forests/:id', async (req, res) => {
@@ -14,22 +14,6 @@ router.get('/forests/:id', async (req, res) => {
     }
   } catch (error) {
     console.error('Error fetching forest details:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-router.get('/campsites/:id', async (req, res) => {
-  try {
-    const campsite = await Campsite.findByPk(req.params.id, {
-      include: [{ model: Post, as: 'posts' }]
-    });
-    if (campsite) {
-      res.json(campsite);
-    } else {
-      res.status(404).json({ error: 'Campsite not found' });
-    }
-  } catch (error) {
-    console.error('Error fetching campsite details:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
