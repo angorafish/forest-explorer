@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const authenticateToken = require('../middleware/auth');
 const path = require('path');
 
-router.get('/user/:username', authenticateToken, async (req, res) => {
+router.get('/user/:username', async (req, res) => {
     try {
         const user = await User.findOne({ where: { username: req.params.username } });
         if (!user) {
@@ -20,11 +20,12 @@ router.get('/user/:username', authenticateToken, async (req, res) => {
                 { model: User, as: 'user', attributes: ['username'] },
                 { model: Review, as: 'reviews' },
                 { model: Comment, as: 'comments', include: [{ model: User, as: 'user', attributes: ['username'] }] },
-                { model: Like, as: 'likes' },
+                { model: Like, as: 'likes', include: [{ model: User, as: 'user', attributes: ['username'] }] },
                 { model: Photo, as: 'photos' }
             ]
         });
 
+        console.log('Posts:', JSON.stringify(posts, null, 2)); // Log the posts response
         res.json(posts);
     } catch (error) {
         console.error('Failed to fetch posts:', error);

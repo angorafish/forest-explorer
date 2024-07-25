@@ -36,8 +36,11 @@ const Profile = () => {
         });
     }, [username]);
 
-    const toggleFriendsList = () => {
-        setShowFriendsList(!showFriendsList);
+    const getPhotoUrl = (url) => {
+        if (url.startsWith('../uploads/')) {
+            return url.replace('../uploads/', '/uploads/');
+        }
+        return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
     };
 
     const handlePostClick = (postId) => {
@@ -101,6 +104,10 @@ const Profile = () => {
         navigate(`/profile/${username}`);
     };
 
+    const toggleFriendsList = () => {
+        setShowFriendsList(!showFriendsList);
+    };
+
     if (!user) {
         return <div>Loading...</div>;
     }
@@ -160,25 +167,27 @@ const Profile = () => {
                             <div key={post.id} className="post">
                                 <div onClick={() => handlePostClick(post.id)} style={{ cursor: 'pointer' }}>
                                     {post.photos && post.photos.length > 0 && (
-                                        <img src={`http://localhost:3000${post.photos[0].url}`} alt="Post" className="post-picture" />
+                                        <img src={`http://localhost:3000${getPhotoUrl(post.photos[0].url)}`} alt="Post" className="post-picture" />
                                     )}
-                                    <p>{post.rating && `Rating: ${post.rating} / 5 stars`}</p>
+                                    {post.rating > 0 && (
+                                        <div className="stars">
+                                            {'★'.repeat(post.rating)}{'☆'.repeat(5 - post.rating)}
+                                        </div>
+                                    )}
                                     <p>{post.location}</p>
                                 </div>
-                                {isCurrentUser && (
-                                    <div className="post-options">
-                                        <button onClick={() => togglePostOptions(post.id)}>⋮</button>
-                                        {postOptionsVisible[post.id] && (
-                                            <div className="post-options-menu">
-                                                <button onClick={() => handleEditPost(post.id)}>Edit</button>
-                                                <button onClick={() => handleDeletePost(post.id)}>Delete</button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+                                <div className="post-options">
+                                    <button onClick={() => togglePostOptions(post.id)}>⋮</button>
+                                    {postOptionsVisible[post.id] && (
+                                        <div className="post-options-menu">
+                                            <button onClick={() => handleEditPost(post.id)}>Edit</button>
+                                            <button onClick={() => handleDeletePost(post.id)}>Delete</button>
+                                        </div>
+                                    )}
+                                </div>
                                 <div className="post-likes-comments">
                                     <p>
-                                        Likes: {post.likes && post.likes.length}
+                                        Likes: {post.likes && post.likes.length > 0 ? post.likes.length : 0}
                                         {post.likes && post.likes.length > 0 && post.likes.map(like => (
                                             <span
                                                 key={like.id}

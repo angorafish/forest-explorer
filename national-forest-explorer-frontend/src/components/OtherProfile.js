@@ -34,6 +34,7 @@ const OtherProfile = () => {
     }, [username, currentUser]);
 
     const handleFriendAction = () => {
+        console.log('Handling friend action for user:', user.id);
         if (isFriend) {
             axios.delete(`/friend-requests/${user.id}`).then(() => {
                 setIsFriend(false);
@@ -90,7 +91,7 @@ const OtherProfile = () => {
                                 <p>{post.reviewText}</p>
                                 <p>{post.location}</p>
                                 {post.photos && post.photos.map((photo, index) => (
-                                    <img key={index} src={photo} alt="Post" className="post-picture" />
+                                    <img key={index} src={`http://localhost:3000${photo.url}`} alt="Post" className="post-picture" />
                                 ))}
                                 <p>Likes: {post.likes.length}</p>
                                 <div className="post-comments">
@@ -98,7 +99,9 @@ const OtherProfile = () => {
                                     <ul>
                                         {post.comments.map(comment => (
                                             <li key={comment.id}>
-                                                <span>{comment.user.username}</span>: {comment.text}
+                                                <span onClick={() => navigate(`/profile/${comment.user.username}`)} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
+                                                    {comment.user.username}
+                                                </span>: {comment.text}
                                             </li>
                                         ))}
                                     </ul>

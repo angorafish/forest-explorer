@@ -4,8 +4,10 @@ const { FriendRequest, User, Notification } = require('../models');
 const authenticateToken = require('../middleware/auth');
 
 router.post('/', authenticateToken, async (req, res) => {
+  console.log('Friend request route hit');
   try {
     const { receiverId } = req.body;
+    console.log('Friend request receiverId:', receiverId);
     const existingRequest = await FriendRequest.findOne({
       where: {
         requesterId: req.user.id,
@@ -44,6 +46,7 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 router.put('/:id/accept', authenticateToken, async (req, res) => {
+  console.log('Accept friend request route hit');
   try {
     const friendRequest = await FriendRequest.findByPk(req.params.id);
     if (!friendRequest) {
