@@ -59,9 +59,17 @@ const Details = () => {
     <div>
       <h1>{details.name}</h1>
       <p>Type: {type}</p>
-      <p>State: {details.state || 'Unknown'}</p>
-      <p>Forest: {details.forest || 'Unknown'}</p>
-      <p>Description: {details.description || 'No description available'}</p>
+      {type === 'forest' ? (
+        <>
+          <p>Region: {details.region || 'Unknown'}</p>
+          <p>Size: {details.shapeArea ? `${details.shapeArea} acres` : 'Unknown'}</p>
+        </>
+      ) : (
+        <>
+          <p>State: {details.state || 'Unknown'}</p>
+          <p>Forest: {details.forest || 'Unknown'}</p>
+        </>
+      )}
       {currentUser && (
         <FontAwesomeIcon
           icon={isSaved ? filledHeart : hollowHeart}

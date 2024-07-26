@@ -27,7 +27,6 @@ router.get('/suggestions', async (req, res) => {
       ...trails.map(trail => ({ name: trail.name, type: 'Trail' })),
     ];
 
-    console.log('Suggestions:', suggestions);
     res.json(suggestions);
   } catch (error) {
     console.error('Error fetching suggestions:', error);
@@ -36,52 +35,41 @@ router.get('/suggestions', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  const { q, state, destination } = req.query;
+  const { q } = req.query;
   try {
-    let results = [];
-
-    if (!destination || destination === 'forest') {
-      const forests = await Forest.findAll({
-        where: {
-          name: {
-            [Op.iLike]: `%${q}%`
-          },
-          ...(state && { state })
+    const forests = await Forest.findAll({
+      where: {
+        name: {
+          [Op.iLike]: `%${q}%`
         }
-      });
-      results = results.concat(
-        forests.map(forest => ({
-          id: forest.id,
-          name: forest.name,
-          type: 'Forest',
-          state: forest.state,
-          forest: forest.name,
-        }))
-      );
-    }
-
-    if (!destination || destination === 'trail') {
-      const trails = await Trail.findAll({
-        where: {
-          name: {
-            [Op.iLike]: `%${q}%`,
-            [Op.not]: null
-          },
-          ...(state && { state })
+      }
+    });
+    const trails = await Trail.findAll({
+      where: {
+        name: {
+          [Op.iLike]: `%${q}%`,
+          [Op.not]: null
         }
-      });
-      results = results.concat(
-        trails.map(trail => ({
-          id: trail.id,
-          name: trail.name,
-          type: 'Trail',
-          state: trail.state,
-          forest: trail.forest,
-        }))
-      );
-    }
+      }
+    });
 
-    console.log('Search results:', results);
+    const results = [
+      ...forests.map(forest => ({
+        id: forest.id,
+        name: forest.name,
+        type: 'Forest',
+        region: forest.region,
+        shapeArea: forest.shapeArea,
+      })),
+      ...trails.map(trail => ({
+        id: trail.id,
+        name: trail.name,
+        type: 'Trail',
+        state: trail.state,
+        forest: trail.forest,
+      })),
+    ];
+
     res.json(results);
   } catch (error) {
     console.error('Error fetching search results:', error);
