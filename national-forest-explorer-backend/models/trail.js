@@ -11,10 +11,10 @@ module.exports = (sequelize) => {
   }
 
   Trail.init({
-    trailId: {
+    id: {
       type: DataTypes.STRING,
       unique: true,
-      field: 'trailId',
+      primaryKey: true,
     },
     name: DataTypes.STRING,
     type: {
@@ -32,21 +32,11 @@ module.exports = (sequelize) => {
     allowedWaterUse: DataTypes.STRING,
     typicalTrailGrade: DataTypes.STRING,
     typicalTreadWidth: DataTypes.STRING,
-    createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      field: 'createdAt',
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
-      field: 'updatedAt',
-    },
   }, {
     sequelize,
     modelName: 'Trail',
     tableName: 'Trails',
-    timestamps: true,
+    timestamps: false,
     underscored: false,
   });
 
