@@ -24,8 +24,11 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
+    const postId = req.params.id;
+    console.log(`Fetching post with ID: ${postId}`);
+
     try {
-        const post = await Post.findByPk(req.params.id, {
+        const post = await Post.findByPk(postId, {
             include: [
                 { model: User, as: 'user', attributes: ['username'] },
                 { model: Review, as: 'reviews' },
@@ -34,10 +37,16 @@ router.get('/:id', async (req, res) => {
                 { model: Photo, as: 'photos' }
             ]
         });
-        if (!post) return res.status(404).json({ error: 'Post not found' });
+
+        if (!post) {
+            console.log(`Post with ID: ${postId} not found`);
+            return res.status(404).json({ error: 'Post not found' });
+        }
+
+        console.log(`Post with ID: ${postId} found`);
         res.json(post);
     } catch (error) {
-        console.error('Failed to fetch post', error);
+        console.error(`Failed to fetch post with ID: ${postId}`, error);
         res.status(500).json({ error: 'Failed to fetch post' });
     }
 });
