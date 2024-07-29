@@ -7,10 +7,6 @@ module.exports = (sequelize) => {
         foreignKey: 'forestId',
         as: 'posts'
       });
-      Forest.hasMany(models.Trail, {
-        foreignKey: 'forestId',
-        as: 'trails'
-      });
     }
   }
 

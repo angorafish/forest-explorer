@@ -71,11 +71,21 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
+const dropForestIdFromTrails = async () => {
+    try {
+        await sequelize.query('ALTER TABLE "Trails" DROP COLUMN IF EXISTS "forestId";');
+        console.log('Dropped forestId column from Trails table if it existed.');
+    } catch (error) {
+        console.error('Error dropping forestId column:', error);
+    }
+};
+
 const syncDatabase = async () => {
     try {
         await sequelize.authenticate();
         console.log('Database connected!');
-        await sequelize.sync({ force: false });
+        await dropForestIdFromTrails();
+        await sequelize.sync({ alter: true });
         console.log('Database synchronized!');
     } catch (error) {
         console.error('Unable to connect to the database:', error);

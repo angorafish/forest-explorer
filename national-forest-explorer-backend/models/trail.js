@@ -12,18 +12,23 @@ module.exports = (sequelize) => {
 
   Trail.init({
     id: {
-      type: DataTypes.STRING,
-      unique: true,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
     },
-    name: DataTypes.STRING,
-    type: {
+    name: {
       type: DataTypes.STRING,
-      defaultValue: 'trail'
+      allowNull: false,
     },
-    forest: DataTypes.STRING,
-    state: DataTypes.STRING,
-    segmentLength: DataTypes.FLOAT,
+    state: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    forest: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    segmentLength: DataTypes.DOUBLE,
     trailSurface: DataTypes.STRING,
     managingOrg: DataTypes.STRING,
     accessibilityStatus: DataTypes.STRING,
@@ -32,12 +37,25 @@ module.exports = (sequelize) => {
     allowedWaterUse: DataTypes.STRING,
     typicalTrailGrade: DataTypes.STRING,
     typicalTreadWidth: DataTypes.STRING,
+    type: {
+      type: DataTypes.STRING,
+      defaultValue: 'trail',
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
   }, {
     sequelize,
     modelName: 'Trail',
     tableName: 'Trails',
-    timestamps: false,
-    underscored: false,
+    timestamps: true,
   });
 
   return Trail;

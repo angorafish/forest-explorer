@@ -8,6 +8,7 @@ module.exports = (sequelize) => {
       Post.hasMany(models.Review, { foreignKey: 'postId', as: 'reviews' });
       Post.hasMany(models.Like, { foreignKey: 'postId', as: 'likes' });
       Post.belongsTo(models.Forest, { foreignKey: 'forestId', as: 'forest' });
+      Post.belongsTo(models.Trail, { foreignKey: 'trailId', as: 'trail' });
       Post.hasMany(models.Photo, { foreignKey: 'postId', as: 'photos' });
     }
   }
@@ -31,6 +32,10 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     forestId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    trailId: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
