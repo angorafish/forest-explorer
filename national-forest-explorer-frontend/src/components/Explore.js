@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../css/Explore.css';
+import forestImage from '../assets/us-forest-land.jpg';
 
 const Explore = () => {
   const [searchInput, setSearchInput] = useState('');
@@ -66,7 +67,7 @@ const Explore = () => {
         )}
       </div>
       <div>
-        <img src="/us-forest-land.jpg" alt="US National Forest Land" style={{ width: '100%', height: 'auto' }} />
+        <img src={forestImage} alt="US National Forest Land" style={{ width: '100%', height: 'auto' }} />
       </div>
       <div>
         {searchResults.map((result, index) => (
