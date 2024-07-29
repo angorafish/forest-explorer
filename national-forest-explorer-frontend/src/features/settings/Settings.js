@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../services/axiosConfig';
+import axios from '../../services/axiosConfig';
+import './settings.css';
 
 const Settings = () => {
     const navigate = useNavigate();

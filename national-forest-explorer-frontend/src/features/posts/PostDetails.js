@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from '../services/axiosConfig';
+import axios from '../../services/axiosConfig';
 import Comment from './Comment';
-import '../css/PostDetails.css';
+import './posts.css';
 import EditPostModal from './EditPostModal';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../authentication/AuthContext';
 import { FaEllipsisV, FaArrowLeft } from 'react-icons/fa';
 
 const PostDetails = () => {

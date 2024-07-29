@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createPortal } from 'react-dom';
-import axios from '../services/axiosConfig';
-import '../css/NewPostModal.css';
+import axios from '../../services/axiosConfig';
+import './posts.css';
 
 const NewPostModal = ({ isOpen, onClose }) => {
     const [postType, setPostType] = useState('photo');

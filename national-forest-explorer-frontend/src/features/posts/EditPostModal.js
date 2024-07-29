@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from '../services/axiosConfig';
-import '../css/EditPostModal.css';
+import axios from '../../services/axiosConfig';
+import './posts.css';
 
 const EditPostModal = ({ post, onClose }) => {
     const [location, setLocation] = useState(post.location);

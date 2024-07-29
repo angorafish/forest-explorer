@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../services/axiosConfig';
-import { useAuth } from '../AuthContext';
+import axios from '../../services/axiosConfig';
+import { useAuth } from './AuthContext';
+import './authentication.css';
 
 const LoginSignup = () => {
     const { setCurrentUser } = useAuth();

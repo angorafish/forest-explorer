@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../services/axiosConfig';
-import { useAuth } from '../AuthContext';
-import socket from '../services/socketConfig';
+import axios from '../../services/axiosConfig';
+import { useAuth } from '../authentication/AuthContext';
+import socket from '../../services/socketConfig';
 import { Link } from 'react-router-dom';
-import '../css/Notification.css';
+import './notification.css';
 
 const Notifications = () => {
     const [notifications, setNotifications] = useState([]);

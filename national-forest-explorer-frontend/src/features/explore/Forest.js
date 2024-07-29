@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from '../services/axiosConfig';
+import axios from '../../services/axiosConfig';
+import './explore.css';
 
 const Forest = () => {
     const { id } = useParams();

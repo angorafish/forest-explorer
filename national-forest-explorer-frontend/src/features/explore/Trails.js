@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../services/axiosConfig';
+import './explore.css';
 
 function Trails() {
     const [trails, setTrails] = useState([]);

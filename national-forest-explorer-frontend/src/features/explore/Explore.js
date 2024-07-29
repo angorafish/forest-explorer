@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from '../../services/axiosConfig';
 import { useNavigate } from 'react-router-dom';
-import '../css/Explore.css';
-import forestImage from '../assets/us-forest-land.jpg';
+import './explore.css';
+import forestImage from '../../assets/us-forest-land.jpg';
 
 const Explore = () => {
   const [searchInput, setSearchInput] = useState('');

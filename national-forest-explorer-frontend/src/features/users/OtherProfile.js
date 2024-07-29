@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from '../services/axiosConfig';
-import { useAuth } from '../AuthContext';
-import '../css/OtherProfile.css';
+import axios from '../../services/axiosConfig';
+import { useAuth } from '../authentication/AuthContext';
+import './profile.css';
 
 const OtherProfile = () => {
     const { currentUser } = useAuth();

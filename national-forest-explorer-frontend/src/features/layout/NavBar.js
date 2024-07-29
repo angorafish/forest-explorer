@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import NewPostModal from './NewPostModal';
-import '../css/NavBar.css';
-import Logo from '../assets/logo_transparent.png';
-import axios from '../services/axiosConfig';
-import socket from '../services/socketConfig';
-import { useAuth } from '../AuthContext';
+import NewPostModal from '../posts/NewPostModal';
+import './navBar.css';
+import Logo from '../../assets/logo_transparent.png';
+import axios from '../../services/axiosConfig';
+import socket from '../../services/socketConfig';
+import { useAuth } from '../authentication/AuthContext';
 
 const NavBar = () => {
   const navigate = useNavigate();

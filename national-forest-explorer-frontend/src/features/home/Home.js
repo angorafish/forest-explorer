@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "../services/axiosConfig";
+import axios from "../../services/axiosConfig";
 import { Link } from "react-router-dom";
-import "../css/Home.css";
+import "./home.css";
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
