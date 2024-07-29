@@ -4,10 +4,6 @@ API Links (USFS):
 https://data-usfs.hub.arcgis.com/datasets/0969eb1cbb2f4a1d861ee58fff587cc2_0/explore?location=27.202374%2C-110.397450%2C3.13
 - Purpose: Contains information about trails within National Forest System
 
-# Recreation Information Database (RIDB)
-https://data-usfs.hub.arcgis.com/documents/usfs::recreation-information-database-ridb/about
-- Purpose: Provides comprehensive information about recreational areas, campsites and activities
-
 # Forest Administrative Boundaries
 https://data-usfs.hub.arcgis.com/datasets/usfs::forest-administrative-boundaries-feature-layer/about
 - Purpose: Provide boundaries of national forests and grasslands
