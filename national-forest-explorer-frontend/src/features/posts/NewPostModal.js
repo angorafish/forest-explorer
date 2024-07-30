@@ -1,21 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from 'react-dom';
 import axios from '../../services/axiosConfig';
 import './posts.css';
 
 // Modal component to create a new post
 const NewPostModal = ({ isOpen, onClose }) => {
-    // State variables for form inputs
-    const [postType, setPostType] = useState('photo');
-    const [location, setLocation] = useState('');
-    const [rating, setRating] = useState(0);
-    const [reviewText, setReviewText] = useState('');
-    const [photo, setPhoto] = useState(null);
+    const [postType, setPostType] = useState('photo'); // State for post type
+    const [location, setLocation] = useState(''); // State for location input
+    const [locationId, setLocationId] = useState(null); // State for selected location ID
+    const [rating, setRating] = useState(0); // State for rating input
+    const [reviewText, setReviewText] = useState(''); // State for review text input
+    const [photo, setPhoto] = useState(null); // State for photo input
+    const [suggestions, setSuggestions] = useState([]); // State for location suggestions
+
+    // Fetch suggestions based on user input
+    const handleLocationChange = async (e) => {
+        const value = e.target.value;
+        setLocation(value);
+        if (value) {
+            try {
+                const response = await axios.get(`/search/suggestions?q=${value}`);
+                setSuggestions(response.data);
+            } catch (error) {
+                console.error('Failed to fetch suggestions', error);
+            }
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    // Handle suggestion click
+    const handleSuggestionClick = (suggestion) => {
+        setLocation(suggestion.name);
+        setLocationId(suggestion.id);
+        setSuggestions([]);
+    };
 
     // Reset form inputs
     const resetForm = () => {
         setPostType('photo');
         setLocation('');
+        setLocationId(null);
         setRating(0);
         setReviewText('');
         setPhoto(null);
@@ -28,6 +53,7 @@ const NewPostModal = ({ isOpen, onClose }) => {
             const formData = new FormData();
             formData.append('postType', postType);
             formData.append('location', location);
+            formData.append('locationId', locationId);
             if (postType === 'review') {
                 formData.append('rating', rating);
                 formData.append('reviewText', reviewText);
@@ -66,9 +92,18 @@ const NewPostModal = ({ isOpen, onClose }) => {
                         <input
                             type="text"
                             value={location}
-                            onChange={(e) => setLocation(e.target.value)}
+                            onChange={handleLocationChange}
                             required
                         />
+                        {suggestions.length > 0 && (
+                            <ul className="suggestions-dropdown">
+                                {suggestions.map((suggestion, index) => (
+                                    <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                                        {suggestion.name} - {suggestion.type}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </label>
                     {postType === 'review' && (
                         <>

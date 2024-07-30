@@ -24,8 +24,8 @@ router.get("/suggestions", async (req, res) => {
     });
 
     const suggestions = [
-      ...forests.map((forest) => ({ name: forest.name, type: "Forest" })),
-      ...trails.map((trail) => ({ name: trail.name, type: "Trail" })),
+      ...forests.map((forest) => ({ id: forest.id, name: forest.name, type: "Forest" })),
+      ...trails.map((trail) => ({ id: trail.id, name: trail.name, type: "Trail" })),
     ];
 
     res.json(suggestions);
