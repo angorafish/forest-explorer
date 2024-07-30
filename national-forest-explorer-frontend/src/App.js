@@ -11,7 +11,6 @@ import Settings from './features/settings/Settings';
 import PostDetails from './features/posts/PostDetails';
 import Explore from './features/explore/Explore';
 import Trails from './features/explore/Trails';
-import OtherProfile from './features/users/OtherProfile';
 import Notifications from './features/notifications/Notification';
 import Details from './features/explore/Details';
 import Saved from './features/saved/Saved';
@@ -22,6 +21,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 function App() {
     const { currentUser, setCurrentUser, notificationCount, setNotificationCount } = useAuth();
 
+    // Effect to fetch and set the current user on initial load
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -30,7 +30,8 @@ function App() {
                     'Authorization': `Bearer ${token}`
                 }
             }).then(response => {
-                setCurrentUser(response.data);
+                setCurrentUser(response.data); // Set the current user state
+                // Join the user to the socket room
                 socket.emit('join', response.data.id);
             }).catch((error) => {
                 localStorage.removeItem('token');
@@ -38,6 +39,7 @@ function App() {
         }
     }, [setCurrentUser]);
 
+    // Effect to fetch notifications and set up socket listeners for new notifications
     useEffect(() => {
         if (currentUser) {
             axios.get('/notifications').then(response => {
@@ -51,12 +53,19 @@ function App() {
                 setNotificationCount(prevCount => prevCount + 1);
             });
 
+            // Cleanup the socket listener on component unmount
             return () => {
                 socket.off('new_notification');
             };
         }
     }, [currentUser, setNotificationCount]);
 
+    /**
+     * The App function is the main component of the whole application.
+     * It sets up the routing structure and provides global components.
+     * The Router component is used to handle navigation between pages.
+     * Routes are defined to map different paths to their respective components.
+     */
     return (
         <Router>
             <NavBar />

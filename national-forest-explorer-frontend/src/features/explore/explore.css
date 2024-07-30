@@ -1,23 +1,23 @@
 .suggestions-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: white;
-    border: 1px solid #ccc;
-    z-index: 1000;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .suggestions-dropdown li {
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .suggestions-dropdown li:hover {
-    background-color: #f0f0f0;
-  }
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.suggestions-dropdown li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestions-dropdown li:hover {
+  background-color: #f0f0f0;
+}
