@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.changeColumn('Photos', 'postId', {
+    await queryInterface.changeColumn("Photos", "postId", {
       type: Sequelize.INTEGER,
-      allowNull: true
+      allowNull: true,
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.changeColumn('Photos', 'postId', {
+    await queryInterface.changeColumn("Photos", "postId", {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     });
-  }
+  },
 };

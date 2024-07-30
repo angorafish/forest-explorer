@@ -1,3 +1,3 @@
-const morgan = require('morgan');
+const morgan = require("morgan");
 
-module.exports = morgan('combined');
+module.exports = morgan("combined");

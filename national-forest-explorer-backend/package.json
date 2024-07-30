@@ -4,12 +4,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest --config package.json"
+    "dev": "nodemon index.js",
+    "test": "jest --config package.json",
+    "format": "prettier --write ."
   },
   "keywords": [],
-  "author": "",
+  "author": "Miriam Foster",
   "license": "ISC",
-  "description": "",
+  "description": "Backend for the National Forest Explorer project.",
   "dependencies": {
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -25,7 +27,9 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
   },
   "jest": {
     "globalSetup": "./tests/setup.js",

@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addColumn('Forests', 'type', {
+    await queryInterface.addColumn("Forests", "type", {
       type: Sequelize.STRING,
-      defaultValue: 'forest'
+      defaultValue: "forest",
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.removeColumn('Forests', 'type');
-  }
+    await queryInterface.removeColumn("Forests", "type");
+  },
 };
