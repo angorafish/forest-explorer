@@ -4,10 +4,15 @@ import axios from '../../services/axiosConfig';
 import { useAuth } from '../authentication/AuthContext';
 import './profile.css';
 
+// Display and edit the current user's profile
 const Profile = () => {
+    // Access the current user from the auth context
     const { currentUser } = useAuth();
+    // Extract the username parameter from the URL
     const { username } = useParams();
+    // Hook for navigation
     const navigate = useNavigate();
+    // State to store user data, posts, and edit mode status
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
     const [editMode, setEditMode] = useState(false);
@@ -15,6 +20,7 @@ const Profile = () => {
     const [newCoverPhoto, setNewCoverPhoto] = useState(null);
     const [postOptionsVisible, setPostOptionsVisible] = useState({});
 
+    // Fetch user data and posts when the component mounts or the username changes
     useEffect(() => {
         axios.get(`/users/profile/${username}`).then(response => {
             setUser(response.data);
@@ -29,6 +35,7 @@ const Profile = () => {
         });
     }, [username]);
 
+    // Helper function to format photo URLs correctly
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
             return url.replace('../uploads/', '/uploads/');
@@ -36,22 +43,27 @@ const Profile = () => {
         return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
     };
 
+    // Handle navigation to post details page
     const handlePostClick = (postId) => {
         navigate(`/posts/${postId}`);
     };
 
+    // Toggle edit mode
     const handleEditClick = () => {
         setEditMode(!editMode);
     };
 
+    // Change profile photo logic
     const handleProfilePhotoChange = (event) => {
         setNewProfilePhoto(event.target.files[0]);
     };
 
+    // Change cover photo logic
     const handleCoverPhotoChange = (event) => {
         setNewCoverPhoto(event.target.files[0]);
     };
 
+    // Save changes to profile photos
     const handleSaveChanges = () => {
         const formData = new FormData();
         if (newProfilePhoto) formData.append('profilePhoto', newProfilePhoto);
@@ -70,6 +82,7 @@ const Profile = () => {
         });
     };
 
+    // Toggle visibility of post options menu
     const togglePostOptions = (postId) => {
         setPostOptionsVisible(prevState => ({
             ...prevState,
@@ -77,10 +90,12 @@ const Profile = () => {
         }));
     };
 
+    // Navigate to edit post page
     const handleEditPost = (postId) => {
         navigate(`/posts/${postId}/edit`);
     };
 
+    // Delete post
     const handleDeletePost = (postId) => {
         axios.delete(`/posts/${postId}`).then(() => {
             setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
@@ -89,18 +104,22 @@ const Profile = () => {
         });
     };
 
+    // Handle like click navigation
     const handleLikeClick = (username) => {
         navigate(`/profile/${username}`);
     };
 
+    // Handle comment click navigation
     const handleCommentClick = (username) => {
         navigate(`/profile/${username}`);
     };
 
+    // Display loading message while fetching data
     if (!user) {
         return <div>Loading...</div>;
     }
 
+    // Check if current user is on their own
     const isCurrentUser = currentUser && currentUser.username === user.username;
 
     return (
