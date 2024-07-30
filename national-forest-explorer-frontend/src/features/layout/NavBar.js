@@ -46,10 +46,6 @@ const NavBar = () => {
     }
   }, [currentUser, setNotificationCount]);
 
-  const handleProfileClick = () => {
-    navigate(`/profile/${currentUser.username}`);
-  };
-
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };

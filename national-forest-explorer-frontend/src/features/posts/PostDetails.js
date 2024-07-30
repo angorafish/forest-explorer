@@ -66,7 +66,7 @@ const PostDetails = () => {
             }
         } else {
             try {
-                const response = await axios.post(`/likes/${id}`);
+                await axios.post(`/likes/${id}`);
                 setLikes(likes + 1);
                 setLikedByUser(true);
             } catch (error) {

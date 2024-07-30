@@ -19,7 +19,7 @@ import socket from './services/socketConfig';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
-    const { currentUser, setCurrentUser, notificationCount, setNotificationCount } = useAuth();
+    const { currentUser, setCurrentUser, setNotificationCount } = useAuth();
 
     // Effect to fetch and set the current user on initial load
     useEffect(() => {
