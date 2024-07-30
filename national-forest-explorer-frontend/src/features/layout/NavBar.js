@@ -7,13 +7,15 @@ import axios from '../../services/axiosConfig';
 import socket from '../../services/socketConfig';
 import { useAuth } from '../authentication/AuthContext';
 
+// Display navbar component
 const NavBar = () => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser, notificationCount, setNotificationCount } = useAuth();
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [isModalOpen, setModalOpen] = useState(false); // Using state to manage modal visibility
+  const [isDropdownOpen, setDropdownOpen] = useState(false); // Using state to manage dropdown visibiility
+  const dropdownRef = useRef(null); // Ref to handle clicks outside the dropdown
 
+  // Verify token and fetch current user
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -27,6 +29,7 @@ const NavBar = () => {
     }
   }, [setCurrentUser]);
 
+  // Fetch notifications and set up socket listeners
   useEffect(() => {
     if (currentUser) {
       axios.get('/notifications').then(response => {
@@ -46,16 +49,19 @@ const NavBar = () => {
     }
   }, [currentUser, setNotificationCount]);
 
+  // Toggle the dropdown
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
   };
 
+  // Handle clicks outside the dropdown
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setDropdownOpen(false);
     }
   };
 
+  // Add and remove event listener for clicks outside the dropdown
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -63,12 +69,14 @@ const NavBar = () => {
     };
   }, []);
 
+  // Handle log out, log user out
   const handleLogout = () => {
     localStorage.removeItem('token');
     setCurrentUser(null);
     navigate('/');
   };
 
+  // Content for the profile picture or account button
   const profileContent = currentUser && currentUser.profilePhoto ? (
     <img
       src={`http://localhost:3000/uploads/${currentUser.profilePhoto}`}

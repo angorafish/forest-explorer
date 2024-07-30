@@ -5,15 +5,21 @@ import { Link } from 'react-router-dom';
 import './notification.css';
 import { useAuth } from '../authentication/AuthContext';
 
+// Logic to display user notifications
 const Notifications = () => {
+    // State to store notifications
     const [notifications, setNotifications] = useState([]);
+    // Access the setNotificationCount function from the auth context
     const { setNotificationCount } = useAuth();
 
+    // useEffect to fetch notifications and set up socket listeners
     useEffect(() => {
+        // Function to fetch notifications from the server
         const fetchNotifications = async () => {
             try {
                 const response = await axios.get('/notifications');
                 setNotifications(response.data);
+                // Set the count of unread notifications
                 setNotificationCount(response.data.filter(notification => notification.status === 'unread').length);
             } catch (error) {
                 console.error('Error fetching notifications:', error);
@@ -22,19 +28,23 @@ const Notifications = () => {
 
         fetchNotifications();
 
+        // Listen for new notifications via socket
         socket.on('new_notification', (notification) => {
             setNotifications((prevNotifications) => [notification, ...prevNotifications]);
             setNotificationCount(prevCount => prevCount + 1);
         });
 
+        // Cleanup the socket listener on component unmount
         return () => {
             socket.off('new_notification');
         };
     }, [setNotificationCount]);
 
+    // Handle marking a notification as read
     const handleReadNotification = async (id) => {
         try {
             await axios.put(`/notifications/${id}/read`);
+            // Update the notifications state to mark the notification as read
             setNotifications((prevNotifications) => prevNotifications.map(notification =>
                 notification.id === id ? { ...notification, status: 'read' } : notification
             ));

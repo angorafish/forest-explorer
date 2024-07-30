@@ -3,11 +3,14 @@ import axios from "../../services/axiosConfig";
 import { Link } from "react-router-dom";
 import "./home.css";
 
+// Logic for home page
 const Home = () => {
+    // State used to manage posts, loading status and errors
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Fetch posts on component mount
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -27,6 +30,7 @@ const Home = () => {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
+    // Get photo URL with correct path
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
             return url.replace('../uploads/', '/uploads/');

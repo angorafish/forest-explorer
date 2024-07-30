@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import axios from '../../services/axiosConfig';
 import './posts.css';
 
+// Modal component to edit a post
 const EditPostModal = ({ post, onClose }) => {
+    // State variables for form inputs
     const [location, setLocation] = useState(post.location);
     const [rating, setRating] = useState(post.rating);
     const [reviewText, setReviewText] = useState(post.reviewText);
     const [photo, setPhoto] = useState(null);
 
+    // Handle form submission to update a post
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -23,7 +26,7 @@ const EditPostModal = ({ post, onClose }) => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            onClose();
+            onClose(); // Close the modal on success
         } catch (error) {
             console.error('Failed to update post', error);
         }

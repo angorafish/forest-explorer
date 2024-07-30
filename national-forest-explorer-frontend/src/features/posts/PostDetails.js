@@ -7,9 +7,10 @@ import EditPostModal from './EditPostModal';
 import { useAuth } from '../authentication/AuthContext';
 import { FaEllipsisV, FaArrowLeft } from 'react-icons/fa';
 
+// Using state to manage the features
 const PostDetails = () => {
-    const { id } = useParams();
-    const { currentUser } = useAuth();
+    const { id } = useParams(); // Get the post ID from URL parameters
+    const { currentUser } = useAuth(); // Get the current user from context
     const navigate = useNavigate();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -21,6 +22,7 @@ const PostDetails = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
+    // Fetch post details and related likes/comments
     useEffect(() => {
         const fetchPost = async () => {
             try {
@@ -39,6 +41,7 @@ const PostDetails = () => {
         fetchPost();
     }, [id, currentUser]);
 
+    // Handle new comment submission
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -54,6 +57,7 @@ const PostDetails = () => {
         }
     };
 
+    // Handle liking and unliking the post
     const handleLike = async () => {
         if (likedByUser) {
             try {
@@ -76,6 +80,7 @@ const PostDetails = () => {
         }
     };
 
+    // Handle post deletion
     const handleDelete = async () => {
         if (window.confirm('Are you sure you want to delete this post?')) {
             try {
@@ -88,6 +93,7 @@ const PostDetails = () => {
         }
     };
 
+    // Handle editing the post
     const handleEdit = () => {
         setShowModal(true);
     };
@@ -99,6 +105,7 @@ const PostDetails = () => {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
+    // Helper function to get the photo URL
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
             return url.replace('../uploads/', '/uploads/');

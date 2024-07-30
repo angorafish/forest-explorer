@@ -3,12 +3,15 @@ import { useParams, Link } from "react-router-dom";
 import axios from '../../services/axiosConfig';
 import './explore.css';
 
+// Logic for displaying forest details
 const Forest = () => {
     const { id } = useParams();
+    // State to store forest details, manage loading status, and manage errors
     const [forest, setForest] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Fetch forest details when component mounts
     useEffect(() => {
         const fetchForest = async () => {
             try {

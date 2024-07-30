@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import axios from '../../services/axiosConfig';
 import './posts.css';
 
+// Using state to manage list of posts, loading status, and errors
 const Posts = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Fetch all posts on component mount
     useEffect(() => {
         const fetchPosts = async () => {
             try {

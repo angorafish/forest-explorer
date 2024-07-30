@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../../services/axiosConfig';
 import './settings.css';
 
+// Logic for user to edit their own account settings
 const Settings = () => {
+    // React state hooks for managing form inputs and messages
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -11,13 +13,18 @@ const Settings = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
 
+    // Handle form submission for updating settings
     const handleUpdate = async (e) => {
         e.preventDefault();
+
+        // Check if passwords match
         if (password !== confirmPassword) {
             setMessage("Passwords do not match.");
             return;
         }
+
         try {
+            // Send PUT request to update user settings
             await axios.put('/settings', { username, email, password });
             setMessage("Settings updated successfully.");
         } catch (error) {
@@ -25,11 +32,13 @@ const Settings = () => {
         }
     };
 
+    // Handle account deletion
     const handleDeleteAccount = async () => {
         if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
             try {
+                // Send DELETE request to delete user account
                 await axios.delete('/settings');
-                navigate('/login');
+                navigate('/login'); // Redirect to login page after account deletion
             } catch (error) {
                 setMessage("Failed to delete account.");
             }

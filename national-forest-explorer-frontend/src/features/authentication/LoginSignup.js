@@ -4,32 +4,40 @@ import axios from '../../services/axiosConfig';
 import { useAuth } from './AuthContext';
 import './authentication.css';
 
+// Handle logic on login and signup pages
 const LoginSignup = () => {
     const { setCurrentUser } = useAuth();
+    // State to manage if form is for signup or login
     const [isSignup, setIsSignup] = useState(false);
+    // State to manage form inputs
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    // State to manage error and success messages
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const navigate = useNavigate();
 
+    // Function to validate email format
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
 
+    // Function to validate password format
     const validatePassword = (password) => {
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
         return passwordRegex.test(password);
     };
 
+    // Handle form submission for both login and signup forms
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setSuccess(null);
 
+        // Validation checks
         if (isSignup && password !== confirmPassword) {
             setError("Passwords do not match!");
             return;

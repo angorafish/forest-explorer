@@ -3,13 +3,16 @@ import { createPortal } from 'react-dom';
 import axios from '../../services/axiosConfig';
 import './posts.css';
 
+// Modal component to create a new post
 const NewPostModal = ({ isOpen, onClose }) => {
+    // State variables for form inputs
     const [postType, setPostType] = useState('photo');
     const [location, setLocation] = useState('');
     const [rating, setRating] = useState(0);
     const [reviewText, setReviewText] = useState('');
     const [photo, setPhoto] = useState(null);
 
+    // Reset form inputs
     const resetForm = () => {
         setPostType('photo');
         setLocation('');
@@ -18,6 +21,7 @@ const NewPostModal = ({ isOpen, onClose }) => {
         setPhoto(null);
     };
 
+    // Handle form submission to create a new post
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -36,8 +40,8 @@ const NewPostModal = ({ isOpen, onClose }) => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            onClose();
-            resetForm();
+            onClose(); // Close the modal on success
+            resetForm(); // Reset form
         } catch (error) {
             console.error("Failed to create a post", error);
         }

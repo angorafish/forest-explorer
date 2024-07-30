@@ -2,11 +2,13 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from '../../services/axiosConfig';
 
 const AuthContext = createContext();
-
+// Manage and provide authentication-related state across the app
 export const AuthProvider = ({ children }) => {
+    // State to store current user and notification count
     const [currentUser, setCurrentUser] = useState(null);
     const [notificationCount, setNotificationCount] = useState(0);
 
+    // Fetch current user on initial load
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {

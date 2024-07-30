@@ -7,13 +7,17 @@ import { faHeart as filledHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as hollowHeart } from '@fortawesome/free-regular-svg-icons';
 import './explore.css';
 
+// Logic to show location details of trails and forests
 const Details = () => {
-  const { type, id } = useParams();
-  const [details, setDetails] = useState(null);
+  const { type, id } = useParams(); // Extract params from URL
+  // State to store details of location and track if location is saved
+  const [details, setDetails] = useState(null); 
   const [isSaved, setIsSaved] = useState(false);
+  // Access current user from auth context
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
+  // Fetch details and saved locations when component mounts
   useEffect(() => {
     const fetchDetails = async () => {
       try {
@@ -34,6 +38,7 @@ const Details = () => {
     fetchDetails();
   }, [type, id, currentUser]);
 
+  // Handle saving and unsaving location
   const handleSaveLocation = async () => {
     if (!currentUser) return;
     try {

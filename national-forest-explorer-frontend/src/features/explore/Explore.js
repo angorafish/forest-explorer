@@ -4,12 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import './explore.css';
 import forestImage from '../../assets/us-forest-land.jpg';
 
+// Logic for explore/search page
 const Explore = () => {
+  // State management for search input, search suggestions, and search results
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
+  // Handle input change and fetch suggestions
   const handleInputChange = async (e) => {
     const value = e.target.value;
     setSearchInput(value);
@@ -25,6 +28,7 @@ const Explore = () => {
     }
   };
 
+  // Handle search action
   const handleSearch = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/search', {
@@ -36,12 +40,14 @@ const Explore = () => {
     }
   };
 
+  // Handle suggestion click
   const handleSuggestionClick = (suggestion) => {
     setSearchInput(suggestion.name);
     setSuggestions([]);
     handleSearch();
   };
 
+  // Handle result click
   const handleResultClick = (id, type) => {
     navigate(`/details/${type}/${id}`);
   };
