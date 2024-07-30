@@ -6,26 +6,29 @@ const authenticateToken = require("../middleware/auth");
 const emailValidator = require("email-validator");
 const router = express.Router();
 
+// Helper function to hash passwords
 const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   return await bcrypt.hash(password, salt);
 };
-
+// Helper function to validate password strength
 const validatePassword = (password) => {
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
   return passwordRegex.test(password);
 };
-
+// Helper function to create a JWT token
 const createToken = (user) => {
   return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "24h",
   });
 };
 
+// Route to verify the token
 router.get("/verify", authenticateToken, (req, res) => {
   res.status(200).json({ message: "Token is valid" });
 });
 
+// Route to handle user signup
 router.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;
   console.log("Received signup request", { username, email });
@@ -59,6 +62,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+// Route to handle user login
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   console.log("Received login request", { username });
@@ -81,6 +85,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Route to fetch authenticated user's details
 router.get("/me", authenticateToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);

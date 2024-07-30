@@ -13,6 +13,7 @@ const authenticateToken = require("../middleware/auth");
 const upload = require("../middleware/upload");
 const path = require("path");
 
+// Route to fetch all posts
 router.get("/", async (req, res) => {
   try {
     const posts = await Post.findAll({
@@ -35,6 +36,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Route to fetch a specific post by ID
 router.get("/:id", async (req, res) => {
   const postId = req.params.id;
   console.log(`Fetching post with ID: ${postId}`);
@@ -67,6 +69,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Route to create a new post
 router.post(
   "/",
   authenticateToken,
@@ -116,6 +119,7 @@ router.post(
   }
 );
 
+// Route to update an existing post
 router.put(
   "/:id",
   authenticateToken,
@@ -156,6 +160,7 @@ router.put(
   }
 );
 
+// Route to delete a post
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);

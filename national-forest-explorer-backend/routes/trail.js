@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const trailService = require("../services/trailService");
 
+// Route to fetch all trails
 router.get("/", async (req, res) => {
   try {
     const trails = await trailService.getAllTrails();

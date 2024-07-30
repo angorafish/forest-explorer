@@ -2,6 +2,7 @@ const express = require("express");
 const { SavedLocation, Forest, Trail } = require("../models");
 const router = express.Router();
 
+// Route to fetch saved location for a specific user
 router.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
   console.log(`Fetching saved locations for user: ${userId}`);
@@ -41,6 +42,7 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
+// Route to save a location
 router.post("/save", async (req, res) => {
   const { userId, locationId, locationType } = req.body;
 
@@ -57,6 +59,7 @@ router.post("/save", async (req, res) => {
   }
 });
 
+// Route to unsave a location
 router.delete("/unsave", async (req, res) => {
   const { userId, locationId, locationType } = req.body;
 

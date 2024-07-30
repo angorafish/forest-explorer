@@ -2,6 +2,7 @@ const express = require("express");
 const { Forest, Trail, Post } = require("../models");
 const router = express.Router();
 
+// Route to fetch details of a specific forest
 router.get("/forests/:id", async (req, res) => {
   try {
     const forest = await Forest.findByPk(req.params.id, {
@@ -18,6 +19,7 @@ router.get("/forests/:id", async (req, res) => {
   }
 });
 
+// Route to fetch details of a specific trail
 router.get("/trails/:id", async (req, res) => {
   try {
     const trail = await Trail.findByPk(req.params.id, {
@@ -34,6 +36,7 @@ router.get("/trails/:id", async (req, res) => {
   }
 });
 
+// Route to fetch details of a specific post
 router.get("/posts/:id", async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);

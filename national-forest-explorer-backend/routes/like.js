@@ -3,6 +3,7 @@ const router = express.Router();
 const { Like, Post, Notification } = require("../models");
 const authenticateToken = require("../middleware/auth");
 
+// Route to like a post
 router.post("/:postId", authenticateToken, async (req, res) => {
   try {
     const { postId } = req.params;
@@ -32,6 +33,7 @@ router.post("/:postId", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to unlike a post
 router.delete("/:postId", authenticateToken, async (req, res) => {
   try {
     const { postId } = req.params;

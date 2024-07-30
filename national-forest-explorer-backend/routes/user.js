@@ -15,6 +15,7 @@ const jwt = require("jsonwebtoken");
 const authenticateToken = require("../middleware/auth");
 const path = require("path");
 
+// Route to fetch a user's post by their username
 router.get("/user/:username", async (req, res) => {
   try {
     const user = await User.findOne({
@@ -51,6 +52,7 @@ router.get("/user/:username", async (req, res) => {
   }
 });
 
+// Route to fetch a user's profile by their username
 router.get("/profile/:username", authenticateToken, async (req, res) => {
   try {
     const user = await User.findOne({
@@ -81,6 +83,7 @@ router.get("/profile/:username", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to update user's profile and cover photos
 router.put(
   "/:username/photos",
   authenticateToken,
@@ -139,6 +142,7 @@ router.put(
   }
 );
 
+// Route to register a new user
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -155,6 +159,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// Route to login a user
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;

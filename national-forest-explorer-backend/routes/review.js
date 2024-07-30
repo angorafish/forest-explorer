@@ -3,6 +3,7 @@ const router = express.Router();
 const { Review } = require("../models");
 const authenticateToken = require("../middleware/auth");
 
+// Route to create a new review
 router.post("/", authenticateToken, async (req, res) => {
   const { forestId, trailId, rating, comment, postId } = req.body;
   const userId = req.user.id;
@@ -23,6 +24,7 @@ router.post("/", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to fetch reviews for a specific lcoation
 router.get("/:locationId", async (req, res) => {
   const { locationId } = req.params;
   try {

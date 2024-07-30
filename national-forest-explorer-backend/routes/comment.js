@@ -3,6 +3,7 @@ const router = express.Router();
 const { Comment, User, Notification, Post } = require("../models");
 const authenticateToken = require("../middleware/auth");
 
+// Route to fetch comments for a specific post
 router.get("/:postId", authenticateToken, async (req, res) => {
   try {
     const comments = await Comment.findAll({
@@ -16,6 +17,7 @@ router.get("/:postId", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to create new comment
 router.post("/", authenticateToken, async (req, res) => {
   const { postId, text } = req.body;
   try {

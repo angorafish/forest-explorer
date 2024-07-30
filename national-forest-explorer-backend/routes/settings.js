@@ -4,6 +4,7 @@ const { User } = require("../models");
 const authenticateToken = require("../middleware/auth");
 const router = express.Router();
 
+// Route to update user settings
 router.put("/", authenticateToken, async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -24,6 +25,7 @@ router.put("/", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to delete a user account
 router.delete("/", authenticateToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);

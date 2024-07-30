@@ -5,6 +5,7 @@ const authenticateToken = require("../middleware/auth");
 const upload = require("../middleware/upload");
 const path = require("path");
 
+// Route to fetch photos for a specific user
 router.get("/user/:userId", authenticateToken, async (req, res) => {
   try {
     const photos = await Photo.findAll({
@@ -17,6 +18,7 @@ router.get("/user/:userId", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to fetch photos for a specific post
 router.get("/post/:postId", authenticateToken, async (req, res) => {
   try {
     const photos = await Photo.findAll({
@@ -29,6 +31,7 @@ router.get("/post/:postId", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to create a new post with photos
 router.post(
   "/",
   authenticateToken,
@@ -68,6 +71,7 @@ router.post(
   }
 );
 
+// Route to delete a photo
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const photo = await Photo.findByPk(req.params.id);

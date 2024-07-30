@@ -3,6 +3,7 @@ const { Forest, Trail } = require("../models");
 const router = express.Router();
 const { Op } = require("sequelize");
 
+// Route to fetch search suggestions
 router.get("/suggestions", async (req, res) => {
   const { q } = req.query;
   try {
@@ -34,6 +35,7 @@ router.get("/suggestions", async (req, res) => {
   }
 });
 
+// Route to perform search
 router.get("/", async (req, res) => {
   const { q } = req.query;
   try {

@@ -3,6 +3,7 @@ const router = express.Router();
 const { Notification, User } = require("../models");
 const authenticateToken = require("../middleware/auth");
 
+// Route to fetch notifications for the authenticated user
 router.get("/", authenticateToken, async (req, res) => {
   try {
     const notifications = await Notification.findAll({
@@ -16,7 +17,7 @@ router.get("/", authenticateToken, async (req, res) => {
       ],
       order: [["createdAt", "DESC"]],
     });
-    console.log("Fetched notifications:", notifications); // Add this line
+    console.log("Fetched notifications:", notifications);
     res.json(notifications);
   } catch (error) {
     console.error("Error fetching notifications:", error.message, error.stack);
@@ -24,6 +25,7 @@ router.get("/", authenticateToken, async (req, res) => {
   }
 });
 
+// Route to mark a notification as read
 router.put("/:id/read", authenticateToken, async (req, res) => {
   try {
     const notification = await Notification.findByPk(req.params.id);
