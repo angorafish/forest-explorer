@@ -6,13 +6,11 @@ import forestImage from '../../assets/us-forest-land.jpg';
 
 // Logic for explore/search page
 const Explore = () => {
-  // State management for search input, search suggestions, and search results
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
-  // Handle input change and fetch suggestions
   const handleInputChange = async (e) => {
     const value = e.target.value;
     setSearchInput(value);
@@ -28,7 +26,6 @@ const Explore = () => {
     }
   };
 
-  // Handle search action
   const handleSearch = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/search', {
@@ -40,21 +37,19 @@ const Explore = () => {
     }
   };
 
-  // Handle suggestion click
   const handleSuggestionClick = (suggestion) => {
     setSearchInput(suggestion.name);
     setSuggestions([]);
     handleSearch();
   };
 
-  // Handle result click
   const handleResultClick = (id, type) => {
     navigate(`/details/${type}/${id}`);
   };
 
   return (
-    <div>
-      <div className="search-bar" style={{ position: 'relative' }}>
+    <div className="explore-content">
+      <div className="search-bar">
         <input
           type="text"
           placeholder="Search for forests or trails..."
@@ -72,17 +67,21 @@ const Explore = () => {
           </ul>
         )}
       </div>
-      <div>
-        <img src={forestImage} alt="US National Forest Land" style={{ width: '100%', height: 'auto' }} />
-      </div>
-      <div>
+      <div className="results-container">
         {searchResults.map((result, index) => (
-          <div key={index} onClick={() => handleResultClick(result.id, result.type.toLowerCase())}>
-            <h3>{result.name}</h3>
-            <p>{result.type} in {result.state || 'Unknown'}</p>
-            <p>{result.forest || 'Unknown'}</p>
+          <div key={index} className="result-item" onClick={() => handleResultClick(result.id, result.type.toLowerCase())}>
+            <div className="result-title">{result.name}</div>
+            {result.type && result.state && (
+              <div className="result-description">{result.type} in {result.state}</div>
+            )}
+            {result.forest && (
+              <div className="result-description">{result.forest}</div>
+            )}
           </div>
         ))}
+      </div>
+      <div className="map-container">
+        <img src={forestImage} alt="US National Forest Land" />
       </div>
     </div>
   );

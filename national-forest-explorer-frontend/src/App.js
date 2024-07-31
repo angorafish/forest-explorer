@@ -16,6 +16,7 @@ import Details from './features/explore/Details';
 import Saved from './features/saved/Saved';
 import axios from './services/axiosConfig';
 import socket from './services/socketConfig';
+import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {

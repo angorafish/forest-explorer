@@ -100,7 +100,7 @@ const NavBar = () => {
         {currentUser && (
           <>
             <Link to="/saved">Saved</Link>
-            <button onClick={() => setModalOpen(true)}>New Post</button>
+            <button classname="new-post-button" onClick={() => setModalOpen(true)}>New Post</button>
           </>
         )}
       </div>
@@ -116,7 +116,7 @@ const NavBar = () => {
             </div>
           </div>
         ) : (
-          <Link to="/login">Login/Signup</Link>
+          <Link to="/login" className="login-signup-button">Login/Signup</Link>
         )}
       </div>
       <NewPostModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />

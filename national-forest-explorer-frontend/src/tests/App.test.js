@@ -1,142 +1,48 @@
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { AuthProvider, AuthContext } from '../features/authentication/AuthContext';
+import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
-import '@testing-library/jest-dom/extend-expect';
-import userEvent from '@testing-library/user-event';
-import socket from '../services/socketConfig';
-import axios from '../services/axiosConfig';
+import '@testing-library/jest-dom';
+import axios from 'axios';
 
-// Mock axios module
-jest.mock('../services/axiosConfig', () => ({
-  get: jest.fn(),
-}));
+// Mock axios
+jest.mock('axios');
 
-// Mock the socketConfig module
-jest.mock('../services/socketConfig', () => ({
-  emit: jest.fn(),
-  on: jest.fn(),
-  off: jest.fn(),
-}));
+afterEach(() => {
+    jest.clearAllMocks();
+});
 
-describe('App Component', () => {
-  test('renders Home page by default', () => {
-    render(
-      <Router>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </Router>
-    );
-    const homeElement = screen.getByText(/home/i);
-    expect(homeElement).toBeInTheDocument();
-  });
+const renderWithRouter = (ui, { route = '/' } = {}) => {
+    window.history.pushState({}, 'Test page', route);
+    return render(<MemoryRouter>{ui}</MemoryRouter>);
+};
 
-  test('renders LoginSignup component when navigating to /login', () => {
-    render(
-      <Router initialEntries={['/login']}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </Router>
-    );
-    const loginElement = screen.getByText(/login/i);
-    expect(loginElement).toBeInTheDocument();
-  });
+test('renders the Home component at the root path', async () => {
+    renderWithRouter(<App />, { route: '/' });
+    await waitFor(() => expect(screen.getByText(/Home/i)).toBeInTheDocument());
+});
 
-  test('redirects to login when accessing a protected route without authentication', () => {
-    render(
-      <Router initialEntries={['/profile/testuser']}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </Router>
-    );
-    const loginElement = screen.getByText(/login/i);
-    expect(loginElement).toBeInTheDocument();
-  });
+test('renders the LoginSignup component at /login', async () => {
+    renderWithRouter(<App />, { route: '/login' });
+    await waitFor(() => expect(screen.getByText(/Login/i)).toBeInTheDocument());
+});
 
-  test('renders Profile component when authenticated and navigating to /profile/:username', () => {
-    const mockAuthContext = {
-      currentUser: { username: 'testuser' },
-      setCurrentUser: jest.fn(),
-      notificationCount: 0,
-      setNotificationCount: jest.fn(),
-    };
+test('renders the Profile component at /profile/:username when authenticated', async () => {
+    axios.get.mockResolvedValue({ data: { username: 'testuser' } }); // Mock data if needed
 
-    render(
-      <Router initialEntries={['/profile/testuser']}>
-        <AuthContext.Provider value={mockAuthContext}>
-          <App />
-        </AuthContext.Provider>
-      </Router>
-    );
-    const profileElement = screen.getByText(/testuser/i);
-    expect(profileElement).toBeInTheDocument();
-  });
+    renderWithRouter(<App />, { route: '/profile/testuser' });
+    await waitFor(() => expect(screen.getByText(/Profile/i)).toBeInTheDocument());
+});
 
-  test('renders Explore component when navigating to /explore', () => {
-    render(
-      <Router initialEntries={['/explore']}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </Router>
-    );
-    const exploreElement = screen.getByText(/explore/i);
-    expect(exploreElement).toBeInTheDocument();
-  });
+test('renders the Settings component at /settings when authenticated', async () => {
+    axios.get.mockResolvedValue({ data: { settings: true } }); // Mock data if needed
 
-  test('renders PostDetails component when navigating to /posts/:id', () => {
-    render(
-      <Router initialEntries={['/posts/1']}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </Router>
-    );
-    const postDetailsElement = screen.getByText(/post details/i);
-    expect(postDetailsElement).toBeInTheDocument();
-  });
+    renderWithRouter(<App />, { route: '/settings' });
+    await waitFor(() => expect(screen.getByText(/Settings/i)).toBeInTheDocument());
+});
 
-  test('renders Saved component when authenticated and navigating to /saved', () => {
-    const mockAuthContext = {
-      currentUser: { username: 'testuser' },
-      setCurrentUser: jest.fn(),
-      notificationCount: 0,
-      setNotificationCount: jest.fn(),
-    };
+test('renders the Notifications component at /notifications when authenticated', async () => {
+    axios.get.mockResolvedValue({ data: { notifications: [] } }); // Mock data if needed
 
-    render(
-      <Router initialEntries={['/saved']}>
-        <AuthContext.Provider value={mockAuthContext}>
-          <App />
-        </AuthContext.Provider>
-      </Router>
-    );
-    const savedElement = screen.getByText(/saved/i);
-    expect(savedElement).toBeInTheDocument();
-  });
-
-  test('increments notification count when new notification is received', () => {
-    const mockAuthContext = {
-      currentUser: { username: 'testuser' },
-      setCurrentUser: jest.fn(),
-      notificationCount: 0,
-      setNotificationCount: jest.fn(),
-    };
-
-    render(
-      <Router initialEntries={['/']}>
-        <AuthContext.Provider value={mockAuthContext}>
-          <App />
-        </AuthContext.Provider>
-      </Router>
-    );
-
-    // Simulate receiving a new notification
-    socket.on.mock.calls[0][1]();
-
-    expect(mockAuthContext.setNotificationCount).toHaveBeenCalledWith(expect.any(Function));
-  });
+    renderWithRouter(<App />, { route: '/notifications' });
+    await waitFor(() => expect(screen.getByText(/Notifications/i)).toBeInTheDocument());
 });

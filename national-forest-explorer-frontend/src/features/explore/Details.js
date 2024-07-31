@@ -57,25 +57,34 @@ const Details = () => {
     }
   };
 
+  // Render loading message if details haven't loaded yet
   if (!details) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div>
+    <div className="details-container">
+      {/* Back button to return to the Explore page */}
+      <button onClick={() => navigate('/explore')} className="back-button">Back to Explore</button>
+      
       <h1>{details.name}</h1>
+      
       <p>Type: {type}</p>
+      
+      {/* Conditionally render details based on type */}
       {type === 'forest' ? (
         <>
-          <p>Region: {details.region || 'Unknown'}</p>
-          <p>Size: {details.shapeArea ? `${details.shapeArea} acres` : 'Unknown'}</p>
+          {details.region && <p>Region: {details.region}</p>}
+          {details.shapeArea && <p>Size: {details.shapeArea} acres</p>}
         </>
       ) : (
         <>
-          <p>State: {details.state || 'Unknown'}</p>
-          <p>Forest: {details.forest || 'Unknown'}</p>
+          {details.state && <p>State: {details.state}</p>}
+          {details.forest && <p>Forest: {details.forest}</p>}
         </>
       )}
+      
+      {/* Display save/unsave button if user is logged in */}
       {currentUser && (
         <FontAwesomeIcon
           icon={isSaved ? filledHeart : hollowHeart}
@@ -83,19 +92,6 @@ const Details = () => {
           style={{ cursor: 'pointer', color: isSaved ? 'red' : 'grey', marginLeft: '10px' }}
         />
       )}
-      <h2>Recent Reviews/Photos</h2>
-      <div>
-        {details.posts && details.posts.length > 0 ? (
-          details.posts.map((post) => (
-            <div key={post.id} onClick={() => navigate(`/posts/${post.id}`)}>
-              <h3>{post.title}</h3>
-              <p>{post.reviewText}</p>
-            </div>
-          ))
-        ) : (
-          <p>No recent reviews/photos available.</p>
-        )}
-      </div>
     </div>
   );
 };

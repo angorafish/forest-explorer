@@ -1,28 +1,30 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Comment from './Comment';
-import '@testing-library/jest-dom/extend-expect';
+import Comment from '../features/posts/Comment';
 
 const mockCommentWithUser = {
     text: 'This is a comment',
-    User: {
+    user: {
         username: 'user1'
     }
 };
 
 const mockCommentWithoutUser = {
-    text: 'This is a comment'
+    text: 'This is a comment',
+    user: null
 };
 
 describe('Comment', () => {
     it('should render the comment with user', () => {
-        render(<Comment comment={mockCommentWithUser} />);
+        const { debug } = render(<Comment comment={mockCommentWithUser} />);
+        debug(); // Print the rendered output
         expect(screen.getByText('This is a comment')).toBeInTheDocument();
         expect(screen.getByText('— user1')).toBeInTheDocument();
     });
 
     it('should render "User not found" when user is missing', () => {
-        render(<Comment comment={mockCommentWithoutUser} />);
+        const { debug } = render(<Comment comment={mockCommentWithoutUser} />);
+        debug(); // Print the rendered output
         expect(screen.getByText('User not found')).toBeInTheDocument();
     });
 });

@@ -1,17 +1,39 @@
+/* Background color for the posts containers */
+.photo-card {
+    background: #949a59;
+    border: 1px solid #59360D;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    width: 200px;
+}
+
+.photo-card p {
+    color: #3B5A00;
+}
+
+.photo-card a {
+    color: #3B777A;
+    text-decoration: none;
+    font-family: 'Helvetica', sans-serif; 
+    font-weight: bold;
+}
+
+.photo-card a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    color: #3B777A;
+    margin-left: 20px;
+    font-family: 'Helvetica', sans-serif;
+}
+
 .photo-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
-}
-
-.photo-card {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 15px;
-    text-align: center;
-    width: 200px;
 }
 
 .photo-card img {
