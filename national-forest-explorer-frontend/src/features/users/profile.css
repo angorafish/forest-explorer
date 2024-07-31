@@ -70,7 +70,7 @@ h2 {
 
 .post {
     width: 200px;
-    background-color: #C3A24B;
+    background-color: #949a59;
     padding: 10px;
     border-radius: 5px;
     position: relative;
@@ -128,7 +128,6 @@ h2 {
     color: #59360D;
 }
 
-/* Removed comment styling */
 
 textarea {
     width: 100%;
