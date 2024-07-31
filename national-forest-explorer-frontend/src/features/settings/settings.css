@@ -1,0 +1,91 @@
+/* Container for settings page */
+.settings-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #DDB158;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Title styling */
+.settings-container h1 {
+    text-align: center;
+    color: #3B5A00;
+    margin-bottom: 20px;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+/* Form input fields */
+.settings-container form div {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.settings-container label {
+    display: block;
+    width: 150px; /* Adjust this width as necessary */
+    margin-right: 20px;
+    color: #59360D;
+    font-weight: bold;
+    text-align: right;
+}
+
+.settings-container input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    color: #59360D;
+}
+
+/* Update button styling */
+.settings-container button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #3B777A;
+    border: 1px solid #3B777A;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.settings-container button[type="submit"]:hover {
+    background-color: #2a5d6a;
+}
+
+/* Message styling */
+.settings-container .message {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #3B5A00;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Delete account button styling */
+.settings-container button.delete-account {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid red;
+    border-radius: 4px;
+    color: red;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: 20px;
+}
+
+.settings-container button.delete-account:hover {
+    background-color: red;
+    color: white;
+}

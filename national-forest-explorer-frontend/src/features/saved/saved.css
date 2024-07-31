@@ -21,7 +21,7 @@ ul {
   }
   
   ul li span {
-    color: #3B777A;
+    color: #59360D;
     font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
@@ -39,7 +39,7 @@ ul {
   }
   
   h1 {
-    color: #59360D;
+    color: #3B777A;
     margin-bottom: 20px;
     font-size: 2rem;
     text-align: center;
