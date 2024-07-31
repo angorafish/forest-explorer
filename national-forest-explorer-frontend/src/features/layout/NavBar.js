@@ -8,7 +8,7 @@ import socket from '../../services/socketConfig';
 import { useAuth } from '../authentication/AuthContext';
 
 // Display navbar component
-const NavBar = () => {
+const NavBar = ({ onPostCreated, successMessage }) => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser, notificationCount, setNotificationCount } = useAuth();
   const [isModalOpen, setModalOpen] = useState(false); // Using state to manage modal visibility
@@ -90,38 +90,39 @@ const NavBar = () => {
 
   return (
     <nav>
-      <div className="nav-logo">
-        <Link to="/">
-          <img src={Logo} alt="Logo" className="logo-image" />
-        </Link>
-      </div>
-      <div className="nav-links">
-        <Link to="/explore">Explore</Link>
-        {currentUser && (
-          <>
-            <Link to="/saved">Saved</Link>
-            <button classname="new-post-button" onClick={() => setModalOpen(true)}>New Post</button>
-          </>
-        )}
-      </div>
-      <div className="nav-user">
-        {currentUser ? (
-          <div className="dropdown" ref={dropdownRef}>
-            {profileContent}
-            <div className={`dropdown-content ${isDropdownOpen ? 'open' : ''}`}>
-              <Link to={`/profile/${currentUser.username}`}>{currentUser.username}</Link>
-              <Link to="/notifications">Notifications {notificationCount > 0 && `(${notificationCount})`}</Link> 
-              <Link to="/settings">Settings</Link>
-              <button onClick={handleLogout}>Logout</button>
-            </div>
-          </div>
-        ) : (
-          <Link to="/login" className="login-signup-button">Login/Signup</Link>
-        )}
-      </div>
-      <NewPostModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
+        <div className="nav-logo">
+            <Link to="/">
+                <img src={Logo} alt="Logo" className="logo-image" />
+            </Link>
+        </div>
+        <div className="nav-links">
+            <Link to="/explore">Explore</Link>
+            {currentUser && (
+                <>
+                    <Link to="/saved">Saved</Link>
+                    <button className="new-post-button" onClick={() => setModalOpen(true)}>New Post</button>
+                </>
+            )}
+        </div>
+        <div className="nav-user">
+            {currentUser ? (
+                <div className="dropdown" ref={dropdownRef}>
+                    {profileContent}
+                    <div className={`dropdown-content ${isDropdownOpen ? 'open' : ''}`}>
+                        <Link to={`/profile/${currentUser.username}`}>{currentUser.username}</Link>
+                        <Link to="/notifications">Notifications {notificationCount > 0 && `(${notificationCount})`}</Link> 
+                        <Link to="/settings">Settings</Link>
+                        <button onClick={handleLogout}>Logout</button>
+                    </div>
+                </div>
+            ) : (
+                <Link to="/login" className="login-signup-button">Login/Signup</Link>
+            )}
+        </div>
+        {successMessage && <div className="success-message">{successMessage}</div>}
+        <NewPostModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} onPostCreated={onPostCreated} />
     </nav>
-  );
+);
 };
 
 export default NavBar;

@@ -26,6 +26,7 @@ router.get("/", async (req, res) => {
         { model: Like, as: "likes" },
         { model: Photo, as: "photos" },
       ],
+      order: [['createdAt', 'DESC']],
     });
     res.json(posts);
   } catch (error) {

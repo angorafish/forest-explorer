@@ -3,14 +3,16 @@ import axios from "../../services/axiosConfig";
 import { Link } from "react-router-dom";
 import "./home.css";
 
-// Logic for home page
+// Home component responsible for displaying recent posts
 const Home = () => {
-    // State used to manage posts, loading status and errors
+    // State to manage the posts data
     const [posts, setPosts] = useState([]);
+    // State to manage the loading status
     const [loading, setLoading] = useState(true);
+    // State to manage any errors encountered during data fetching
     const [error, setError] = useState(null);
 
-    // Fetch posts on component mount
+    // Effect hook to fetch posts when the component mounts
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -25,12 +27,18 @@ const Home = () => {
         };
 
         fetchPosts();
-    }, []);
+    }, []); // Empty dependency array ensures this effect runs only once on mount
+
+    // Function to handle when a new post is created
+    const handlePostCreated = (newPost) => {
+        // Prepend the new post to the existing posts list
+        setPosts([newPost, ...posts]);
+    };
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
-    // Get photo URL with correct path
+    // Helper function to correctly format photo URLs
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
             return url.replace('../uploads/', '/uploads/');

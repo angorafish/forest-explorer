@@ -114,3 +114,12 @@ nav {
   color: #3B5A00;
   border-color: #8AC718;
 }
+
+.success-message {
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  text-align: center;
+}

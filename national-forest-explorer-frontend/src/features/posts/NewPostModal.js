@@ -4,7 +4,7 @@ import axios from '../../services/axiosConfig';
 import './posts.css';
 
 // Modal component to create a new post
-const NewPostModal = ({ isOpen, onClose }) => {
+const NewPostModal = ({ isOpen, onClose, onPostCreated }) => {
     const [postType, setPostType] = useState('photo'); // State for post type
     const [location, setLocation] = useState(''); // State for location input
     const [locationId, setLocationId] = useState(null); // State for selected location ID
@@ -61,13 +61,14 @@ const NewPostModal = ({ isOpen, onClose }) => {
             if (photo) {
                 formData.append('photo', photo);
             }
-            await axios.post('/posts', formData, {
+            const response = await axios.post('/posts', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            onClose(); // Close the modal on success
-            resetForm(); // Reset form
+            onPostCreated(response.data); // Notify parent component that a post was created
+            onClose();
+            resetForm();
         } catch (error) {
             console.error("Failed to create a post", error);
         }

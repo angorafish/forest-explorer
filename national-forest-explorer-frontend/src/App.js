@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useAuth } from './features/authentication/AuthContext';
 import NavBar from './features/layout/NavBar';
@@ -21,6 +21,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
     const { currentUser, setCurrentUser, setNotificationCount } = useAuth();
+    const [posts, setPosts] = useState([]); // Manage posts state
+    const [successMessage, setSuccessMessage] = useState(''); // Manage success message
 
     // Effect to fetch and set the current user on initial load
     useEffect(() => {
@@ -61,17 +63,21 @@ function App() {
         }
     }, [currentUser, setNotificationCount]);
 
-    /**
-     * The App function is the main component of the whole application.
-     * It sets up the routing structure and provides global components.
-     * The Router component is used to handle navigation between pages.
-     * Routes are defined to map different paths to their respective components.
-     */
+    // Function to handle when a new post is created
+    const handlePostCreated = (newPost) => {
+        setPosts([newPost, ...posts]); // Add the new post to the start of the posts array
+        setSuccessMessage('Your post has been successfully created!') // Send success message when post is created
+
+        setTimeout(() => {
+            setSuccessMessage('');
+        }, 3000);
+    };
+
     return (
         <Router>
-            <NavBar />
+            <NavBar onPostCreated={handlePostCreated} successMessage={successMessage} />
             <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<Home posts={posts} />} /> 
                 <Route path="/login" element={<LoginSignup />} />
                 <Route path="/profile/:username" element={<ProtectedRoute element={<Profile />} />} />
                 <Route path="/my-profile" element={<ProtectedRoute element={<Profile />} />} />
