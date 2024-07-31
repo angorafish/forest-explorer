@@ -1,19 +1,24 @@
 a {
-    color: blue;
+    color: #3B777A;
     text-decoration: underline;
 }
 
 a:hover {
-    color: darkblue;
+    color: #2a5d6a;
 }
 
 .post-details {
     padding: 20px;
+    background-color: #DDB158;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .post-title {
     font-size: 2em;
     margin-bottom: 10px;
+    color: #59360D; 
 }
 
 .post-image {
@@ -26,15 +31,18 @@ a:hover {
 
 .post-author {
     margin-bottom: 10px;
+    color: #3B777A;
 }
 
 .stars {
     color: gold;
     font-size: 1.5em;
+    margin-bottom: 20px;
 }
 
 .post-review-text {
     margin-bottom: 20px;
+    color: #59360D;
 }
 
 .post-actions {
@@ -51,7 +59,7 @@ a:hover {
     padding: 0;
     margin: 0;
     font-size: 1.5em;
-    color: #333;
+    color: #59360D;
 }
 
 .dropdown-menu {
@@ -63,16 +71,31 @@ a:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    border-radius: 4px;
 }
 
 .dropdown-item {
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
+    color: #3B777A;
 }
 
 .dropdown-item:hover {
-    background-color: #f5f5f5;
+    background-color: #f0f0f0;
+}
+
+.comment {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 15px;
+}
+
+.comment p {
+    margin: 0;
+    color: #59360D;
 }
 
 .comment-form {
@@ -87,19 +110,20 @@ a:hover {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
 }
 
 .comment-submit-button {
     padding: 10px 20px;
     border: none;
-    background-color: #4caf50;
+    background-color: #3B777A;
     color: white;
     border-radius: 5px;
     cursor: pointer;
 }
 
 .comment-submit-button:hover {
-    background-color: #45a049;
+    background-color: #2a5d6a;
 }
 
 .back-button {
@@ -107,7 +131,7 @@ a:hover {
     align-items: center;
     background: none;
     border: none;
-    color: #007bff;
+    color: #3B777A;
     font-size: 1em;
     cursor: pointer;
     margin-bottom: 20px;
@@ -131,7 +155,7 @@ a:hover {
 }
 
 .modal-content {
-    background: white;
+    background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
     max-width: 500px;
@@ -148,46 +172,89 @@ a:hover {
     border: none;
     font-size: 24px;
     cursor: pointer;
+    color: #59360D;
 }
 
-.modal {
+.modal-content form label {
     display: block;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
+    margin-bottom: 10px;
+    color: #59360D;
     font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
+.modal-content form input[type="text"],
+.modal-content form input[type="email"],
+.modal-content form input[type="password"],
+.modal-content form input[type="file"],
+.modal-content form select,
+.modal-content form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.modal-content form button {
+    background-color: #3B777A;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
+}
+
+.modal-content form button:hover {
+    background-color: #2a5d6a;
 }
 
 form {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+ul.posts-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul.posts-list li {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    transition: box-shadow 0.3s ease;
+}
+
+ul.posts-list li:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+ul.posts-list h2 {
+    color: #3B777A;
+    margin: 0 0 10px 0;
+}
+
+ul.posts-list p {
+    color: #59360D;
+    margin: 0 0 10px 0;
+}
+
+ul.posts-list img {
+    max-width: 100%;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+ul.posts-list a {
+    color: #3B777A;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+ul.posts-list a:hover {
+    text-decoration: underline;
 }
