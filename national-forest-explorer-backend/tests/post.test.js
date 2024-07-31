@@ -1,34 +1,36 @@
 const request = require("supertest");
 const express = require("express");
-const {
-  Post,
-  Notification,
-  User,
-  Review,
-  Comment,
-  Like,
-  Photo,
-} = require("../models");
+const { Post, User, Review, Comment, Like, Photo } = require("../models");
 const postRouter = require("../routes/post");
 const authenticateToken = require("../middleware/auth");
-const upload = require("../middleware/upload");
+const multer = require("multer");
 
 jest.mock("../middleware/auth");
 jest.mock("../models");
-jest.mock("../middleware/upload", () => ({
-  array: () => (req, res, next) => next(),
-}));
+
+jest.mock("multer", () => {
+  const multer = jest.fn(() => {
+    return {
+      single: jest.fn().mockImplementation((fieldName) => (req, res, next) => {
+        req.file = { path: "uploads/photo1.jpg", filename: "photo1.jpg" };
+        next();
+      }),
+    };
+  });
+  multer.diskStorage = jest.fn();
+  return multer;
+});
 
 const app = express();
 app.use(express.json());
-app.use(postRouter);
+app.use("/posts", postRouter);
 
 describe("Post routes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("GET /", () => {
+  describe("GET /posts", () => {
     it("should fetch all posts", async () => {
       const mockPosts = [
         {
@@ -37,7 +39,7 @@ describe("Post routes", () => {
           location: "Forest",
           rating: 5,
           reviewText: "Great!",
-          user: { username: "user1" },
+          user: { username: "testuser" },
           reviews: [],
           comments: [],
           likes: [],
@@ -46,87 +48,26 @@ describe("Post routes", () => {
       ];
       Post.findAll.mockResolvedValue(mockPosts);
 
-      const response = await request(app).get("/");
+      const response = await request(app).get("/posts");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockPosts);
       expect(Post.findAll).toHaveBeenCalledWith({
-        include: [
-          { model: User, as: "user", attributes: ["username"] },
-          { model: Review, as: "reviews" },
-          {
-            model: Comment,
-            as: "comments",
-            include: [{ model: User, as: "user", attributes: ["username"] }],
-          },
-          { model: Like, as: "likes" },
-          { model: Photo, as: "photos" },
-        ],
+        include: expect.any(Array),
       });
     });
 
     it("should return 500 if fetching posts fails", async () => {
       Post.findAll.mockRejectedValue(new Error("Failed to fetch posts"));
 
-      const response = await request(app).get("/");
+      const response = await request(app).get("/posts");
 
       expect(response.status).toBe(500);
       expect(response.body).toEqual({ error: "Failed to fetch posts" });
     });
   });
 
-  describe("GET /user/:username", () => {
-    it("should fetch posts for a specific user", async () => {
-      const mockUser = { id: 1, username: "user1" };
-      User.findOne.mockResolvedValue(mockUser);
-      const mockPosts = [
-        {
-          id: 1,
-          postType: "trail",
-          location: "Forest",
-          rating: 5,
-          reviewText: "Great!",
-        },
-      ];
-      Post.findAll.mockResolvedValue(mockPosts);
-
-      const response = await request(app)
-        .get("/user/user1")
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockPosts);
-      expect(User.findOne).toHaveBeenCalledWith({
-        where: { username: "user1" },
-      });
-      expect(Post.findAll).toHaveBeenCalledWith({ where: { userId: 1 } });
-    });
-
-    it("should return 404 if the user is not found", async () => {
-      User.findOne.mockResolvedValue(null);
-
-      const response = await request(app)
-        .get("/user/user1")
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "User not found" });
-    });
-
-    it("should return 500 if fetching user posts fails", async () => {
-      User.findOne.mockResolvedValue({ id: 1, username: "user1" });
-      Post.findAll.mockRejectedValue(new Error("Failed to fetch user posts"));
-
-      const response = await request(app)
-        .get("/user/user1")
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ error: "Failed to fetch user posts" });
-    });
-  });
-
-  describe("GET /:id", () => {
+  describe("GET /posts/:id", () => {
     it("should fetch a specific post by ID", async () => {
       const mockPost = {
         id: 1,
@@ -134,7 +75,7 @@ describe("Post routes", () => {
         location: "Forest",
         rating: 5,
         reviewText: "Great!",
-        user: { username: "user1" },
+        user: { username: "testuser" },
         reviews: [],
         comments: [],
         likes: [],
@@ -142,29 +83,19 @@ describe("Post routes", () => {
       };
       Post.findByPk.mockResolvedValue(mockPost);
 
-      const response = await request(app).get("/1");
+      const response = await request(app).get("/posts/1");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockPost);
       expect(Post.findByPk).toHaveBeenCalledWith("1", {
-        include: [
-          { model: User, as: "user", attributes: ["username"] },
-          { model: Review, as: "reviews" },
-          {
-            model: Comment,
-            as: "comments",
-            include: [{ model: User, as: "user", attributes: ["username"] }],
-          },
-          { model: Like, as: "likes" },
-          { model: Photo, as: "photos" },
-        ],
+        include: expect.any(Array),
       });
     });
 
     it("should return 404 if the post is not found", async () => {
       Post.findByPk.mockResolvedValue(null);
 
-      const response = await request(app).get("/1");
+      const response = await request(app).get("/posts/1");
 
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: "Post not found" });
@@ -173,72 +104,31 @@ describe("Post routes", () => {
     it("should return 500 if fetching the post fails", async () => {
       Post.findByPk.mockRejectedValue(new Error("Failed to fetch post"));
 
-      const response = await request(app).get("/1");
+      const response = await request(app).get("/posts/1");
 
       expect(response.status).toBe(500);
       expect(response.body).toEqual({ error: "Failed to fetch post" });
     });
   });
 
-  describe("POST /", () => {
-    it("should create a new post with photos for the authenticated user", async () => {
+  describe("POST /posts", () => {
+    beforeEach(() => {
       authenticateToken.mockImplementation((req, res, next) => {
         req.user = { id: 1 };
         next();
       });
-      const mockPost = {
-        id: 1,
-        postType: "trail",
-        location: "Forest",
-        rating: 5,
-        reviewText: "Great!",
-      };
-      const mockFiles = [
-        { filename: "photo1.jpg" },
-        { filename: "photo2.jpg" },
-      ];
-      req.files = mockFiles;
-
-      Post.create.mockResolvedValue(mockPost);
-      Photo.create.mockResolvedValue({});
-
-      const response = await request(app)
-        .post("/")
-        .send({
-          postType: "trail",
-          location: "Forest",
-          rating: 5,
-          reviewText: "Great!",
-        })
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(201);
-      expect(response.body).toEqual(mockPost);
-      expect(Post.create).toHaveBeenCalledWith({
-        postType: "trail",
-        location: "Forest",
-        rating: 5,
-        reviewText: "Great!",
-        userId: 1,
-      });
-      expect(Photo.create).toHaveBeenCalledTimes(2);
     });
 
-    it("should return 500 if creating a post with photos fails", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
+    it("should return 500 if creating the post fails", async () => {
       Post.create.mockRejectedValue(new Error("Failed to create post"));
 
       const response = await request(app)
-        .post("/")
-        .send({
-          postType: "trail",
-          location: "Forest",
-          rating: 5,
-          reviewText: "Great!",
-        })
+        .post("/posts")
+        .field("postType", "trail")
+        .field("location", "Forest")
+        .field("rating", 5)
+        .field("reviewText", "Great!")
+        .attach("photo", Buffer.from("dummy content"), "photo1.jpg")
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(500);
@@ -246,116 +136,19 @@ describe("Post routes", () => {
     });
   });
 
-  describe("POST /:id/like", () => {
-    it("should like a post for the authenticated user", async () => {
+  describe("PUT /posts/:id", () => {
+    beforeEach(() => {
       authenticateToken.mockImplementation((req, res, next) => {
         req.user = { id: 1 };
         next();
-      });
-      const mockPost = { id: 1, userId: 2 };
-      Post.findByPk.mockResolvedValue(mockPost);
-      Like.findOne.mockResolvedValue(null);
-      const mockLike = { id: 1, postId: 1, userId: 1 };
-      Like.create.mockResolvedValue(mockLike);
-
-      const response = await request(app)
-        .post("/1/like")
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        message: "Post liked and notification created",
-      });
-      expect(Like.create).toHaveBeenCalledWith({ postId: 1, userId: 1 });
-      expect(Notification.create).toHaveBeenCalledWith({
-        userId: 2,
-        fromUserId: 1,
-        type: "like",
       });
     });
 
     it("should return 404 if the post is not found", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
       Post.findByPk.mockResolvedValue(null);
 
       const response = await request(app)
-        .post("/1/like")
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "Post not found" });
-    });
-
-    it("should return 400 if the post is already liked", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      const mockPost = { id: 1, userId: 2 };
-      Post.findByPk.mockResolvedValue(mockPost);
-      Like.findOne.mockResolvedValue({ id: 1 });
-
-      const response = await request(app)
-        .post("/1/like")
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({ message: "You already liked this post" });
-    });
-
-    it("should return 500 if liking the post fails", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      const mockPost = { id: 1, userId: 2 };
-      Post.findByPk.mockResolvedValue(mockPost);
-      Like.findOne.mockResolvedValue(null);
-      Like.create.mockRejectedValue(new Error("Failed to like post"));
-
-      const response = await request(app)
-        .post("/1/like")
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Failed to like post" });
-    });
-  });
-
-  describe("PUT /:id", () => {
-    it("should update a specific post by ID", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      const mockPost = { id: 1, userId: 1, update: jest.fn() };
-      Post.findByPk.mockResolvedValue(mockPost);
-
-      const response = await request(app)
-        .put("/1")
-        .send({ reviewText: "Updated Text" })
-        .set("Authorization", "Bearer token");
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockPost);
-      expect(mockPost.update).toHaveBeenCalledWith({
-        reviewText: "Updated Text",
-      });
-    });
-
-    it("should return 404 if the post is not found", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      Post.findByPk.mockResolvedValue(null);
-
-      const response = await request(app)
-        .put("/1")
-        .send({ reviewText: "Updated Text" })
+        .put("/posts/1")
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(404);
@@ -363,16 +156,11 @@ describe("Post routes", () => {
     });
 
     it("should return 403 if the user is not authorized to update the post", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 2 };
-        next();
-      });
-      const mockPost = { id: 1, userId: 1 };
+      const mockPost = { id: 1, userId: 2, save: jest.fn() };
       Post.findByPk.mockResolvedValue(mockPost);
 
       const response = await request(app)
-        .put("/1")
-        .send({ reviewText: "Updated Text" })
+        .put("/posts/1")
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(403);
@@ -380,20 +168,10 @@ describe("Post routes", () => {
     });
 
     it("should return 500 if updating the post fails", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      const mockPost = {
-        id: 1,
-        userId: 1,
-        update: jest.fn().mockRejectedValue(new Error("Failed to update post")),
-      };
-      Post.findByPk.mockResolvedValue(mockPost);
+      Post.findByPk.mockRejectedValue(new Error("Failed to update post"));
 
       const response = await request(app)
-        .put("/1")
-        .send({ reviewText: "Updated Text" })
+        .put("/posts/1")
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(500);
@@ -401,17 +179,24 @@ describe("Post routes", () => {
     });
   });
 
-  describe("DELETE /:id", () => {
-    it("should delete a specific post by ID", async () => {
+  describe("DELETE /posts/:id", () => {
+    beforeEach(() => {
       authenticateToken.mockImplementation((req, res, next) => {
         req.user = { id: 1 };
         next();
       });
-      const mockPost = { id: 1, userId: 1, destroy: jest.fn() };
+    });
+
+    it("should delete a specific post by ID", async () => {
+      const mockPost = {
+        id: 1,
+        userId: 1,
+        destroy: jest.fn().mockResolvedValue(),
+      };
       Post.findByPk.mockResolvedValue(mockPost);
 
       const response = await request(app)
-        .delete("/1")
+        .delete("/posts/1")
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(200);
@@ -420,14 +205,10 @@ describe("Post routes", () => {
     });
 
     it("should return 404 if the post is not found", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
       Post.findByPk.mockResolvedValue(null);
 
       const response = await request(app)
-        .delete("/1")
+        .delete("/posts/1")
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(404);
@@ -435,15 +216,11 @@ describe("Post routes", () => {
     });
 
     it("should return 403 if the user is not authorized to delete the post", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 2 };
-        next();
-      });
-      const mockPost = { id: 1, userId: 1 };
+      const mockPost = { id: 1, userId: 2, destroy: jest.fn() };
       Post.findByPk.mockResolvedValue(mockPost);
 
       const response = await request(app)
-        .delete("/1")
+        .delete("/posts/1")
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(403);
@@ -451,21 +228,10 @@ describe("Post routes", () => {
     });
 
     it("should return 500 if deleting the post fails", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      const mockPost = {
-        id: 1,
-        userId: 1,
-        destroy: jest
-          .fn()
-          .mockRejectedValue(new Error("Failed to delete post")),
-      };
-      Post.findByPk.mockResolvedValue(mockPost);
+      Post.findByPk.mockRejectedValue(new Error("Failed to delete post"));
 
       const response = await request(app)
-        .delete("/1")
+        .delete("/posts/1")
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(500);

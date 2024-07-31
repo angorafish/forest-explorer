@@ -1,112 +1,104 @@
 const request = require("supertest");
 const bcrypt = require("bcrypt");
-const app = require("../index");
+const { app } = require("../index");
 const { User } = require("../models");
+const authenticateToken = require("../middleware/auth");
 
-jest.mock("../models");
-jest.mock("bcrypt");
+jest.mock("../models", () => ({
+  User: {
+    findByPk: jest.fn(),
+  },
+}));
+
+jest.mock("bcrypt", () => ({
+  hash: jest.fn(),
+}));
+
+jest.mock("../middleware/auth", () => jest.fn((req, res, next) => {
+  req.user = { id: 1 };
+  next();
+}));
 
 describe("Settings Routes", () => {
-  beforeEach(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("PUT /", () => {
-    it("should update user settings", async () => {
+  describe("PUT /api/settings", () => {
+    it("should update user settings successfully", async () => {
       const mockUser = {
         id: 1,
-        username: "testuser",
-        email: "test@example.com",
+        username: "oldUsername",
+        email: "oldemail@example.com",
         save: jest.fn(),
       };
+
       User.findByPk.mockResolvedValue(mockUser);
-      bcrypt.hash.mockResolvedValue("hashedpassword");
+      bcrypt.hash.mockResolvedValue("hashedPassword");
 
-      const response = await request(app)
-        .put("/settings")
-        .send({
-          username: "newuser",
-          email: "new@example.com",
-          password: "newpassword",
-        })
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .put("/api/settings")
+        .send({ username: "newUsername", email: "newemail@example.com", password: "newPassword" });
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        message: "Settings updated successfully",
-      });
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({ message: "Settings updated successfully" });
+      expect(mockUser.username).toBe("newUsername");
+      expect(mockUser.email).toBe("newemail@example.com");
+      expect(mockUser.passwordHash).toBe("hashedPassword");
       expect(mockUser.save).toHaveBeenCalled();
     });
 
     it("should return 404 if user is not found", async () => {
       User.findByPk.mockResolvedValue(null);
 
-      const response = await request(app)
-        .put("/settings")
-        .send({
-          username: "newuser",
-          email: "new@example.com",
-          password: "newpassword",
-        })
-        .set("Authorization", "Bearer token");
+      const res = await request(app).put("/api/settings").send({ username: "newUsername" });
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "User not found" });
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toEqual({ message: "User not found" });
     });
 
-    it("should return 500 if updating settings fails", async () => {
-      User.findByPk.mockRejectedValue(new Error("Failed to update settings"));
+    it("should return 500 if an error occurs during update", async () => {
+      User.findByPk.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app)
-        .put("/settings")
-        .send({
-          username: "newuser",
-          email: "new@example.com",
-          password: "newpassword",
-        })
-        .set("Authorization", "Bearer token");
+      const res = await request(app).put("/api/settings").send({ username: "newUsername" });
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ message: "Internal server error" });
     });
   });
 
-  describe("DELETE /", () => {
-    it("should delete user account", async () => {
-      const mockUser = { id: 1, destroy: jest.fn() };
+  describe("DELETE /api/settings", () => {
+    it("should delete the user account successfully", async () => {
+      const mockUser = {
+        id: 1,
+        destroy: jest.fn(),
+      };
+
       User.findByPk.mockResolvedValue(mockUser);
 
-      const response = await request(app)
-        .delete("/settings")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).delete("/api/settings");
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({
-        message: "Account deleted successfully",
-      });
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({ message: "Account deleted successfully" });
       expect(mockUser.destroy).toHaveBeenCalled();
     });
 
     it("should return 404 if user is not found", async () => {
       User.findByPk.mockResolvedValue(null);
 
-      const response = await request(app)
-        .delete("/settings")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).delete("/api/settings");
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "User not found" });
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toEqual({ message: "User not found" });
     });
 
-    it("should return 500 if deleting account fails", async () => {
-      User.findByPk.mockRejectedValue(new Error("Failed to delete account"));
+    it("should return 500 if an error occurs during deletion", async () => {
+      User.findByPk.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app)
-        .delete("/settings")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).delete("/api/settings");
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ message: "Internal server error" });
     });
   });
 });

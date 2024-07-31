@@ -1,35 +1,41 @@
 const request = require("supertest");
-const app = require("../index"); // Adjust the path as necessary
+const express = require("express");
+const trailRouter = require("../routes/trail");
 const trailService = require("../services/trailService");
 
 jest.mock("../services/trailService");
+
+const app = express();
+app.use(express.json());
+app.use("/api/trails", trailRouter);
 
 describe("Trail Routes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("GET /", () => {
-    it("should fetch all trails", async () => {
-      const mockTrails = [{ id: 1, name: "Trail1" }];
-      trailService.getAllTrails.mockResolvedValue(mockTrails);
+  it("should fetch all trails successfully", async () => {
+    const mockTrails = [
+      { id: 1, name: "Trail 1", location: "Location 1" },
+      { id: 2, name: "Trail 2", location: "Location 2" },
+    ];
 
-      const response = await request(app).get("/trail");
+    trailService.getAllTrails.mockResolvedValue(mockTrails);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockTrails);
-      expect(trailService.getAllTrails).toHaveBeenCalled();
-    });
+    const res = await request(app).get("/api/trails");
 
-    it("should return 500 if fetching trails fails", async () => {
-      trailService.getAllTrails.mockRejectedValue(
-        new Error("Failed to fetch trails")
-      );
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toEqual(mockTrails);
+    expect(trailService.getAllTrails).toHaveBeenCalled();
+  });
 
-      const response = await request(app).get("/trail");
+  it("should handle errors when fetching trails", async () => {
+    trailService.getAllTrails.mockRejectedValue(new Error("Database error"));
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ error: "Failed to fetch trails" });
-    });
+    const res = await request(app).get("/api/trails");
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body).toEqual({ error: "Failed to fetch trails" });
+    expect(trailService.getAllTrails).toHaveBeenCalled();
   });
 });

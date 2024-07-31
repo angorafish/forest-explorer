@@ -45,6 +45,8 @@ const fetchForestData = async () => {
   }
 };
 
+module.exports = fetchForestData;
+
 // Main function to authenticate and fetch forest data
 const main = async () => {
   try {

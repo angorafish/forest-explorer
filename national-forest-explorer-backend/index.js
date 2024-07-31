@@ -77,7 +77,7 @@ app.use(errorHandler); // Global error handler middleware
 
 const PORT = process.env.PORT || 3000; // Define the port to run the server
 
-// Drop forestId column from Trails table if it exists (confronting continuous error)
+// Drop forestId column from Trails table if it exists
 const dropForestIdFromTrails = async () => {
   try {
     await sequelize.query(
@@ -127,4 +127,4 @@ io.on("connection", (socket) => {
   });
 });
 
-module.exports = { app, sequelize, io };
+module.exports = { app, server, sequelize, io };

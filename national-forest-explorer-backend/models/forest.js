@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
   Forest.init(
     {
       id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         unique: true,
         primaryKey: true,
       },

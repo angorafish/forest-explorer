@@ -1,9 +1,8 @@
-const { sequelize } = require("../models");
-const { app, server } = require("../index");
-const request = require("supertest");
+const { sequelize } = require('../models');
 
-module.exports = async () => {
-  process.env.PORT = 3002;
+const setupTestDB = async () => {
   await sequelize.sync({ force: true });
-  global.testRequest = request(app);
+  console.log("Database synced successfully!");
 };
+
+module.exports = setupTestDB;

@@ -69,7 +69,7 @@ const loadTrailsData = async () => {
 
     console.log(`Reading CSV file from path: ${filePath}`);
 
-    // Read the CSV file and store the data in the results array
+    // Read the CSV file and store the data in the results
     fs.createReadStream(filePath)
       .pipe(csv())
       .on("data", (data) => {

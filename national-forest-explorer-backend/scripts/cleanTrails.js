@@ -15,4 +15,8 @@ const cleanTrails = async () => {
   }
 };
 
-cleanTrails();
+module.exports = cleanTrails;
+
+if (require.main === module) {
+  cleanTrails();
+}

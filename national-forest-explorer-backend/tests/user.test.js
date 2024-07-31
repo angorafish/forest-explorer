@@ -1,240 +1,215 @@
 const request = require("supertest");
+const express = require("express");
+const path = require("path");
+const userRouter = require("../routes/user");
+const { User, Post, Review, Comment, Like, Notification, Photo } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const app = require("../index");
-const { User, Post, FriendRequest, Notification, Photo } = require("../models");
+const authenticateToken = require("../middleware/auth");
 
 jest.mock("../models");
 jest.mock("bcrypt");
 jest.mock("jsonwebtoken");
+jest.mock("../middleware/auth", () => jest.fn((req, res, next) => {
+  req.user = { id: 1 };
+  next();
+}));
+
+const app = express();
+app.use(express.json());
+app.use("/api/users", userRouter);
 
 describe("User Routes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("GET /username/:username", () => {
-    it("should fetch user profile by username", async () => {
-      const mockUser = {
-        id: 1,
-        username: "testuser",
-        sentRequests: [],
-        receivedRequests: [],
-        posts: [],
-      };
+  describe("GET /api/users/user/:username", () => {
+    it("should fetch a user's posts by username", async () => {
+      const mockUser = { id: 1, username: "testuser" };
+      const mockPosts = [{ id: 1, userId: 1, content: "Post content" }];
+
       User.findOne.mockResolvedValue(mockUser);
+      Post.findAll.mockResolvedValue(mockPosts);
 
-      const response = await request(app)
-        .get("/user/username/testuser")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).get("/api/users/user/testuser");
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockUser);
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual(mockPosts);
+      expect(User.findOne).toHaveBeenCalledWith({ where: { username: "testuser" } });
+      expect(Post.findAll).toHaveBeenCalledWith({
+        where: { userId: mockUser.id },
+        include: expect.any(Array),
+      });
     });
 
     it("should return 404 if user is not found", async () => {
       User.findOne.mockResolvedValue(null);
 
-      const response = await request(app)
-        .get("/user/username/testuser")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).get("/api/users/user/testuser");
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "User not found" });
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toEqual({ message: "User not found" });
     });
 
-    it("should return 500 if fetching user profile fails", async () => {
-      User.findOne.mockRejectedValue(new Error("Failed to fetch user profile"));
+    it("should return 500 if an error occurs", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app)
-        .get("/user/username/testuser")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).get("/api/users/user/testuser");
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ error: "Failed to fetch posts" });
     });
   });
 
-  describe("GET /profile/:username", () => {
-    it("should fetch user profile with posts by username", async () => {
+  describe("GET /api/users/profile/:username", () => {
+    it("should fetch a user's profile by username", async () => {
       const mockUser = {
         id: 1,
         username: "testuser",
-        posts: [],
-        sentRequests: [],
-        receivedRequests: [],
+        posts: [{ id: 1, content: "Post content", likes: [], comments: [], reviews: [] }],
       };
+
       User.findOne.mockResolvedValue(mockUser);
 
-      const response = await request(app)
-        .get("/user/profile/testuser")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).get("/api/users/profile/testuser");
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockUser);
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual(mockUser);
+      expect(User.findOne).toHaveBeenCalledWith({
+        where: { username: "testuser" },
+        include: expect.any(Array),
+      });
     });
 
     it("should return 404 if user is not found", async () => {
       User.findOne.mockResolvedValue(null);
 
-      const response = await request(app)
-        .get("/user/profile/testuser")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).get("/api/users/profile/testuser");
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "User not found" });
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toEqual({ message: "User not found" });
     });
 
-    it("should return 500 if fetching user profile fails", async () => {
-      User.findOne.mockRejectedValue(new Error("Failed to fetch user profile"));
+    it("should return 500 if an error occurs", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app)
-        .get("/user/profile/testuser")
-        .set("Authorization", "Bearer token");
+      const res = await request(app).get("/api/users/profile/testuser");
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ message: "Internal server error" });
     });
   });
 
-  describe("PUT /:username/photos", () => {
-    it("should update user photos", async () => {
+  describe("PUT /api/users/:username/photos", () => {
+    it("should update user's profile and cover photos", async () => {
       const mockUser = { id: 1, username: "testuser", save: jest.fn() };
+
       User.findOne.mockResolvedValue(mockUser);
-      const mockPhoto = { create: jest.fn() };
-      const mockNotification = { create: jest.fn() };
-      Photo.create.mockResolvedValue(mockPhoto);
-      Notification.create.mockResolvedValue(mockNotification);
+      Photo.create.mockResolvedValue();
+      Notification.create.mockResolvedValue();
 
-      const response = await request(app)
-        .put("/user/testuser/photos")
-        .set("Authorization", "Bearer token")
-        .attach("profilePhoto", "path/to/profilePhoto.jpg")
-        .attach("coverPhoto", "path/to/coverPhoto.jpg");
+      const res = await request(app)
+        .put("/api/users/testuser/photos")
+        .attach("profilePhoto", path.resolve(__dirname, "fixtures", "profile.jpg"))
+        .attach("coverPhoto", path.resolve(__dirname, "fixtures", "cover.jpg"));
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockUser);
+      expect(res.statusCode).toBe(200);
       expect(mockUser.save).toHaveBeenCalled();
-      expect(Photo.create).toHaveBeenCalled();
-      expect(Notification.create).toHaveBeenCalled();
+      expect(Photo.create).toHaveBeenCalledTimes(4);
+      expect(Notification.create).toHaveBeenCalledTimes(4);
     });
 
     it("should return 404 if user is not found", async () => {
       User.findOne.mockResolvedValue(null);
 
-      const response = await request(app)
-        .put("/user/testuser/photos")
-        .set("Authorization", "Bearer token")
-        .attach("profilePhoto", "path/to/profilePhoto.jpg")
-        .attach("coverPhoto", "path/to/coverPhoto.jpg");
+      const res = await request(app).put("/api/users/testuser/photos");
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "User not found" });
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toEqual({ message: "User not found" });
     });
 
-    it("should return 500 if updating photos fails", async () => {
-      User.findOne.mockRejectedValue(new Error("Failed to update photos"));
+    it("should return 500 if an error occurs", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app)
-        .put("/user/testuser/photos")
-        .set("Authorization", "Bearer token")
-        .attach("profilePhoto", "path/to/profilePhoto.jpg")
-        .attach("coverPhoto", "path/to/coverPhoto.jpg");
+      const res = await request(app).put("/api/users/testuser/photos");
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ message: "Internal server error" });
     });
   });
 
-  describe("POST /register", () => {
+  describe("POST /api/users/register", () => {
     it("should register a new user", async () => {
-      const mockUser = {
-        id: 1,
-        username: "testuser",
-        email: "test@example.com",
-      };
-      bcrypt.hash.mockResolvedValue("hashedpassword");
+      const mockUser = { id: 1, username: "testuser", email: "test@example.com" };
+      bcrypt.hash.mockResolvedValue("hashedPassword");
       User.create.mockResolvedValue(mockUser);
 
-      const response = await request(app)
-        .post("/user/register")
-        .send({
-          username: "testuser",
-          email: "test@example.com",
-          password: "password",
-        });
+      const res = await request(app)
+        .post("/api/users/register")
+        .send({ username: "testuser", email: "test@example.com", password: "password123" });
 
-      expect(response.status).toBe(201);
-      expect(response.body).toEqual(mockUser);
-      expect(User.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          username: "testuser",
-          email: "test@example.com",
-        })
-      );
+      expect(res.statusCode).toBe(201);
+      expect(res.body).toEqual(mockUser);
+      expect(User.create).toHaveBeenCalledWith({
+        username: "testuser",
+        email: "test@example.com",
+        passwordHash: "hashedPassword",
+      });
     });
 
-    it("should return 500 if registering user fails", async () => {
-      bcrypt.hash.mockResolvedValue("hashedpassword");
-      User.create.mockRejectedValue(new Error("Failed to register user"));
+    it("should return 500 if an error occurs during registration", async () => {
+      bcrypt.hash.mockRejectedValue(new Error("Hash error"));
 
-      const response = await request(app)
-        .post("/user/register")
-        .send({
-          username: "testuser",
-          email: "test@example.com",
-          password: "password",
-        });
+      const res = await request(app)
+        .post("/api/users/register")
+        .send({ username: "testuser", email: "test@example.com", password: "password123" });
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ message: "Internal server error" });
     });
   });
 
-  describe("POST /login", () => {
-    it("should login a user", async () => {
-      const mockUser = {
-        id: 1,
-        email: "test@example.com",
-        passwordHash: "hashedpassword",
-      };
+  describe("POST /api/users/login", () => {
+    it("should login a user and return a token", async () => {
+      const mockUser = { id: 1, email: "test@example.com", passwordHash: "hashedPassword" };
       bcrypt.compare.mockResolvedValue(true);
+      jwt.sign.mockReturnValue("fakeToken");
       User.findOne.mockResolvedValue(mockUser);
-      jwt.sign.mockReturnValue("token");
 
-      const response = await request(app)
-        .post("/user/login")
-        .send({ email: "test@example.com", password: "password" });
+      const res = await request(app)
+        .post("/api/users/login")
+        .send({ email: "test@example.com", password: "password123" });
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({ token: "token" });
-      expect(User.findOne).toHaveBeenCalledWith({
-        where: { email: "test@example.com" },
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({ token: "fakeToken" });
+      expect(User.findOne).toHaveBeenCalledWith({ where: { email: "test@example.com" } });
+      expect(bcrypt.compare).toHaveBeenCalledWith("password123", mockUser.passwordHash);
+      expect(jwt.sign).toHaveBeenCalledWith({ id: mockUser.id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
       });
-      expect(bcrypt.compare).toHaveBeenCalledWith("password", "hashedpassword");
     });
 
-    it("should return 401 if credentials are invalid", async () => {
-      bcrypt.compare.mockResolvedValue(false);
-      User.findOne.mockResolvedValue({ passwordHash: "hashedpassword" });
+    it("should return 401 for invalid credentials", async () => {
+      User.findOne.mockResolvedValue(null);
 
-      const response = await request(app)
-        .post("/user/login")
-        .send({ email: "test@example.com", password: "password" });
+      const res = await request(app)
+        .post("/api/users/login")
+        .send({ email: "test@example.com", password: "password123" });
 
-      expect(response.status).toBe(401);
-      expect(response.body).toEqual({ message: "Invalid email or password" });
+      expect(res.statusCode).toBe(401);
+      expect(res.body).toEqual({ message: "Invalid email or password" });
     });
 
-    it("should return 500 if logging in user fails", async () => {
-      User.findOne.mockRejectedValue(new Error("Failed to login user"));
+    it("should return 500 if an error occurs during login", async () => {
+      User.findOne.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app)
-        .post("/user/login")
-        .send({ email: "test@example.com", password: "password" });
+      const res = await request(app)
+        .post("/api/users/login")
+        .send({ email: "test@example.com", password: "password123" });
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ message: "Internal server error" });
     });
   });
 });

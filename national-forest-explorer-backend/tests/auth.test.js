@@ -1,13 +1,20 @@
 const request = require("supertest");
-const app = require("../index");
+const { app } = require("../index");
 const { User } = require("../models");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const setupTestDB = require("./setup");
 
 jest.mock("../models");
 jest.mock("jsonwebtoken");
+jest.mock("bcrypt");
 
 describe("Auth Routes", () => {
   let token;
+
+  beforeAll(async () => {
+    await setupTestDB();
+  });
 
   beforeEach(() => {
     token = "mockToken";
@@ -15,6 +22,12 @@ describe("Auth Routes", () => {
     jwt.verify.mockImplementation((token, secret, callback) =>
       callback(null, { id: 1 })
     );
+    bcrypt.hash.mockImplementation(async (password, salt) => {
+      return "hashedPassword";
+    });
+    bcrypt.compare.mockImplementation(async (password, hashedPassword) => {
+      return password === "Password123" && hashedPassword === "hashedPassword";
+    });
   });
 
   afterEach(() => {
@@ -29,7 +42,7 @@ describe("Auth Routes", () => {
         email: "testuser@example.com",
       });
 
-      const res = await request(app).post("/auth/signup").send({
+      const res = await request(app).post("/api/auth/signup").send({
         username: "testuser",
         email: "testuser@example.com",
         password: "Password123",
@@ -41,7 +54,7 @@ describe("Auth Routes", () => {
     });
 
     it("should not sign up a user with invalid email", async () => {
-      const res = await request(app).post("/auth/signup").send({
+      const res = await request(app).post("/api/auth/signup").send({
         username: "testuser",
         email: "invalidemail",
         password: "Password123",
@@ -52,7 +65,7 @@ describe("Auth Routes", () => {
     });
 
     it("should not sign up a user with invalid password", async () => {
-      const res = await request(app).post("/auth/signup").send({
+      const res = await request(app).post("/api/auth/signup").send({
         username: "testuser",
         email: "testuser@example.com",
         password: "password",
@@ -71,10 +84,10 @@ describe("Auth Routes", () => {
       User.findOne.mockResolvedValue({
         id: 1,
         username: "testuser",
-        passwordHash: await bcrypt.hash("Password123", 10),
+        passwordHash: "hashedPassword",
       });
 
-      const res = await request(app).post("/auth/login").send({
+      const res = await request(app).post("/api/auth/login").send({
         username: "testuser",
         password: "Password123",
       });
@@ -87,7 +100,7 @@ describe("Auth Routes", () => {
     it("should return error for invalid credentials", async () => {
       User.findOne.mockResolvedValue(null);
 
-      const res = await request(app).post("/auth/login").send({
+      const res = await request(app).post("/api/auth/login").send({
         username: "invaliduser",
         password: "InvalidPassword",
       });
@@ -100,7 +113,7 @@ describe("Auth Routes", () => {
   describe("GET /auth/verify", () => {
     it("should verify token", async () => {
       const res = await request(app)
-        .get("/auth/verify")
+        .get("/api/auth/verify")
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.statusCode).toEqual(200);
@@ -117,7 +130,7 @@ describe("Auth Routes", () => {
       });
 
       const res = await request(app)
-        .get("/auth/me")
+        .get("/api/auth/me")
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.statusCode).toEqual(200);
@@ -128,7 +141,7 @@ describe("Auth Routes", () => {
       User.findByPk.mockResolvedValue(null);
 
       const res = await request(app)
-        .get("/auth/me")
+        .get("/api/auth/me")
         .set("Authorization", `Bearer ${token}`);
 
       expect(res.statusCode).toEqual(404);

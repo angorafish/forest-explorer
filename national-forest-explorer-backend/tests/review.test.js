@@ -1,47 +1,74 @@
 const request = require("supertest");
-const app = require("../index");
+const { app, sequelize } = require("../index");
 const { Review } = require("../models");
 
-jest.mock("../models");
+jest.mock("../middleware/auth", () => (req, res, next) => {
+  req.user = { id: 1 }; 
+  next();
+});
 
-describe("Review Routes", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+describe("Review routes", () => {
+  beforeAll(async () => {
+    await sequelize.sync();
   });
 
-  describe("POST /", () => {
+  afterAll(async () => {
+    await sequelize.close();
+  });
+
+  describe("POST /api/reviews", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
     it("should create a new review", async () => {
       const mockReview = {
         id: 1,
         userId: 1,
+        postId: 1,
         forestId: 1,
+        trailId: null,
         rating: 5,
-        comment: "Great place!",
+        comment: "Great forest!",
       };
-      Review.create.mockResolvedValue(mockReview);
+
+      Review.create = jest.fn().mockResolvedValue(mockReview);
 
       const response = await request(app)
-        .post("/review")
-        .send({ forestId: 1, rating: 5, comment: "Great place!" })
+        .post("/api/reviews")
+        .send({
+          forestId: 1,
+          trailId: null,
+          rating: 5,
+          comment: "Great forest!",
+          postId: 1,
+        })
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockReview);
-      expect(Review.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          forestId: 1,
-          rating: 5,
-          comment: "Great place!",
-        })
-      );
+      expect(response.body).toEqual(expect.objectContaining(mockReview));
+      expect(Review.create).toHaveBeenCalledWith(expect.objectContaining({
+        userId: 1,
+        forestId: 1,
+        trailId: null,
+        rating: 5,
+        comment: "Great forest!",
+        postId: 1,
+      }));
     });
 
-    it("should return 500 if creating a review fails", async () => {
-      Review.create.mockRejectedValue(new Error("Failed to create review"));
+    it("should return 500 if creating the review fails", async () => {
+      Review.create = jest.fn().mockRejectedValue(new Error("Failed to create review"));
 
       const response = await request(app)
-        .post("/review")
-        .send({ forestId: 1, rating: 5, comment: "Great place!" })
+        .post("/api/reviews")
+        .send({
+          forestId: 1,
+          trailId: null,
+          rating: 5,
+          comment: "Great forest!",
+          postId: 1,
+        })
         .set("Authorization", "Bearer token");
 
       expect(response.status).toBe(500);
@@ -49,24 +76,37 @@ describe("Review Routes", () => {
     });
   });
 
-  describe("GET /:locationId", () => {
+  describe("GET /api/reviews/:locationId", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
     it("should fetch reviews for a specific location", async () => {
       const mockReviews = [
-        { id: 1, forestId: 1, rating: 5, comment: "Great place!" },
+        {
+          id: 1,
+          userId: 1,
+          postId: 1,
+          forestId: 1,
+          trailId: null,
+          rating: 5,
+          comment: "Great forest!",
+        },
       ];
-      Review.findAll.mockResolvedValue(mockReviews);
 
-      const response = await request(app).get("/review/1");
+      Review.findAll = jest.fn().mockResolvedValue(mockReviews);
+
+      const response = await request(app).get("/api/reviews/1");
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockReviews);
+      expect(response.body).toEqual(expect.arrayContaining(mockReviews));
       expect(Review.findAll).toHaveBeenCalledWith({ where: { forestId: "1" } });
     });
 
     it("should return 500 if fetching reviews fails", async () => {
-      Review.findAll.mockRejectedValue(new Error("Failed to fetch reviews"));
+      Review.findAll = jest.fn().mockRejectedValue(new Error("Failed to fetch reviews"));
 
-      const response = await request(app).get("/review/1");
+      const response = await request(app).get("/api/reviews/1");
 
       expect(response.status).toBe(500);
       expect(response.body).toEqual({ error: "Failed to fetch reviews" });

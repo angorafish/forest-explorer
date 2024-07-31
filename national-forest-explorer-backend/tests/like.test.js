@@ -1,166 +1,163 @@
 const request = require("supertest");
-const express = require("express");
-const { Like, Post, Notification } = require("../models");
-const likeRouter = require("../routes/like");
+const { app, sequelize } = require("../index");
+const { Like, Post, Notification, User } = require("../models");
 const authenticateToken = require("../middleware/auth");
 
-jest.mock("../middleware/auth");
 jest.mock("../models");
+jest.mock("../middleware/auth");
 
-const app = express();
-app.use(express.json());
-app.use(likeRouter);
+describe("Like Routes", () => {
+  let user, post;
 
-describe("Like routes", () => {
-  beforeEach(() => {
+  beforeAll(async () => {
+    await sequelize.authenticate();
+  });
+
+  beforeEach(async () => {
+    user = {
+      id: 1,
+      username: "testuser",
+      email: "testuser@example.com",
+      passwordHash: "hashedPassword",
+    };
+
+    post = {
+      id: 1,
+      postType: "review",
+      location: "Test Location",
+      rating: 5,
+      reviewText: "Great place!",
+      userId: user.id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    User.findByPk.mockResolvedValue(user);
+    Post.findByPk.mockResolvedValue(post);
+    authenticateToken.mockImplementation((req, res, next) => {
+      req.user = user;
+      next();
+    });
+  });
+
+  afterEach(async () => {
     jest.clearAllMocks();
   });
 
-  describe("POST /:postId", () => {
-    it("should like a post for the authenticated user", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      Post.findByPk.mockResolvedValue({ id: 1, userId: 2 });
+  afterAll(async () => {
+    await sequelize.close();
+  });
+
+  describe("POST /api/likes/:postId", () => {
+    it("should like a post successfully", async () => {
       Like.findOne.mockResolvedValue(null);
-      const mockLike = { id: 1, postId: 1, userId: 1 };
-      Like.create.mockResolvedValue(mockLike);
+      Like.create.mockResolvedValue({
+        id: 1,
+        postId: post.id,
+        userId: user.id,
+      });
+      Notification.create.mockResolvedValue();
 
-      const response = await request(app)
-        .post("/1")
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .post(`/api/likes/${post.id}`)
+        .set("Authorization", `Bearer mockToken`);
 
-      expect(response.status).toBe(201);
-      expect(response.body).toEqual(mockLike);
-      expect(Like.create).toHaveBeenCalledWith({ postId: 1, userId: 1 });
+      expect(res.statusCode).toEqual(201);
+      expect(res.body).toHaveProperty("postId", post.id);
+      expect(res.body).toHaveProperty("userId", user.id);
+      expect(Like.create).toHaveBeenCalledWith({ postId: post.id, userId: user.id });
       expect(Notification.create).toHaveBeenCalledWith({
-        userId: 2,
-        fromUserId: 1,
+        userId: post.userId,
+        fromUserId: user.id,
         type: "like",
       });
     });
 
     it("should return 404 if the post is not found", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
       Post.findByPk.mockResolvedValue(null);
 
-      const response = await request(app)
-        .post("/1")
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .post(`/api/likes/999`)
+        .set("Authorization", `Bearer mockToken`);
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "Post not found" });
+      expect(res.statusCode).toEqual(404);
+      expect(res.body).toHaveProperty("message", "Post not found");
     });
 
     it("should return 400 if the post is already liked", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      Post.findByPk.mockResolvedValue({ id: 1, userId: 2 });
-      Like.findOne.mockResolvedValue({ id: 1 });
+      Like.findOne.mockResolvedValue({ id: 1, postId: post.id, userId: user.id });
 
-      const response = await request(app)
-        .post("/1")
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .post(`/api/likes/${post.id}`)
+        .set("Authorization", `Bearer mockToken`);
 
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({ message: "You already liked this post" });
+      expect(res.statusCode).toEqual(400);
+      expect(res.body).toHaveProperty("message", "You already liked this post");
     });
 
-    it("should return 500 if liking the post fails", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      Post.findByPk.mockResolvedValue({ id: 1, userId: 2 });
-      Like.findOne.mockResolvedValue(null);
-      Like.create.mockRejectedValue(new Error("Failed to like post"));
+    it("should handle errors and return 500", async () => {
+      Like.findOne.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app)
-        .post("/1")
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .post(`/api/likes/${post.id}`)
+        .set("Authorization", `Bearer mockToken`);
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Failed to like post" });
+      expect(res.statusCode).toEqual(500);
+      expect(res.body).toHaveProperty("message", "Failed to like post");
     });
   });
 
-  describe("DELETE /:postId", () => {
-    it("should unlike a post for the authenticated user", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      Post.findByPk.mockResolvedValue({ id: 1 });
-      const mockLike = { id: 1, destroy: jest.fn() };
+  describe("DELETE /api/likes/:postId", () => {
+    it("should unlike a post successfully", async () => {
+      const mockLike = {
+        id: 1,
+        postId: post.id,
+        userId: user.id,
+        destroy: jest.fn().mockResolvedValue(),
+      };
       Like.findOne.mockResolvedValue(mockLike);
 
-      const response = await request(app)
-        .delete("/1")
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .delete(`/api/likes/${post.id}`)
+        .set("Authorization", `Bearer mockToken`);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual({ message: "Post unliked successfully" });
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toHaveProperty("message", "Post unliked successfully");
+      expect(Like.findOne).toHaveBeenCalledWith({ where: { postId: post.id, userId: user.id } });
       expect(mockLike.destroy).toHaveBeenCalled();
     });
 
     it("should return 404 if the post is not found", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
       Post.findByPk.mockResolvedValue(null);
 
-      const response = await request(app)
-        .delete("/1")
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .delete(`/api/likes/999`)
+        .set("Authorization", `Bearer mockToken`);
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ message: "Post not found" });
+      expect(res.statusCode).toEqual(404);
+      expect(res.body).toHaveProperty("message", "Post not found");
     });
 
     it("should return 400 if the post is not liked", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      Post.findByPk.mockResolvedValue({ id: 1 });
       Like.findOne.mockResolvedValue(null);
 
-      const response = await request(app)
-        .delete("/1")
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .delete(`/api/likes/${post.id}`)
+        .set("Authorization", `Bearer mockToken`);
 
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({
-        message: "You have not liked this post",
-      });
+      expect(res.statusCode).toEqual(400);
+      expect(res.body).toHaveProperty("message", "You have not liked this post");
     });
 
-    it("should return 500 if unliking the post fails", async () => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
-      Post.findByPk.mockResolvedValue({ id: 1 });
-      Like.findOne.mockResolvedValue({
-        id: 1,
-        destroy: jest
-          .fn()
-          .mockRejectedValue(new Error("Failed to unlike post")),
-      });
+    it("should handle errors and return 500", async () => {
+      Like.findOne.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app)
-        .delete("/1")
-        .set("Authorization", "Bearer token");
+      const res = await request(app)
+        .delete(`/api/likes/${post.id}`)
+        .set("Authorization", `Bearer mockToken`);
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Failed to unlike post" });
+      expect(res.statusCode).toEqual(500);
+      expect(res.body).toHaveProperty("message", "Failed to unlike post");
     });
   });
 });

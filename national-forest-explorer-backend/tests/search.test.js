@@ -1,125 +1,110 @@
 const request = require("supertest");
-const app = require("../index");
-const { Campsite, Forest, Trail } = require("../models");
+const { app } = require("../index");
+const { Forest, Trail, Sequelize } = require("../models");
+const { Op } = require("sequelize");
 
-jest.mock("../models");
+jest.mock("../models", () => ({
+  Forest: {
+    findAll: jest.fn(),
+  },
+  Trail: {
+    findAll: jest.fn(),
+  },
+  Sequelize: {
+    Op: jest.requireActual("sequelize").Op,
+  },
+}));
 
 describe("Search Routes", () => {
-  beforeEach(() => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("GET /suggestions", () => {
-    it("should fetch search suggestions", async () => {
-      const mockCampsites = [{ name: "Campsite1" }];
-      const mockForests = [{ name: "Forest1" }];
-      const mockTrails = [{ name: "Trail1" }];
-      Campsite.findAll.mockResolvedValue(mockCampsites);
+  describe("GET /api/search/suggestions", () => {
+    it("should return search suggestions for forests and trails", async () => {
+      const mockForests = [{ id: 1, name: "Forest A" }];
+      const mockTrails = [{ id: 2, name: "Trail B" }];
+
       Forest.findAll.mockResolvedValue(mockForests);
       Trail.findAll.mockResolvedValue(mockTrails);
 
-      const response = await request(app)
-        .get("/search/suggestions")
-        .query({ q: "test" });
+      const res = await request(app).get("/api/search/suggestions?q=test");
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(["Campsite1", "Forest1", "Trail1"]);
-    });
-
-    it("should return 500 if fetching suggestions fails", async () => {
-      Campsite.findAll.mockRejectedValue(
-        new Error("Failed to fetch suggestions")
-      );
-
-      const response = await request(app)
-        .get("/search/suggestions")
-        .query({ q: "test" });
-
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ error: "Internal server error" });
-    });
-  });
-
-  describe("GET /", () => {
-    it("should fetch search results", async () => {
-      const mockCampsites = [
-        { id: 1, name: "Campsite1", state: "CA", forest: "Forest1" },
-      ];
-      const mockForests = [{ id: 1, name: "Forest1", state: "CA" }];
-      const mockTrails = [
-        { id: 1, name: "Trail1", state: "CA", forest: "Forest1" },
-      ];
-      Campsite.findAll.mockResolvedValue(mockCampsites);
-      Forest.findAll.mockResolvedValue(mockForests);
-      Trail.findAll.mockResolvedValue(mockTrails);
-
-      const response = await request(app).get("/search").query({ q: "test" });
-
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([
-        {
-          id: 1,
-          name: "Campsite1",
-          type: "Campsite",
-          state: "CA",
-          forest: "Forest1",
-        },
-        {
-          id: 1,
-          name: "Forest1",
-          type: "Forest",
-          state: "CA",
-          forest: "Forest1",
-        },
-        {
-          id: 1,
-          name: "Trail1",
-          type: "Trail",
-          state: "CA",
-          forest: "Forest1",
-        },
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual([
+        { id: 1, name: "Forest A", type: "Forest" },
+        { id: 2, name: "Trail B", type: "Trail" },
       ]);
+
+      expect(Forest.findAll).toHaveBeenCalledWith({
+        where: {
+          name: {
+            [Op.iLike]: `%test%`,
+          },
+        },
+      });
+
+      expect(Trail.findAll).toHaveBeenCalledWith({
+        where: {
+          name: {
+            [Op.iLike]: `%test%`,
+            [Op.not]: null,
+          },
+        },
+      });
     });
 
-    it("should return 500 if fetching search results fails", async () => {
-      Campsite.findAll.mockRejectedValue(
-        new Error("Failed to fetch search results")
-      );
+    it("should return a 500 error if an exception occurs", async () => {
+      Forest.findAll.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app).get("/search").query({ q: "test" });
+      const res = await request(app).get("/api/search/suggestions?q=test");
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ error: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ error: "Internal server error" });
     });
   });
 
-  describe("GET /details/:id", () => {
-    it("should fetch details by ID", async () => {
-      const mockCampsite = { id: 1, name: "Campsite1" };
-      Campsite.findByPk.mockResolvedValue(mockCampsite);
+  describe("GET /api/search", () => {
+    it("should return search results for forests and trails", async () => {
+      const mockForests = [{ id: 1, name: "Forest A", region: "Region A", shapeArea: 100 }];
+      const mockTrails = [{ id: 2, name: "Trail B", state: "State B", forest: "Forest A" }];
 
-      const response = await request(app).get("/search/details/1");
+      Forest.findAll.mockResolvedValue(mockForests);
+      Trail.findAll.mockResolvedValue(mockTrails);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual(mockCampsite);
+      const res = await request(app).get("/api/search?q=test");
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual([
+        { id: 1, name: "Forest A", type: "Forest", region: "Region A", shapeArea: 100 },
+        { id: 2, name: "Trail B", type: "Trail", state: "State B", forest: "Forest A" },
+      ]);
+
+      expect(Forest.findAll).toHaveBeenCalledWith({
+        where: {
+          name: {
+            [Op.iLike]: `%test%`,
+          },
+        },
+      });
+
+      expect(Trail.findAll).toHaveBeenCalledWith({
+        where: {
+          name: {
+            [Op.iLike]: `%test%`,
+            [Op.not]: null,
+          },
+        },
+      });
     });
 
-    it("should return 404 if details are not found", async () => {
-      Campsite.findByPk.mockResolvedValue(null);
+    it("should return a 500 error if an exception occurs", async () => {
+      Forest.findAll.mockRejectedValue(new Error("Database error"));
 
-      const response = await request(app).get("/search/details/1");
+      const res = await request(app).get("/api/search?q=test");
 
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ error: "Not found" });
-    });
-
-    it("should return 500 if fetching details fails", async () => {
-      Campsite.findByPk.mockRejectedValue(new Error("Failed to fetch details"));
-
-      const response = await request(app).get("/search/details/1");
-
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ error: "Internal server error" });
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ error: "Internal server error" });
     });
   });
 });

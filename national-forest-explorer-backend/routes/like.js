@@ -6,7 +6,7 @@ const authenticateToken = require("../middleware/auth");
 // Route to like a post
 router.post("/:postId", authenticateToken, async (req, res) => {
   try {
-    const { postId } = req.params;
+    const postId = parseInt(req.params.postId, 10);
     const userId = req.user.id;
 
     const post = await Post.findByPk(postId);
@@ -19,16 +19,18 @@ router.post("/:postId", authenticateToken, async (req, res) => {
       return res.status(400).json({ message: "You already liked this post" });
     }
 
+    console.log(`Creating like with postId: ${postId}, userId: ${userId}`);
     const like = await Like.create({ postId, userId });
 
     await Notification.create({
       userId: post.userId,
-      fromUserId: req.user.id,
+      fromUserId: userId,
       type: "like",
     });
 
-    res.status(201).json(like);
+    res.status(201).json({ postId, userId });
   } catch (error) {
+    console.error("Failed to like post:", error);
     res.status(500).json({ message: "Failed to like post" });
   }
 });
@@ -36,7 +38,7 @@ router.post("/:postId", authenticateToken, async (req, res) => {
 // Route to unlike a post
 router.delete("/:postId", authenticateToken, async (req, res) => {
   try {
-    const { postId } = req.params;
+    const postId = parseInt(req.params.postId, 10);
     const userId = req.user.id;
 
     const post = await Post.findByPk(postId);
@@ -53,6 +55,7 @@ router.delete("/:postId", authenticateToken, async (req, res) => {
 
     res.json({ message: "Post unliked successfully" });
   } catch (error) {
+    console.error("Failed to unlike post:", error);
     res.status(500).json({ message: "Failed to unlike post" });
   }
 });

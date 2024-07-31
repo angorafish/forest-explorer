@@ -67,4 +67,8 @@ const fetchTrailData = async () => {
   }
 };
 
-fetchTrailData();
+module.exports = fetchTrailData;
+
+if (require.main === module) {
+  fetchTrailData();
+}
