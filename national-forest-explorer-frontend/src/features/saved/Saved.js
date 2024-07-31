@@ -66,7 +66,7 @@ const Saved = () => {
         <ul>
           {savedLocations.map((loc) => (
             <li key={`${loc.locationId}-${loc.locationType}`}>
-              <span onClick={() => navigate(`/details/${loc.locationType}/${loc.locationId}`)}>
+              <span onClick={() => navigate(`/details/${loc.locationType}/${loc.locationId}`, { state: { fromSaved: true } })}>
                 {loc.name}
               </span>
               {currentUser && (

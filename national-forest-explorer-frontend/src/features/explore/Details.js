@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../services/axiosConfig';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../authentication/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as filledHeart } from '@fortawesome/free-solid-svg-icons';
@@ -10,12 +10,11 @@ import './explore.css';
 // Logic to show location details of trails and forests
 const Details = () => {
   const { type, id } = useParams(); // Extract params from URL
-  // State to store details of location and track if location is saved
   const [details, setDetails] = useState(null); 
   const [isSaved, setIsSaved] = useState(false);
-  // Access current user from auth context
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); // Access the location
 
   // Fetch details and saved locations when component mounts
   useEffect(() => {
@@ -64,8 +63,10 @@ const Details = () => {
 
   return (
     <div className="details-container">
-      {/* Back button to return to the Explore page */}
-      <button onClick={() => navigate('/explore')} className="back-button">Back to Explore</button>
+      {/* Back button to return to the previous page */}
+      <button onClick={() => navigate(location.state?.fromSaved ? '/saved' : '/explore')} className="back-button">
+        Back to {location.state?.fromSaved ? 'Saved' : 'Explore'}
+      </button>
       
       <h1>{details.name}</h1>
       
