@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import NewTripForm from './NewTripForm';
-import '@testing-library/jest-dom/extend-expect';
 import axios from '../services/axiosConfig';
 import { MemoryRouter } from 'react-router-dom';
 

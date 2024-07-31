@@ -29,7 +29,7 @@ const Settings = () => {
         setIsLoading(true); // Set loading state
 
         // Check if passwords match
-        if (password !== confirmPassword) {
+        if (password && password !== confirmPassword) {
             setMessage("Passwords do not match.");
             setIsLoading(false);
             return;
@@ -39,16 +39,19 @@ const Settings = () => {
             // Send PUT request to update user settings
             const response = await axios.put('/settings', { username, email, password });
 
+            // Re-fetch user data to update the Auth context
+            const updatedUser = await axios.get('/auth/me', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
             // Update the currentUser context with the new data
-            setCurrentUser((prevUser) => ({
-                ...prevUser,
-                username: response.data.username,
-                email: response.data.email
-            }));
+            setCurrentUser(updatedUser.data);
 
             setMessage("Settings updated successfully.");
             // Optionally, redirect the user after a successful update
-            setTimeout(() => navigate('/profile'), 2000); // Redirect to profile after 2 seconds
+            setTimeout(() => navigate(`/profile/${updatedUser.data.username}`), 2000); // Redirect to profile after 2 seconds
         } catch (error) {
             setMessage("Failed to update settings: " + (error.response?.data?.message || error.message));
         } finally {

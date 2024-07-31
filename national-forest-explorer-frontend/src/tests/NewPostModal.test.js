@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import NewPostModal from './NewPostModal';
-import '@testing-library/jest-dom/extend-expect';
 import axios from '../services/axiosConfig';
 
 jest.mock('../services/axiosConfig');
