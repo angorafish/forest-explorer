@@ -87,15 +87,23 @@ a:hover {
 
 .comment {
     padding: 10px;
-    border: 1px solid #ddd;
     border-radius: 4px;
-    background-color: #fff;
+    background-color: #DDB158;
     margin-bottom: 15px;
 }
 
 .comment p {
     margin: 0;
     color: #59360D;
+}
+
+.comment-username {
+    color: #3B777A;
+    cursor: pointer;
+}
+
+.comment-username:hover {
+    text-decoration: underline;
 }
 
 .comment-form {

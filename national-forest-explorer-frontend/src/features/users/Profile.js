@@ -104,22 +104,12 @@ const Profile = () => {
         });
     };
 
-    // Handle like click navigation
-    const handleLikeClick = (username) => {
-        navigate(`/profile/${username}`);
-    };
-
-    // Handle comment click navigation
-    const handleCommentClick = (username) => {
-        navigate(`/profile/${username}`);
-    };
-
     // Display loading message while fetching data
     if (!user) {
         return <div>Loading...</div>;
     }
 
-    // Check if current user is on their own
+    // Check if current user is on their own profile
     const isCurrentUser = currentUser && currentUser.username === user.username;
 
     return (
@@ -168,6 +158,7 @@ const Profile = () => {
                                         </div>
                                     )}
                                     <p>{post.location}</p>
+                                    <p>Likes: {post.likes.length}</p>
                                 </div>
                                 <div className="post-options">
                                     <button onClick={() => togglePostOptions(post.id)}>⋮</button>
@@ -177,32 +168,6 @@ const Profile = () => {
                                             <button onClick={() => handleDeletePost(post.id)}>Delete</button>
                                         </div>
                                     )}
-                                </div>
-                                <div className="post-likes-comments">
-                                    <p>
-                                        Likes: {post.likes && post.likes.length > 0 ? post.likes.length : 0}
-                                        {post.likes && post.likes.length > 0 && post.likes.map(like => (
-                                            <span
-                                                key={like.id}
-                                                onClick={() => handleLikeClick(like.user.username)}
-                                                style={{ cursor: 'pointer', textDecoration: 'underline', marginLeft: '5px' }}
-                                            >
-                                                {like.user.username}
-                                            </span>
-                                        ))}
-                                    </p>
-                                    <ul>
-                                        {post.comments && post.comments.length > 0 && post.comments.map(comment => (
-                                            <li key={comment.id}>
-                                                <span
-                                                    onClick={() => handleCommentClick(comment.user.username)}
-                                                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                                                >
-                                                    {comment.user.username}
-                                                </span>: {comment.text}
-                                            </li>
-                                        ))}
-                                    </ul>
                                 </div>
                             </div>
                         ))}

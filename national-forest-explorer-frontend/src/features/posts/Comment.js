@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // Display a single comment
 const Comment = ({ comment }) => {
@@ -10,7 +11,7 @@ const Comment = ({ comment }) => {
     return (
         <div className="comment">
             <p>{comment.text}</p>
-            <p>— {comment.user.username}</p>
+            <p>— <Link to={`/profile/${comment.user.username}`} className="comment-username">{comment.user.username}</Link></p>
         </div>
     );
 };

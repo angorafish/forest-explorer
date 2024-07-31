@@ -63,27 +63,16 @@ const OtherProfile = () => {
                     <div className="posts-grid">
                         {posts.map(post => (
                             <div key={post.id} className="post" onClick={() => navigate(`/posts/${post.id}`)}>
-                                <p>{post.reviewText}</p>
+                                {post.photos && post.photos.length > 0 && (
+                                    <img src={`http://localhost:3000${post.photos[0].url}`} alt="Post" className="post-picture" />
+                                )}
+                                {post.rating > 0 && (
+                                    <div className="stars">
+                                        {'★'.repeat(post.rating)}{'☆'.repeat(5 - post.rating)}
+                                    </div>
+                                )}
                                 <p>{post.location}</p>
-                                {post.photos && post.photos.map((photo, index) => (
-                                    <img key={index} src={`http://localhost:3000${photo.url}`} alt="Post" className="post-picture" />
-                                ))}
                                 <p>Likes: {post.likes.length}</p>
-                                {/* Comments */}
-                                <div className="post-comments">
-                                    <h4>Comments</h4>
-                                    <ul>
-                                        {post.comments.map(comment => (
-                                            <li key={comment.id}>
-                                                <span onClick={() => navigate(`/profile/${comment.user.username}`)} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
-                                                    {comment.user.username}
-                                                </span>: {comment.text}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <textarea placeholder="Add a comment"></textarea>
-                                    <button>Comment</button>
-                                </div>
                             </div>
                         ))}
                     </div>

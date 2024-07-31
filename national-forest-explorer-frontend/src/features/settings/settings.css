@@ -1,4 +1,3 @@
-/* Container for settings page */
 .settings-container {
     max-width: 600px;
     margin: 0 auto;
@@ -8,7 +7,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Title styling */
 .settings-container h1 {
     text-align: center;
     color: #3B5A00;
@@ -17,7 +15,6 @@
     font-weight: bold;
 }
 
-/* Form input fields */
 .settings-container form div {
     margin-bottom: 15px;
     display: flex;
@@ -26,7 +23,7 @@
 
 .settings-container label {
     display: block;
-    width: 150px; /* Adjust this width as necessary */
+    width: 150px;
     margin-right: 20px;
     color: #59360D;
     font-weight: bold;
@@ -43,7 +40,6 @@
     color: #59360D;
 }
 
-/* Update button styling */
 .settings-container button[type="submit"] {
     width: 100%;
     padding: 10px;
@@ -61,7 +57,6 @@
     background-color: #2a5d6a;
 }
 
-/* Message styling */
 .settings-container .message {
     margin-top: 20px;
     padding: 10px;
@@ -71,7 +66,6 @@
     text-align: center;
 }
 
-/* Delete account button styling */
 .settings-container button.delete-account {
     width: 100%;
     padding: 10px;
