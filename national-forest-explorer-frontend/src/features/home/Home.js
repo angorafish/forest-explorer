@@ -5,39 +5,34 @@ import "./home.css";
 
 // Home component responsible for displaying recent posts
 const Home = () => {
-    // State to manage the posts data
     const [posts, setPosts] = useState([]);
-    // State to manage the loading status
     const [loading, setLoading] = useState(true);
-    // State to manage any errors encountered during data fetching
     const [error, setError] = useState(null);
 
-    // Effect hook to fetch posts when the component mounts
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                const response = await axios.get('/posts');
-                console.log('Fetched Posts:', response.data);
-                setPosts(response.data);
-                setLoading(false);
-            } catch (error) {
-                setError("Failed to fetch posts.");
-                setLoading(false);
-            }
-        };
+    const fetchPosts = async () => {
+        try {
+            const response = await axios.get('/posts');
+            console.log('Fetched Posts:', response.data);
+            setPosts(response.data);
+            setLoading(false);
+        } catch (error) {
+            setError("Failed to fetch posts.");
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchPosts();
     }, []);
 
-    // Function to handle when a new post is created
-    const handlePostCreated = (newPost) => {
-        setPosts([newPost, ...posts]);
+    const handlePostCreated = async () => {
+        setLoading(true);
+        await fetchPosts();
     };
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
-    // Helper function to correctly format photo URLs
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
             return url.replace('../uploads/', '/uploads/');

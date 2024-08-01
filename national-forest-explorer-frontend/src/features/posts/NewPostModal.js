@@ -12,6 +12,7 @@ const NewPostModal = ({ isOpen, onClose, onPostCreated }) => {
     const [reviewText, setReviewText] = useState(''); // State for review text input
     const [photo, setPhoto] = useState(null); // State for photo input
     const [suggestions, setSuggestions] = useState([]); // State for location suggestions
+    const [loading, setLoading] = useState(false); // State to manage loading status
 
     // Fetch suggestions based on user input
     const handleLocationChange = async (e) => {
@@ -49,6 +50,7 @@ const NewPostModal = ({ isOpen, onClose, onPostCreated }) => {
     // Handle form submission to create a new post
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const formData = new FormData();
             formData.append('postType', postType);
@@ -66,14 +68,17 @@ const NewPostModal = ({ isOpen, onClose, onPostCreated }) => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            onPostCreated(response.data); // Notify parent component that a post was created
+            onPostCreated(response.data);
             onClose();
             resetForm();
         } catch (error) {
             console.error("Failed to create a post", error);
+        } finally {
+            setLoading(false);
         }
     };
 
+    // If the modal is not open, return null to prevent rendering
     if (!isOpen) return null;
 
     return createPortal(
@@ -132,7 +137,9 @@ const NewPostModal = ({ isOpen, onClose, onPostCreated }) => {
                             onChange={(e) => setPhoto(e.target.files[0])}
                         />
                     </label>
-                    <button type="submit">Submit</button>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Submitting...' : 'Submit'}
+                    </button>
                 </form>
             </div>
         </div>,
