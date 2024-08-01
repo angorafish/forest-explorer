@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const { User } = require("../models");
+const { User, Notification, Post, Comment, Like, Review } = require("../models");
 const authenticateToken = require("../middleware/auth");
 const router = express.Router();
 
@@ -33,7 +33,16 @@ router.delete("/", authenticateToken, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Delete related records in other tables
+    await Notification.destroy({ where: { userId: user.id } });
+    await Comment.destroy({ where: { userId: user.id } });
+    await Like.destroy({ where: { userId: user.id } });
+    await Review.destroy({ where: { userId: user.id } });
+    await Post.destroy({ where: { userId: user.id } });
+
+    // Now delete the user
     await user.destroy();
+
     res.json({ message: "Account deleted successfully" });
   } catch (error) {
     console.error("Failed to delete account", error);

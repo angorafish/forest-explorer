@@ -26,7 +26,7 @@ const Settings = () => {
     // Handle form submission for updating settings
     const handleUpdate = async (e) => {
         e.preventDefault();
-        setIsLoading(true); // Set loading state
+        setIsLoading(true);
 
         // Check if passwords match
         if (password && password !== confirmPassword) {
@@ -55,7 +55,7 @@ const Settings = () => {
         } catch (error) {
             setMessage("Failed to update settings: " + (error.response?.data?.message || error.message));
         } finally {
-            setIsLoading(false); // Reset loading state
+            setIsLoading(false);
         }
     };
 
@@ -65,7 +65,16 @@ const Settings = () => {
             try {
                 // Send DELETE request to delete user account
                 await axios.delete('/settings');
-                navigate('/login'); // Redirect to login page after account deletion
+
+                // Clear current user and token from the Auth context
+                setCurrentUser(null);
+                localStorage.removeItem('token');
+
+                // Display a success message
+                setMessage("Account deleted successfully.");
+
+                // Redirect to home page and show login/signup option after a short delay
+                setTimeout(() => navigate('/'), 2000);
             } catch (error) {
                 setMessage("Failed to delete account: " + (error.response?.data?.message || error.message));
             }
@@ -84,7 +93,7 @@ const Settings = () => {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         className="form-input"
-                        disabled={isLoading} // Disable input while loading
+                        disabled={isLoading}
                     />
                 </div>
                 <div className="form-group">
@@ -95,7 +104,7 @@ const Settings = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="form-input"
-                        disabled={isLoading} // Disable input while loading
+                        disabled={isLoading}
                     />
                 </div>
                 <div className="form-group">
@@ -106,7 +115,7 @@ const Settings = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="form-input"
-                        disabled={isLoading} // Disable input while loading
+                        disabled={isLoading}
                     />
                 </div>
                 <div className="form-group">
@@ -117,7 +126,7 @@ const Settings = () => {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         className="form-input"
-                        disabled={isLoading} // Disable input while loading
+                        disabled={isLoading}
                     />
                 </div>
                 <button type="submit" className="update-button" disabled={isLoading}>

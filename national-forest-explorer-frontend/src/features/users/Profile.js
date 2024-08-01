@@ -17,6 +17,7 @@ const Profile = () => {
     const [postOptionsVisible, setPostOptionsVisible] = useState({});
     const [editingPost, setEditingPost] = useState(null);
 
+    // Fetch user data and posts when the component mounts or when the current user changes
     useEffect(() => {
         if (currentUser?.username) {
             axios.get(`/users/profile/${currentUser.username}`).then(response => {
@@ -33,6 +34,7 @@ const Profile = () => {
         }
     }, [currentUser]);
 
+    // Helper function to format photo URLs correctly
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
             return url.replace('../uploads/', '/uploads/');
@@ -40,27 +42,33 @@ const Profile = () => {
         return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
     };
 
+    // Navigate to post details page when post is clicked
     const handlePostClick = (postId) => {
         navigate(`/posts/${postId}`);
     };
 
+    // Toggle edit mode for profile photos
     const handleEditClick = () => {
         setEditMode(!editMode);
     };
 
+    // Handle the change of profile photo during editing
     const handleProfilePhotoChange = (event) => {
         setNewProfilePhoto(event.target.files[0]);
     };
 
+    // Handle the change of cover photo during editing
     const handleCoverPhotoChange = (event) => {
         setNewCoverPhoto(event.target.files[0]);
     };
 
+    // Save the changes made to the profile or cover photos
     const handleSaveChanges = () => {
         const formData = new FormData();
         if (newProfilePhoto) formData.append('profilePhoto', newProfilePhoto);
         if (newCoverPhoto) formData.append('coverPhoto', newCoverPhoto);
 
+        // Send the updated photos to the server
         axios.put(`/users/${currentUser.username}/photos`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         }).then(response => {
@@ -72,6 +80,7 @@ const Profile = () => {
         });
     };
 
+    // Toggle the visibility of options menu for a specific post
     const togglePostOptions = (postId) => {
         setPostOptionsVisible(prevState => ({
             ...prevState,
@@ -79,22 +88,27 @@ const Profile = () => {
         }));
     };
 
+    // Set the post to be edited and open the edit modal
     const handleEditPost = (postId) => {
         const post = posts.find(p => p.id === postId);
         setEditingPost(post);
-        setPostOptionsVisible({}); // Close all dropdowns
+        setPostOptionsVisible({});
     };
 
+    // Close the edit post modal
     const handleCloseEditModal = () => {
         setEditingPost(null);
     };
 
+    // Delete a post and update the posts state with a confirmation prompt
     const handleDeletePost = (postId) => {
-        axios.delete(`/posts/${postId}`).then(() => {
-            setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-        }).catch(error => {
-            console.error('Error deleting post:', error);
-        });
+        if (window.confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
+            axios.delete(`/posts/${postId}`).then(() => {
+                setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+            }).catch(error => {
+                console.error('Error deleting post:', error);
+            });
+        }
     };
 
     if (!user) {
