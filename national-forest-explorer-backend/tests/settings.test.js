@@ -1,12 +1,27 @@
 const request = require("supertest");
 const bcrypt = require("bcrypt");
 const { app } = require("../index");
-const { User } = require("../models");
+const { User, Notification, Post, Comment, Like, Review } = require("../models");
 const authenticateToken = require("../middleware/auth");
 
 jest.mock("../models", () => ({
   User: {
     findByPk: jest.fn(),
+  },
+  Notification: {
+    destroy: jest.fn(),
+  },
+  Post: {
+    destroy: jest.fn(),
+  },
+  Comment: {
+    destroy: jest.fn(),
+  },
+  Like: {
+    destroy: jest.fn(),
+  },
+  Review: {
+    destroy: jest.fn(),
   },
 }));
 
@@ -80,6 +95,11 @@ describe("Settings Routes", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toEqual({ message: "Account deleted successfully" });
+      expect(Notification.destroy).toHaveBeenCalledWith({ where: { userId: 1 } });
+      expect(Comment.destroy).toHaveBeenCalledWith({ where: { userId: 1 } });
+      expect(Like.destroy).toHaveBeenCalledWith({ where: { userId: 1 } });
+      expect(Review.destroy).toHaveBeenCalledWith({ where: { userId: 1 } });
+      expect(Post.destroy).toHaveBeenCalledWith({ where: { userId: 1 } });
       expect(mockUser.destroy).toHaveBeenCalled();
     });
 

@@ -53,7 +53,18 @@ describe("Post routes", () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockPosts);
       expect(Post.findAll).toHaveBeenCalledWith({
-        include: expect.any(Array),
+        include: [
+          { model: User, as: "user", attributes: ["username"] },
+          { model: Review, as: "reviews" },
+          {
+            model: Comment,
+            as: "comments",
+            include: [{ model: User, as: "user", attributes: ["username"] }],
+          },
+          { model: Like, as: "likes" },
+          { model: Photo, as: "photos" },
+        ],
+        order: [["createdAt", "DESC"]],
       });
     });
 
@@ -88,7 +99,17 @@ describe("Post routes", () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockPost);
       expect(Post.findByPk).toHaveBeenCalledWith("1", {
-        include: expect.any(Array),
+        include: [
+          { model: User, as: "user", attributes: ["username"] },
+          { model: Review, as: "reviews" },
+          {
+            model: Comment,
+            as: "comments",
+            include: [{ model: User, as: "user", attributes: ["username"] }],
+          },
+          { model: Like, as: "likes" },
+          { model: Photo, as: "photos" },
+        ],
       });
     });
 
@@ -113,28 +134,28 @@ describe("Post routes", () => {
 
   describe("POST /posts", () => {
     beforeEach(() => {
-      authenticateToken.mockImplementation((req, res, next) => {
-        req.user = { id: 1 };
-        next();
-      });
+        authenticateToken.mockImplementation((req, res, next) => {
+            req.user = { id: 1 };
+            next();
+        });
     });
 
     it("should return 500 if creating the post fails", async () => {
-      Post.create.mockRejectedValue(new Error("Failed to create post"));
+        Post.create.mockRejectedValue(new Error("Failed to create post"));
 
-      const response = await request(app)
-        .post("/posts")
-        .field("postType", "trail")
-        .field("location", "Forest")
-        .field("rating", 5)
-        .field("reviewText", "Great!")
-        .attach("photo", Buffer.from("dummy content"), "photo1.jpg")
-        .set("Authorization", "Bearer token");
+        const response = await request(app)
+            .post("/posts")
+            .field("postType", "trail")
+            .field("location", "Forest")
+            .field("rating", 5)
+            .field("reviewText", "Great!")
+            .attach("photo", Buffer.from("dummy content"), "photo1.jpg")
+            .set("Authorization", "Bearer token");
 
-      expect(response.status).toBe(500);
-      expect(response.body).toEqual({ message: "Failed to create post" });
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ message: "Failed to create post" });
     });
-  });
+});
 
   describe("PUT /posts/:id", () => {
     beforeEach(() => {
