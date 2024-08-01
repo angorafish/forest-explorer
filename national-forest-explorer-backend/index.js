@@ -31,7 +31,7 @@ const app = express();
 const server = http.createServer(app); // Create HTTP server
 const io = socketIo(server, { // Setup socket.io with CORS config
   cors: {
-    origin: "http://localhost:3001",
+    origin: "https://national-forest-frontend-5e04820d306c.herokuapp.com/",
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true,

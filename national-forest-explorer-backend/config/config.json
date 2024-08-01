@@ -14,10 +14,7 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "mfoster",
-    "password": "pword123",
-    "database": "national_forest_explorer_dev",
-    "host": "127.0.0.1",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres"
   }
 }

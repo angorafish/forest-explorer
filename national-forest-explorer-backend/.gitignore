@@ -11,4 +11,3 @@ Thumbs.db
 .vscode/
 *.swp
 coverage/
-config/config.json
