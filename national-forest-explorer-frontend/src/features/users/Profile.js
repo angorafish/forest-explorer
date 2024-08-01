@@ -2,33 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../services/axiosConfig';
 import { useAuth } from '../authentication/AuthContext';
+import EditPostModal from '../posts/EditPostModal';
 import './profile.css';
 
 // Component to display and edit the current user's profile
 const Profile = () => {
-    // Access the current user from the auth context
     const { currentUser } = useAuth();
-    // Hook for navigation
     const navigate = useNavigate();
-    // State to store user data, posts, and edit mode status
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
     const [editMode, setEditMode] = useState(false);
     const [newProfilePhoto, setNewProfilePhoto] = useState(null);
     const [newCoverPhoto, setNewCoverPhoto] = useState(null);
     const [postOptionsVisible, setPostOptionsVisible] = useState({});
+    const [editingPost, setEditingPost] = useState(null);
 
-    // Fetch user data and posts when the component mounts
     useEffect(() => {
         if (currentUser?.username) {
-            // Fetch the current user's profile data
             axios.get(`/users/profile/${currentUser.username}`).then(response => {
                 setUser(response.data);
             }).catch(error => {
                 console.error('Error fetching user data:', error);
             });
 
-            // Fetch the current user's posts
             axios.get(`/users/user/${currentUser.username}`).then(response => {
                 setPosts(response.data);
             }).catch(error => {
@@ -37,7 +33,6 @@ const Profile = () => {
         }
     }, [currentUser]);
 
-    // Helper function to format photo URLs correctly
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
             return url.replace('../uploads/', '/uploads/');
@@ -45,36 +40,29 @@ const Profile = () => {
         return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
     };
 
-    // Handle navigation to the post details page
     const handlePostClick = (postId) => {
         navigate(`/posts/${postId}`);
     };
 
-    // Toggle edit mode for profile photos
     const handleEditClick = () => {
         setEditMode(!editMode);
     };
 
-    // Change profile photo logic
     const handleProfilePhotoChange = (event) => {
         setNewProfilePhoto(event.target.files[0]);
     };
 
-    // Change cover photo logic
     const handleCoverPhotoChange = (event) => {
         setNewCoverPhoto(event.target.files[0]);
     };
 
-    // Save changes to profile photos
     const handleSaveChanges = () => {
         const formData = new FormData();
         if (newProfilePhoto) formData.append('profilePhoto', newProfilePhoto);
         if (newCoverPhoto) formData.append('coverPhoto', newCoverPhoto);
 
         axios.put(`/users/${currentUser.username}/photos`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+            headers: { 'Content-Type': 'multipart/form-data' }
         }).then(response => {
             setUser(response.data);
             setEditMode(false);
@@ -84,7 +72,6 @@ const Profile = () => {
         });
     };
 
-    // Toggle visibility of post options menu
     const togglePostOptions = (postId) => {
         setPostOptionsVisible(prevState => ({
             ...prevState,
@@ -92,12 +79,16 @@ const Profile = () => {
         }));
     };
 
-    // Navigate to edit post page
     const handleEditPost = (postId) => {
-        navigate(`/posts/${postId}/edit`);
+        const post = posts.find(p => p.id === postId);
+        setEditingPost(post);
+        setPostOptionsVisible({}); // Close all dropdowns
     };
 
-    // Delete post
+    const handleCloseEditModal = () => {
+        setEditingPost(null);
+    };
+
     const handleDeletePost = (postId) => {
         axios.delete(`/posts/${postId}`).then(() => {
             setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
@@ -106,12 +97,10 @@ const Profile = () => {
         });
     };
 
-    // Display loading message while fetching data
     if (!user) {
         return <div>Loading...</div>;
     }
 
-    // Check if the current user is on their own profile
     const isCurrentUser = currentUser && currentUser.username === user.username;
 
     return (
@@ -176,6 +165,11 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+            {editingPost && (
+                <div className="modal-overlay">
+                    <EditPostModal post={editingPost} onClose={handleCloseEditModal} />
+                </div>
+            )}
         </div>
     );
 };

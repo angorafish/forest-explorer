@@ -18,6 +18,7 @@ import axios from './services/axiosConfig';
 import socket from './services/socketConfig';
 import OtherProfile from './features/users/OtherProfile';
 import Forest from './features/explore/Forest';
+import EditPostModal from './features/posts/EditPostModal';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -86,6 +87,7 @@ function App() {
                 <Route path="/posts" element={<Posts />} />
                 <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
                 <Route path="/posts/:id" element={<PostDetails />} />
+                <Route path="/posts/:id/edit" element={<EditPostModal />} />
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/trails" element={<Trails />} />
                 <Route path="/forest/:id" element={<Forest />} />

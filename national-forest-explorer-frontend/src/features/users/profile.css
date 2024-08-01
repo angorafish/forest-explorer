@@ -126,7 +126,7 @@ h2 {
     border: 1px solid #444;
     border-radius: 5px;
     overflow: hidden;
-    z-index: 1;
+    z-index: 10;
 }
 
 .post-options-menu button {
@@ -197,3 +197,5 @@ button.edit-profile {
 button.edit-profile:hover {
     background-color: #C3A24B;
 }
+
+
