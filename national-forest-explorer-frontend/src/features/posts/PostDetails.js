@@ -5,7 +5,7 @@ import Comment from './Comment';
 import './posts.css';
 import EditPostModal from './EditPostModal';
 import { useAuth } from '../authentication/AuthContext';
-import { FaEllipsisV, FaArrowLeft } from 'react-icons';
+import { FaEllipsisV, FaArrowLeft } from 'react-icons/fa';
 
 // Using state to manage the features
 const PostDetails = () => {
