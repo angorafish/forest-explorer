@@ -37,7 +37,7 @@ const Settings = () => {
 
         try {
             // Send PUT request to update user settings
-            const response = await axios.put('/settings', { username, email, password });
+            await axios.put('/settings', { username, email, password });
 
             // Re-fetch user data to update the Auth context
             const updatedUser = await axios.get('/auth/me', {

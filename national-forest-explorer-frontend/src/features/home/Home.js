@@ -5,34 +5,36 @@ import "./home.css";
 
 // Home component responsible for displaying recent posts
 const Home = () => {
+    // State to store posts
     const [posts, setPosts] = useState([]);
+    // State to manage loading status
     const [loading, setLoading] = useState(true);
+    // State to manage error messages
     const [error, setError] = useState(null);
 
+    // Function to fetch posts from the API
     const fetchPosts = async () => {
         try {
+            // Make a GET request to fetch posts
             const response = await axios.get('/posts');
             console.log('Fetched Posts:', response.data);
+            // Update posts state with the fetched data
             setPosts(response.data);
+            // Set loading to false after fetching posts
             setLoading(false);
         } catch (error) {
+            // Set error message if fetching posts fails
             setError("Failed to fetch posts.");
             setLoading(false);
         }
     };
 
+    // useEffect hook to fetch posts when the component mounts
     useEffect(() => {
         fetchPosts();
     }, []);
 
-    const handlePostCreated = async () => {
-        setLoading(true);
-        await fetchPosts();
-    };
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-
+    // Function to get the correct photo URL
     const getPhotoUrl = (url) => {
         if (url.startsWith('../uploads/')) {
             return url.replace('../uploads/', '/uploads/');
@@ -40,6 +42,12 @@ const Home = () => {
         return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
     };
 
+    // Render loading state
+    if (loading) return <div>Loading...</div>;
+    // Render error state
+    if (error) return <div>{error}</div>;
+
+    // Render the list of posts
     return (
         <div>
             <h1>Recent Posts</h1>
@@ -48,8 +56,10 @@ const Home = () => {
                     <div key={post.id} className="photo-card">
                         <Link to={`/posts/${post.id}`}>
                             {post.photos && post.photos.length > 0 ? (
+                                // Render post photo if available
                                 <img src={`http://localhost:3000${getPhotoUrl(post.photos[0].url)}`} alt={post.location} />
                             ) : (
+                                // Render star rating if the post is a review and no photo is available
                                 post.postType === 'review' && (
                                     <div className="review-info">
                                         {[...Array(5)].map((star, index) => {
