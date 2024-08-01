@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import Trails from '../features/explore/Trails';
 import axios from 'axios';
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('axios');
 

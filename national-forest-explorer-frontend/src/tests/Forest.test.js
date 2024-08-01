@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import Forest from './Forest';
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('../services/axiosConfig');
 

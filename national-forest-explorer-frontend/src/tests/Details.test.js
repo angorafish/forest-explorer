@@ -4,7 +4,6 @@ import axios from 'axios';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import Details from './Details';
 import { AuthContext } from '../context/AuthContext';
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('axios');
 

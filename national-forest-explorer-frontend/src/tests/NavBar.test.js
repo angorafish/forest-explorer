@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import NavBar from './NavBar';
 import { MemoryRouter } from 'react-router-dom';
-import '@testing-library/jest-dom/extend-expect';
 import axios from '../services/axiosConfig';
 import socket from '../services/socketConfig';
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import Notifications from './Notifications';
 import axios from '../services/axiosConfig';
-import '@testing-library/jest-dom/extend-expect';
 import socket from '../services/socketConfig';
 
 jest.mock('../services/axiosConfig');

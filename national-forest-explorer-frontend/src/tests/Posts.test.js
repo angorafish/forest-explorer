@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import Posts from './Posts';
 import axios from '../services/axiosConfig';
-import '@testing-library/jest-dom/extend-expect';
 import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../services/axiosConfig');

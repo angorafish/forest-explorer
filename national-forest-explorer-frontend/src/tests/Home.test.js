@@ -4,7 +4,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import Home from '../components/Home';
 import PostDetails from '../components/PostDetails';
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('../services/axiosConfig');
 

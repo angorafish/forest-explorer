@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import InviteModal from './InviteModal';
 import Modal from 'react-modal';
 import axios from '../services/axiosConfig';
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('../services/axiosConfig');
 

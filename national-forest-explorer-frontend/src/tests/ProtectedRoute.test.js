@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
-import '@testing-library/jest-dom/extend-expect';
 import jwtDecode from 'jwt-decode';
 
 jest.mock('jwt-decode');
