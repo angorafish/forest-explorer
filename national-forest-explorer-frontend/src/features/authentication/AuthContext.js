@@ -6,6 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     // State to store current user and notification count
     const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [notificationCount, setNotificationCount] = useState(0);
 
     // Fetch current user on initial load
@@ -19,12 +20,20 @@ export const AuthProvider = ({ children }) => {
             })
                 .then((response) => {
                     setCurrentUser(response.data);
+                    setLoading(false);
                 })
                 .catch(() => {
                     localStorage.removeItem('token');
+                    setLoading(false);
                 });
+        } else {
+            setLoading(false);
         }
     }, []);
+
+    if (loading) {
+        return <div>Loading...</div>
+    }
 
     return (
         <AuthContext.Provider value={{ currentUser, setCurrentUser, notificationCount, setNotificationCount }}>

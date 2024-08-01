@@ -12,6 +12,9 @@ const OtherProfile = () => {
     const { username } = useParams();
     // Hook for navigation
     const navigate = useNavigate();
+
+    console.log('OtherProfile component is rendering');
+    console.log('currentUser:', currentUser);
     // State to store user data, posts, and errors
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
@@ -19,11 +22,13 @@ const OtherProfile = () => {
 
     // Fetch user data and posts when the component mounts or the username changes
     useEffect(() => {
+        if (currentUser && username === currentUser.username) {
+            navigate('/my-profile');
+        }
+
         const fetchUserData = async () => {
             try {
-                // Fetch user data from the API
                 const response = await axios.get(`/users/profile/${username}`);
-                // Set the user and posts state with the response data
                 setUser(response.data);
                 setPosts(response.data.posts);
             } catch (error) {
@@ -32,7 +37,7 @@ const OtherProfile = () => {
             }
         };
         fetchUserData();
-    }, [username]);
+    }, [username, currentUser, navigate]);
 
     // Display an error message if there's an error
     if (error) {
@@ -46,18 +51,15 @@ const OtherProfile = () => {
 
     return (
         <div className="profile-page">
-            {/* Cover Photo */}
             <div className="cover-photo">
                 <img src={`http://localhost:3000/uploads/${user.coverPhoto}`} alt="Cover" />
             </div>
-            {/* Profile Details */}
             <div className="profile-details">
                 <div className="profile-photo">
                     <img src={`http://localhost:3000/uploads/${user.profilePhoto}`} alt="Profile" />
                 </div>
                 <h2>{user.username}</h2>
                 <p>Member since {new Date(user.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
-                {/* User's Posts */}
                 <div className="user-posts">
                     <h3>Recent Posts</h3>
                     <div className="posts-grid">
@@ -73,6 +75,14 @@ const OtherProfile = () => {
                                 )}
                                 <p>{post.location}</p>
                                 <p>Likes: {post.likes.length}</p>
+
+                                {/* Conditionally render the edit/delete options */}
+                                {currentUser?.id === post.userId ? (
+                                    <div className="post-options">
+                                        <span>Edit</span>
+                                        <span>Delete</span>
+                                    </div>
+                                ) : null}
                             </div>
                         ))}
                     </div>

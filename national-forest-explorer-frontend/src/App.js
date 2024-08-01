@@ -16,6 +16,8 @@ import Details from './features/explore/Details';
 import Saved from './features/saved/Saved';
 import axios from './services/axiosConfig';
 import socket from './services/socketConfig';
+import OtherProfile from './features/users/OtherProfile';
+import Forest from './features/explore/Forest';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -79,13 +81,14 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home posts={posts} />} /> 
                 <Route path="/login" element={<LoginSignup />} />
-                <Route path="/profile/:username" element={<ProtectedRoute element={<Profile />} />} />
+                <Route path="/profile/:username" element={<ProtectedRoute element={<OtherProfile />} />} />
                 <Route path="/my-profile" element={<ProtectedRoute element={<Profile />} />} />
                 <Route path="/posts" element={<Posts />} />
                 <Route path="/settings" element={<ProtectedRoute element={<Settings />} />} />
                 <Route path="/posts/:id" element={<PostDetails />} />
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/trails" element={<Trails />} />
+                <Route path="/forest/:id" element={<Forest />} />
                 <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
                 <Route path="/details/:type/:id" element={<Details />} />
                 <Route path="/saved" element={<ProtectedRoute element={<Saved />} />} />

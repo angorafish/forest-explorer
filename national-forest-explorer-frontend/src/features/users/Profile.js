@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from '../../services/axiosConfig';
 import { useAuth } from '../authentication/AuthContext';
 import './profile.css';
 
-// Display and edit the current user's profile
+// Component to display and edit the current user's profile
 const Profile = () => {
     // Access the current user from the auth context
     const { currentUser } = useAuth();
-    // Extract the username parameter from the URL
-    const { username } = useParams();
     // Hook for navigation
     const navigate = useNavigate();
     // State to store user data, posts, and edit mode status
@@ -20,20 +18,24 @@ const Profile = () => {
     const [newCoverPhoto, setNewCoverPhoto] = useState(null);
     const [postOptionsVisible, setPostOptionsVisible] = useState({});
 
-    // Fetch user data and posts when the component mounts or the username changes
+    // Fetch user data and posts when the component mounts
     useEffect(() => {
-        axios.get(`/users/profile/${username}`).then(response => {
-            setUser(response.data);
-        }).catch(error => {
-            console.error('Error fetching user data:', error);
-        });
+        if (currentUser?.username) {
+            // Fetch the current user's profile data
+            axios.get(`/users/profile/${currentUser.username}`).then(response => {
+                setUser(response.data);
+            }).catch(error => {
+                console.error('Error fetching user data:', error);
+            });
 
-        axios.get(`/users/user/${username}`).then(response => {
-            setPosts(response.data);
-        }).catch(error => {
-            console.error('Error fetching user posts:', error);
-        });
-    }, [username]);
+            // Fetch the current user's posts
+            axios.get(`/users/user/${currentUser.username}`).then(response => {
+                setPosts(response.data);
+            }).catch(error => {
+                console.error('Error fetching user posts:', error);
+            });
+        }
+    }, [currentUser]);
 
     // Helper function to format photo URLs correctly
     const getPhotoUrl = (url) => {
@@ -43,12 +45,12 @@ const Profile = () => {
         return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
     };
 
-    // Handle navigation to post details page
+    // Handle navigation to the post details page
     const handlePostClick = (postId) => {
         navigate(`/posts/${postId}`);
     };
 
-    // Toggle edit mode
+    // Toggle edit mode for profile photos
     const handleEditClick = () => {
         setEditMode(!editMode);
     };
@@ -69,7 +71,7 @@ const Profile = () => {
         if (newProfilePhoto) formData.append('profilePhoto', newProfilePhoto);
         if (newCoverPhoto) formData.append('coverPhoto', newCoverPhoto);
 
-        axios.put(`/users/${username}/photos`, formData, {
+        axios.put(`/users/${currentUser.username}/photos`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -109,7 +111,7 @@ const Profile = () => {
         return <div>Loading...</div>;
     }
 
-    // Check if current user is on their own profile
+    // Check if the current user is on their own profile
     const isCurrentUser = currentUser && currentUser.username === user.username;
 
     return (

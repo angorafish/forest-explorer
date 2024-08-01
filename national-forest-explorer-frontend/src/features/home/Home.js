@@ -27,11 +27,10 @@ const Home = () => {
         };
 
         fetchPosts();
-    }, []); // Empty dependency array ensures this effect runs only once on mount
+    }, []);
 
     // Function to handle when a new post is created
     const handlePostCreated = (newPost) => {
-        // Prepend the new post to the existing posts list
         setPosts([newPost, ...posts]);
     };
 
