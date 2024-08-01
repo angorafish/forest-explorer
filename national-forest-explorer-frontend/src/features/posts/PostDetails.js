@@ -5,7 +5,8 @@ import Comment from './Comment';
 import './posts.css';
 import EditPostModal from './EditPostModal';
 import { useAuth } from '../authentication/AuthContext';
-import { FaEllipsisV, FaArrowLeft } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisV, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 // Using state to manage the features
 const PostDetails = () => {
@@ -116,7 +117,7 @@ const PostDetails = () => {
     return (
         <div className="post-details">
             <button className="back-button" onClick={() => navigate(-1)}>
-                <FaArrowLeft /> Back
+                <FontAwesomeIcon icon={faArrowLeft} /> Back
             </button>
             <h1 className="post-title">{post.location}</h1>
             <div className="post-images">
@@ -140,7 +141,7 @@ const PostDetails = () => {
             {currentUser && post.userId === currentUser.id && (
                 <div className="post-actions">
                     <button className="action-button" onClick={() => setShowDropdown(!showDropdown)}>
-                        <FaEllipsisV />
+                        <FontAwesomeIcon icon={faEllipsisV} />
                     </button>
                     {showDropdown && (
                         <div className="dropdown-menu">
