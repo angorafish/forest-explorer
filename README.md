@@ -1,7 +1,6 @@
 Step Six - Project Documentation
 National Forest Explorer - https://github.com/angorafish/forest-explorer
 https://national-forest-frontend-5e04820d306c.herokuapp.com
-- Note: herokuapp is not correctly deploying because the file is too large. Working on this.
 
 # Description
 My national forest explorer app is an informational and social site where users can explore information on forests and trails around the US, save places to visit, and post about their trips to these places.
