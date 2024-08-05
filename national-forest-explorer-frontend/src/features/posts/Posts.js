@@ -40,7 +40,7 @@ const Posts = () => {
                         <p>{post.reviewText}</p>
                         <p>Rating: {post.rating}</p>
                         {post.photos && post.photos.map(photo => (
-                            <img key={photo.id} src={`http://localhost:3000${photo.url}`} alt="Post" />
+                            <img key={photo.id} src={`${process.env.REACT_APP_API_URL}${photo.url}`} alt="Post" />
                         ))}
                         <p>Posted by: <Link to={`/profile/${post.user.username}`}>{post.user.username}</Link></p>
                         <Link to={`/post/${post.id}`}>View Post</Link>

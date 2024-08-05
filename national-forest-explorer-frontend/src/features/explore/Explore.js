@@ -16,7 +16,7 @@ const Explore = () => {
     setSearchInput(value);
     if (value) {
       try {
-        const response = await axios.get(`http://localhost:3000/api/search/suggestions?q=${value}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/search/suggestions?q=${value}`);
         setSuggestions(response.data);
       } catch (error) {
         console.error('Error fetching suggestions:', error);
@@ -28,7 +28,7 @@ const Explore = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/search', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/search`, {
         params: { q: searchInput },
       });
       setSearchResults(response.data);

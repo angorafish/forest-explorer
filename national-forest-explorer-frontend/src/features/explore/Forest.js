@@ -15,7 +15,7 @@ const Forest = () => {
     useEffect(() => {
         const fetchForest = async () => {
             try {
-                const response = await axios.get(`/forests/nps/${id}`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/forests/nps/${id}`);
                 setForest(response.data);
                 setLoading(false);
             } catch (error) {

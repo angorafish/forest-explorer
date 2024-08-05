@@ -20,12 +20,12 @@ const Details = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/details/${type}s/${id}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/details/${type}s/${id}`);
         console.log('Fetched details:', response.data);
         setDetails(response.data);
 
         if (currentUser) {
-          const savedResponse = await axios.get(`http://localhost:3000/api/savedLocations/user/${currentUser.id}`);
+          const savedResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/savedLocations/user/${currentUser.id}`);
           const saved = savedResponse.data.some(loc => loc.locationId === parseInt(id) && loc.locationType === type);
           setIsSaved(saved);
         }
@@ -42,11 +42,11 @@ const Details = () => {
     if (!currentUser) return;
     try {
       if (isSaved) {
-        await axios.delete('http://localhost:3000/api/savedLocations/unsave', {
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/savedLocations/unsave`, {
           data: { userId: currentUser.id, locationId: parseInt(id), locationType: type }
         });
       } else {
-        await axios.post('http://localhost:3000/api/savedLocations/save', {
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/savedLocations/save`, {
           userId: currentUser.id, locationId: parseInt(id), locationType: type
         });
       }
@@ -63,7 +63,6 @@ const Details = () => {
 
   return (
     <div className="details-container">
-      {/* Back button to return to the previous page */}
       <button onClick={() => navigate(location.state?.fromSaved ? '/saved' : '/explore')} className="back-button">
         Back to {location.state?.fromSaved ? 'Saved' : 'Explore'}
       </button>
@@ -72,7 +71,6 @@ const Details = () => {
       
       <p>Type: {type}</p>
       
-      {/* Conditionally render details based on type */}
       {type === 'forest' ? (
         <>
           {details.region && <p>Region: {details.region}</p>}
@@ -85,7 +83,6 @@ const Details = () => {
         </>
       )}
       
-      {/* Display save/unsave button if user is logged in */}
       {currentUser && (
         <FontAwesomeIcon
           icon={isSaved ? filledHeart : hollowHeart}

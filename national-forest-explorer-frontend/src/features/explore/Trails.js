@@ -8,7 +8,7 @@ function Trails() {
 
     // Fetch trails data when component mounts
     useEffect(() => {
-        axios.get('http://localhost:3000/api/trails')
+        axios.get(`${process.env.REACT_APP_API_URL}/api/trails`)
             .then(response => {
                 setTrails(response.data);
             })

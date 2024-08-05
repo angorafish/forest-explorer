@@ -37,10 +37,10 @@ const Settings = () => {
 
         try {
             // Send PUT request to update user settings
-            await axios.put('/settings', { username, email, password });
+            await axios.put(`${process.env.REACT_APP_API_URL}/settings`, { username, email, password });
 
             // Re-fetch user data to update the Auth context
-            const updatedUser = await axios.get('/auth/me', {
+            const updatedUser = await axios.get(`${process.env.REACT_APP_API_URL}/auth/me`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
@@ -64,7 +64,7 @@ const Settings = () => {
         if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
             try {
                 // Send DELETE request to delete user account
-                await axios.delete('/settings');
+                await axios.delete(`${process.env.REACT_APP_API_URL}/settings`);
 
                 // Clear current user and token from the Auth context
                 setCurrentUser(null);

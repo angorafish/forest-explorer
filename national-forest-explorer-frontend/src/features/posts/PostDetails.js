@@ -122,7 +122,7 @@ const PostDetails = () => {
             <h1 className="post-title">{post.location}</h1>
             <div className="post-images">
                 {post.photos && post.photos.length > 0 && (
-                    <img src={`http://localhost:3000${getPhotoUrl(post.photos[0].url)}`} alt={post.location} className="post-image" />
+                    <img src={`${process.env.REACT_APP_API_URL}${getPhotoUrl(post.photos[0].url)}`} alt={post.location} className="post-image" />
                 )}
             </div>
             <p className="post-author">Posted by <Link to={`/profile/${post.user.username}`}>{post.user.username}</Link></p>

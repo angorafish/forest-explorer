@@ -40,7 +40,7 @@ const Home = () => {
             return url.replace('../uploads/', '/uploads/');
         }
         return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
-    };
+    };    
 
     // Render loading state
     if (loading) return <div>Loading...</div>;
@@ -56,10 +56,8 @@ const Home = () => {
                     <div key={post.id} className="photo-card">
                         <Link to={`/posts/${post.id}`}>
                             {post.photos && post.photos.length > 0 ? (
-                                // Render post photo if available
-                                <img src={`http://localhost:3000${getPhotoUrl(post.photos[0].url)}`} alt={post.location} />
+                                <img src={`${process.env.REACT_APP_API_URL}${getPhotoUrl(post.photos[0].url)}`} alt={post.location} />
                             ) : (
-                                // Render star rating if the post is a review and no photo is available
                                 post.postType === 'review' && (
                                     <div className="review-info">
                                         {[...Array(5)].map((star, index) => {

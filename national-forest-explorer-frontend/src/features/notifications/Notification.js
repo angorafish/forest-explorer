@@ -17,7 +17,7 @@ const Notifications = () => {
         // Function to fetch notifications from the server
         const fetchNotifications = async () => {
             try {
-                const response = await axios.get('/notifications');
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/notifications`);
                 setNotifications(response.data);
                 // Set the count of unread notifications
                 setNotificationCount(response.data.filter(notification => notification.status === 'unread').length);
@@ -43,7 +43,7 @@ const Notifications = () => {
     // Handle marking a notification as read
     const handleReadNotification = async (id) => {
         try {
-            await axios.put(`/notifications/${id}/read`);
+            await axios.put(`${process.env.REACT_APP_API_URL}/notifications/${id}/read`);
             // Update the notifications state to mark the notification as read
             setNotifications((prevNotifications) => prevNotifications.map(notification =>
                 notification.id === id ? { ...notification, status: 'read' } : notification

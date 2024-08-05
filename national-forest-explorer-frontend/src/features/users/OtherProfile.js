@@ -13,8 +13,6 @@ const OtherProfile = () => {
     // Hook for navigation
     const navigate = useNavigate();
 
-    console.log('OtherProfile component is rendering');
-    console.log('currentUser:', currentUser);
     // State to store user data, posts, and errors
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
@@ -52,11 +50,11 @@ const OtherProfile = () => {
     return (
         <div className="profile-page">
             <div className="cover-photo">
-                <img src={`http://localhost:3000/uploads/${user.coverPhoto}`} alt="Cover" />
+                <img src={`${process.env.REACT_APP_API_URL}/uploads/${user.coverPhoto}`} alt="Cover" />
             </div>
             <div className="profile-details">
                 <div className="profile-photo">
-                    <img src={`http://localhost:3000/uploads/${user.profilePhoto}`} alt="Profile" />
+                    <img src={`${process.env.REACT_APP_API_URL}/uploads/${user.profilePhoto}`} alt="Profile" />
                 </div>
                 <h2>{user.username}</h2>
                 <p>Member since {new Date(user.createdAt).toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
@@ -66,7 +64,7 @@ const OtherProfile = () => {
                         {posts.map(post => (
                             <div key={post.id} className="post" onClick={() => navigate(`/posts/${post.id}`)}>
                                 {post.photos && post.photos.length > 0 && (
-                                    <img src={`http://localhost:3000${post.photos[0].url}`} alt="Post" className="post-picture" />
+                                    <img src={`${process.env.REACT_APP_API_URL}${post.photos[0].url}`} alt="Post" className="post-picture" />
                                 )}
                                 {post.rating > 0 && (
                                     <div className="stars">
@@ -76,7 +74,6 @@ const OtherProfile = () => {
                                 <p>{post.location}</p>
                                 <p>Likes: {post.likes.length}</p>
 
-                                {/* Conditionally render the edit/delete options */}
                                 {currentUser?.id === post.userId ? (
                                     <div className="post-options">
                                         <span>Edit</span>

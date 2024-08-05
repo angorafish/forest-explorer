@@ -12,7 +12,7 @@ const NavBar = ({ onPostCreated, successMessage }) => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser, notificationCount, setNotificationCount } = useAuth();
   const [isModalOpen, setModalOpen] = useState(false); // Using state to manage modal visibility
-  const [isDropdownOpen, setDropdownOpen] = useState(false); // Using state to manage dropdown visibiility
+  const [isDropdownOpen, setDropdownOpen] = useState(false); // Using state to manage dropdown visibility
   const dropdownRef = useRef(null); // Ref to handle clicks outside the dropdown
 
   // Verify token and fetch current user
@@ -79,7 +79,7 @@ const NavBar = ({ onPostCreated, successMessage }) => {
   // Content for the profile picture or account button
   const profileContent = currentUser && currentUser.profilePhoto ? (
     <img
-      src={`http://localhost:3000/uploads/${currentUser.profilePhoto}`}
+      src={`${process.env.REACT_APP_API_URL}/uploads/${currentUser.profilePhoto}`}
       alt="Profile"
       className="profile-picture"
       onClick={toggleDropdown}
@@ -122,7 +122,7 @@ const NavBar = ({ onPostCreated, successMessage }) => {
         {successMessage && <div className="success-message">{successMessage}</div>}
         <NewPostModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} onPostCreated={onPostCreated} />
     </nav>
-);
+  );
 };
 
 export default NavBar;

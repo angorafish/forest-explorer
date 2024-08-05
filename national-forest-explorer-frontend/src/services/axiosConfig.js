@@ -3,7 +3,7 @@ import axios from 'axios';
 // Creating an axios instance with predefined configuration
 const instance = axios.create({
     // The base URL for all API requests
-    baseURL: 'http://localhost:3000/api',
+    baseURL: `${process.env.REACT_APP_API_URL}/api`,
     // Default headers for all requests
     headers: {
         'Content-Type': 'application/json'

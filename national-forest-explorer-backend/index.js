@@ -31,9 +31,9 @@ const app = express();
 const server = http.createServer(app); // Create HTTP server
 const io = socketIo(server, { // Setup socket.io with CORS config
   cors: {
-    origin: "https://national-forest-frontend-5e04820d306c.herokuapp.com/",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],
+    origin: process.env.FRONTEND_URL || "https://national-forest-frontend-5e04820d306c.herokuapp.com",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   },
 });
@@ -47,12 +47,13 @@ if (!fs.existsSync(uploadDir)) {
 // Middleware setup
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: "https://national-forest-frontend-5e04820d306c.herokuapp.com",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
 app.use(bodyParser.json()); // Parse incoming JSON requests
 app.use(cookieParser()); // Parse cookies
 app.use("/uploads", express.static(uploadDir)); // Serve static files from uploads directory
@@ -72,6 +73,11 @@ app.use("/api/photos", photoRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/details", detailsRouter);
 app.use("/api/savedLocations", savedLocationsRouter);
+
+// Serve a simple welcome message on the root route
+app.get('/', (req, res) => {
+  res.send('Welcome to the National Forest Explorer API!');
+});
 
 app.use(errorHandler); // Global error handler middleware
 
@@ -120,10 +126,15 @@ startServer(); // Initialize the server
 
 // Setup socket.io connection
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("A user connected");
+
   socket.on("join", (userId) => {
     socket.join(userId);
     console.log(`User ${userId} joined room ${userId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
   });
 });
 

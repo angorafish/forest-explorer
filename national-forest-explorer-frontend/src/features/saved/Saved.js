@@ -21,7 +21,7 @@ const Saved = () => {
     const fetchSavedLocations = async () => {
       try {
         if (currentUser) {
-          const response = await axios.get(`http://localhost:3000/api/savedLocations/user/${currentUser.id}`);
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/savedLocations/user/${currentUser.id}`);
           setSavedLocations(response.data);
         }
       } catch (error) {
@@ -40,13 +40,13 @@ const Saved = () => {
 
     try {
       if (isSaved) {
-        await axios.delete('http://localhost:3000/api/savedLocations/unsave', {
+        await axios.delete(`${process.env.REACT_APP_API_URL}/savedLocations/unsave`, {
           data: { userId: currentUser.id, locationId, locationType }
         });
         // Remove the location from the saved locations state
         setSavedLocations(savedLocations.filter(loc => !(loc.locationId === locationId && loc.locationType === locationType)));
       } else {
-        await axios.post('http://localhost:3000/api/savedLocations/save', {
+        await axios.post(`${process.env.REACT_APP_API_URL}/savedLocations/save`, {
           userId: currentUser.id, locationId, locationType
         });
         // Add the location to the saved locations state

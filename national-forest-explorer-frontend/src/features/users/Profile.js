@@ -123,7 +123,7 @@ const Profile = () => {
                 {editMode ? (
                     <input type="file" onChange={handleCoverPhotoChange} />
                 ) : (
-                    user.coverPhoto && <img src={`http://localhost:3000/uploads/${user.coverPhoto}`} alt="Cover" />
+                    user.coverPhoto && <img src={`${process.env.REACT_APP_API_URL}/uploads/${user.coverPhoto}`} alt="Cover" />
                 )}
             </div>
             <div className="profile-details">
@@ -131,7 +131,7 @@ const Profile = () => {
                     {editMode ? (
                         <input type="file" onChange={handleProfilePhotoChange} />
                     ) : (
-                        user.profilePhoto && <img src={`http://localhost:3000/uploads/${user.profilePhoto}`} alt="Profile" />
+                        user.profilePhoto && <img src={`${process.env.REACT_APP_API_URL}/uploads/${user.profilePhoto}`} alt="Profile" />
                     )}
                 </div>
                 <h2>{user.username}</h2>
@@ -155,7 +155,7 @@ const Profile = () => {
                             <div key={post.id} className="post">
                                 <div onClick={() => handlePostClick(post.id)} style={{ cursor: 'pointer' }}>
                                     {post.photos && post.photos.length > 0 && (
-                                        <img src={`http://localhost:3000${getPhotoUrl(post.photos[0].url)}`} alt="Post" className="post-picture" />
+                                        <img src={`${process.env.REACT_APP_API_URL}${getPhotoUrl(post.photos[0].url)}`} alt="Post" className="post-picture" />
                                     )}
                                     {post.rating > 0 && (
                                         <div className="stars">
