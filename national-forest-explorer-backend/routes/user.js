@@ -10,10 +10,7 @@ const {
   Photo,
 } = require("../models");
 const upload = require("../middleware/upload");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const authenticateToken = require("../middleware/auth");
-const path = require("path");
 
 // Route to fetch a user's post by their username
 router.get("/user/:username", async (req, res) => {
@@ -136,45 +133,9 @@ router.put(
       res.json(user);
     } catch (error) {
       console.error("Error updating photos:", error.message);
-      console.error("Stack:", error.stack);
       res.status(500).json({ message: "Internal server error" });
     }
   }
 );
-
-// Route to register a new user
-router.post("/register", async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      username,
-      email,
-      passwordHash: hashedPassword,
-    });
-    res.status(201).json(user);
-  } catch (error) {
-    console.error("Failed to register user:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-// Route to login a user
-router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ where: { email } });
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    res.json({ token });
-  } catch (error) {
-    console.error("Failed to login user:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
 
 module.exports = router;

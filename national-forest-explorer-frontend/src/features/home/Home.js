@@ -24,7 +24,7 @@ const Home = () => {
             setLoading(false);
         } catch (error) {
             // Set error message if fetching posts fails
-            setError("Failed to fetch posts.");
+            setError("Failed to fetch posts.", error);
             setLoading(false);
         }
     };

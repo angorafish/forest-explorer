@@ -54,9 +54,10 @@ const LoginSignup = () => {
         try {
             const endpoint = isSignup ? '/auth/signup' : '/auth/login';
             const data = isSignup ? { username, email, password } : { username, password };
-            console.log(`Sending request to ${process.env.REACT_APP_API_URL}${endpoint} with data:`, data);
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}${endpoint}`, data);
+            console.log(`Sending request to ${endpoint} with data:`, data);
+            const response = await axios.post(endpoint, data);
             const { token, user } = response.data;
+        
 
             localStorage.setItem('token', token);
             console.log('Token stored in localStorage:', token);
