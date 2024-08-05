@@ -16,7 +16,7 @@ const Home = () => {
     const fetchPosts = async () => {
         try {
             // Make a GET request to fetch posts
-            const response = await axios.get('/posts');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`);
             console.log('Fetched Posts:', response.data);
             // Update posts state with the fetched data
             setPosts(response.data);
